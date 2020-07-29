@@ -1,16 +1,17 @@
 #include QMK_KEYBOARD_H
 
 enum layer_id {
-    BASE_LAYER,
-    SECOND_LAYER,
-    KEYBOARD_CONTROL_LAYER
+  BASE_LAYER,
+  RGUI_LAYER,
+  SECOND_LAYER,
+  KEYBOARD_CONTROL_LAYER
 };
 
 #define CAPS_FN     LT(SECOND_LAYER, KC_CAPSLOCK)
 #define ESC_FN2     LT(KEYBOARD_CONTROL_LAYER, KC_ESCAPE)
+#define TG_RGUI     TG(RGUI_LAYER)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-
   [BASE_LAYER] = LAYOUT(
     KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_PSCR,  KC_INS,   KC_DEL,
     KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,  KC_BSPC,  KC_HOME,
@@ -20,13 +21,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LCTL,  KC_LGUI,  KC_LALT,                      KC_SPC,   KC_SPC,   KC_SPC,                       KC_RALT,  KC_RCTRL, KC_RCTRL, KC_LEFT,  KC_DOWN,  KC_RGHT
   ),
 
+  [RGUI_LAYER] = LAYOUT(
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,                      _______,  _______,
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______,
+    _______,  _______,  _______,                      _______,  _______,  _______,                      KC_RGUI,  _______,  _______,  _______,  _______,  _______
+  ),
+
   [SECOND_LAYER] = LAYOUT(
-    ESC_FN2,  XXXXXXX,  XXXXXXX,  KC_F13,   KC_F14,   KC_F15,   KC_F16,   KC_F17,   KC_F18,   KC_F19,   KC_F20,   KC_F21,   KC_F22,   XXXXXXX,  KC_SLCK,  KC_PAUS,
-    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            KC_SLEP,
-    XXXXXXX,  KC_VOLD,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,
+    ESC_FN2,  XXXXXXX,  XXXXXXX,   KC_F13,   KC_F14,   KC_F15,   KC_F16,   KC_F17,   KC_F18,   KC_F19,   KC_F20,   KC_F21,   KC_F22,  XXXXXXX,  XXXXXXX,  KC_SLEP,
+    XXXXXXX,  KC_P1,    KC_P2,      KC_P3,    KC_P4,    KC_P5,    KC_P6,    KC_P7,    KC_P8,    KC_P9,    KC_P0,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+    XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_MPRV,  KC_MNXT,  KC_MPLY,            XXXXXXX,
+    XXXXXXX,  KC_VOLD,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      KC_PENT,  XXXXXXX,
     _______,  _______,  KC_MUTE,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
-    _______,  KC_RGUI,  _______,                      XXXXXXX,  XXXXXXX,  XXXXXXX,                      _______,  KC_APP,   KC_APP,   XXXXXXX,  XXXXXXX,  XXXXXXX
+    _______,  _______,  _______,                      XXXXXXX,  XXXXXXX,  XXXXXXX,                      TG_RGUI,  KC_APP,   KC_APP,   XXXXXXX,  XXXXXXX,  XXXXXXX
   ),
 
   [KEYBOARD_CONTROL_LAYER] = LAYOUT(
@@ -38,3 +48,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,  XXXXXXX,  _______,                      XXXXXXX,  XXXXXXX,  XXXXXXX,                      _______,  _______,  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX
   ),
 };
+
+// The "led_set_user" is called in initialization and any time the "lock" state is changed for any of the states.
+// It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
+void led_set_user(uint8_t usb_led) {
+  if (!IS_LED_ON(usb_led, USB_LED_NUM_LOCK)) {
+    register_code(KC_NUMLOCK);
+    unregister_code(KC_NUMLOCK);
+  }
+}
