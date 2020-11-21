@@ -4,10 +4,9 @@ Download and compile the firmware:
 
 ```
 cd ~/projects
-toolbox create -c qmk_build
-toolbox enter -c qmk_build
-sudo dnf install python3 python3-pip
-pip3 install --user qmk
+toolbox create qmk_build
+toolbox enter qmk_build
+pip install --user qmk
 qmk clone sekogan/qmk_firmware.git
 
 # Answer yes to all questions
@@ -18,9 +17,11 @@ cp -r kbd75v2/keymap/. qmk_firmware/keyboards/kbdfans/kbd75/keymaps/sekogan
 qmk compile -kb kbdfans/kbd75/rev2 -km sekogan
 ```
 
+Find and connect a second keyboard.
+
 On the host outside the container:
 
-Switch the keyboard into the bootloader mode (CapsLock + Esc + Backspace).
+Switch the keyboard into the bootloader mode (CapsLock + Esc + F12).
 Use `lsusb` command (from usbutils package) to verify that the device is connected:
 
 ```
