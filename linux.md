@@ -7,14 +7,14 @@ cd ~/projects
 toolbox create qmk_build
 toolbox enter qmk_build
 pip install --user qmk
-qmk clone sekogan/qmk_firmware.git
+qmk clone sekogan/qmk_firmware.git  # or git clone https://github.com/qmk/qmk_firmware.git
 
 # Answer yes to all questions
 QMK_HOME=./qmk_firmware qmk setup
 
 git clone https://github.com/sekogan/kbd75v2.git
 cp -r kbd75v2/keymap/. qmk_firmware/keyboards/kbdfans/kbd75/keymaps/sekogan
-qmk compile -kb kbdfans/kbd75/rev2 -km sekogan
+QMK_HOME=./qmk_firmware qmk compile -kb kbdfans/kbd75/rev2 -km sekogan
 ```
 
 Find and connect a second keyboard.
