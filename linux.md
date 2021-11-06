@@ -3,10 +3,11 @@
 Download and compile the firmware:
 
 ```
-cd ~/projects
 toolbox create qmk_build
 toolbox enter qmk_build
-pip install --user qmk
+pip install qmk --user --upgrade
+
+cd ~/projects
 qmk clone sekogan/qmk_firmware.git  # or git clone https://github.com/qmk/qmk_firmware.git
 
 # Answer yes to all questions
