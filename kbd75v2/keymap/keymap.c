@@ -2,14 +2,12 @@
 
 enum layer_id {
   BASE_LAYER,
-  RGUI_LAYER,
   SECOND_LAYER,
   THIRD_LAYER
 };
 
 #define CAPS_FN     LT(SECOND_LAYER, KC_CAPSLOCK)
 #define ESC_FN2     LT(THIRD_LAYER, KC_ESCAPE)
-#define TG_RGUI     TG(RGUI_LAYER)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [BASE_LAYER] = LAYOUT(
@@ -21,22 +19,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LCTL,  KC_LGUI,  KC_LALT,                      KC_SPC,   KC_SPC,   KC_SPC,                       KC_RALT,  KC_RCTRL, KC_RCTRL, KC_LEFT,  KC_DOWN,  KC_RGHT
   ),
 
-  [RGUI_LAYER] = LAYOUT(
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,                      _______,  _______,
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______,
-    _______,  _______,  _______,                      _______,  _______,  _______,                      KC_RGUI,  _______,  _______,  _______,  _______,  _______
-  ),
-
   [SECOND_LAYER] = LAYOUT(
-    ESC_FN2,  XXXXXXX,  XXXXXXX,   KC_F13,   KC_F14,   KC_F15,   KC_F16,   KC_F17,   KC_F18,   KC_F19,   KC_F20,   KC_F21,   KC_F22,  KC_PAUS,  XXXXXXX,  XXXXXXX,
-    XXXXXXX,  KC_P1,    KC_P2,      KC_P3,    KC_P4,    KC_P5,    KC_P6,    KC_P7,    KC_P8,    KC_P9,    KC_P0,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+    ESC_FN2,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_PAUS,  XXXXXXX,  XXXXXXX,
+    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
     XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_MPRV,  KC_MNXT,  KC_MPLY,            XXXXXXX,
     XXXXXXX,  KC_VOLD,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      KC_PENT,  XXXXXXX,
-    _______,  _______,  KC_MUTE,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,            XXXXXXX,  XXXXXXX,
-    _______,  _______,  _______,                      XXXXXXX,  XXXXXXX,  XXXXXXX,                      TG_RGUI,  KC_APP,   KC_APP,   XXXXXXX,  XXXXXXX,  XXXXXXX
+    _______,  _______,  KC_MUTE,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  _______,            XXXXXXX,  XXXXXXX,
+    _______,  _______,  _______,                      XXXXXXX,  XXXXXXX,  XXXXXXX,                      _______,  _______,  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX
   ),
 
   [THIRD_LAYER] = LAYOUT(

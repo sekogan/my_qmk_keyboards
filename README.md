@@ -26,10 +26,19 @@ QMK_HOME=./qmk_firmware qmk setup
 ```
 
 ```bash
-git clone https://github.com/sekogan/kbd75v2.git
+git clone https://github.com/sekogan/my_qmk_keyboards.git
+```
+
+```bash
 cp -r my_qmk_keyboards/kbd75v2/keymap/. qmk_firmware/keyboards/kbdfans/kbd75/keymaps/sekogan
 QMK_HOME=./qmk_firmware qmk compile -kb kbdfans/kbd75/rev2 -km sekogan
 cp qmk_firmware/.build/kbdfans_kbd75_rev2_sekogan.hex my_qmk_keyboards/kbd75v2/firmware/
+```
+
+```bash
+cp -r my_qmk_keyboards/kbd75hs/keymap/. qmk_firmware/keyboards/kbdfans/kbd75hs/keymaps/sekogan
+QMK_HOME=./qmk_firmware qmk compile -kb kbdfans/kbd75hs -km sekogan
+cp qmk_firmware/.build/kbdfans_kbd75hs_sekogan.hex my_qmk_keyboards/kbd75hs/firmware/
 ```
 
 Find and connect a second keyboard.
@@ -50,5 +59,6 @@ cd ~/projects
 sudo dnf install dfu-programmer
 sudo dfu-programmer atmega32u4 erase
 sudo dfu-programmer atmega32u4 flash qmk_firmware/.build/kbdfans_kbd75_rev2_sekogan.hex
+sudo dfu-programmer atmega32u4 flash qmk_firmware/.build/kbdfans_kbd75hs_sekogan.hex
 sudo dfu-programmer atmega32u4 launch
 ```
