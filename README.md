@@ -2,7 +2,6 @@
 
 This is customized firmware for my QMK-based keyboards.
 
-See [keymap/README.md](keymap/README.md) for details regarding the keymap.
 
 ## How to build and flash on Fedora linux
 
@@ -16,17 +15,14 @@ pip install qmk --user --upgrade
 
 ```bash
 cd ~/projects
-qmk clone sekogan/qmk_firmware.git  # or git clone https://github.com/qmk/qmk_firmware.git
+qmk clone qmk/qmk_firmware.git
+git clone https://github.com/sekogan/my_qmk_keyboards.git
 ```
 
 Answer yes to all questions
 
 ```bash
 QMK_HOME=./qmk_firmware qmk setup
-```
-
-```bash
-git clone https://github.com/sekogan/my_qmk_keyboards.git
 ```
 
 ```bash
