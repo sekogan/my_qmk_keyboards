@@ -1,6 +1,6 @@
 #include QMK_KEYBOARD_H
 
-enum sofle_layers {
+enum layers {
     _QWERTY,
     _COLEMAK,
     _LOWER,
@@ -20,6 +20,25 @@ enum custom_keycodes {
     KC_DLINE,               // Delete line
 };
 
+
+#ifdef TAP_DANCE_ENABLE
+
+enum tap_dances {
+  TAP_DANCE_LSFT,
+  TAP_DANCE_RSFT,
+};
+
+#define TD_LSFT     TD(TAP_DANCE_LSFT)
+#define TD_RSFT     TD(TAP_DANCE_RSFT)
+
+#else // TAP_DANCE_ENABLE
+
+#define TD_LSFT     KC_LSFT
+#define TD_RSFT     KC_RSFT
+
+#endif // TAP_DANCE_ENABLE
+
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* ,-----------------------------------------.                    ,-----------------------------------------.
@@ -29,7 +48,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | TAB  |  A   |  S   |  D   |  F   |  G   |,------.    ,------.|  H   |  J   |  K   |  L   | ; :  | ' "  |
  * |------+------+------+------+------+------|| MPLY |    |      ||------+------+------+------+------+------|
- * | LSFT |  Z   |  X   |  C   |  V   |  B   |`------'    `------'|  N   |  M   | , <  | . >  | / ?  | RSFT |
+ * |Shift |  Z   |  X   |  C   |  V   |  B   |`------'    `------'|  N   |  M   | , <  | . >  | / ?  |Shift |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | LGUI | LALT |LCTRL |/LOWER / SPC  /    \ ENT  \RAISE \|RCTRL | RALT | RGUI |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -39,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,                         KC_7,     KC_8,     KC_9,     KC_0,     XXXXXXX,  KC_LBRC, \
   KC_ESC,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSPC, \
   KC_TAB,   KC_A,     KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT, \
-  KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT, \
+  TD_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  TD_RSFT, \
                       KC_LGUI,  KC_LALT,  KC_LCTRL, KC_LOWER, KC_SPC,   KC_ENT,   KC_RAISE, KC_RCTRL, KC_RALT,  KC_RGUI \
 ),
 
@@ -50,7 +69,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | TAB  |  A   |  R   |  S   |  T   |  D   |,------.    ,------.|  H   |  N   |  E   |  I   |  O   | ' "  |
  * |------+------+------+------+------+------|| MPLY |    |      ||------+------+------+------+------+------|
- * | LSFT |  Z   |  X   |  C   |  V   |  B   |`------'    `------'|  K   |  M   | , <  | . >  | / ?  | RSFT |
+ * |Shift |  Z   |  X   |  C   |  V   |  B   |`------'    `------'|  K   |  M   | , <  | . >  | / ?  |Shift |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | LGUI | LALT |LCTRL |/LOWER / SPC  /    \ ENT  \RAISE \|RCTRL | RALT | RGUI |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -60,7 +79,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,                         KC_7,     KC_8,     KC_9,     KC_0,     XXXXXXX,  XXXXXXX, \
   KC_ESC,   KC_Q,     KC_W,     KC_F,     KC_P,     KC_G,                         KC_J,     KC_L,     KC_U,     KC_Y,     KC_SCLN,  KC_BSPC, \
   KC_TAB,   KC_A,     KC_R,     KC_S,     KC_T,     KC_D,                         KC_H,     KC_N,     KC_E,     KC_I,     KC_O,     KC_QUOT, \
-  KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  KC_K,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT, \
+  TD_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  KC_K,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  TD_RSFT, \
                       KC_LGUI,  KC_LALT,  KC_LCTRL, KC_LOWER, KC_SPC,   KC_ENT,   KC_RAISE, KC_RCTRL, KC_RALT,  KC_RGUI \
 ),
 
@@ -128,17 +147,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   )
 };
 
+
 #ifdef OLED_ENABLE
-
-static void render_logo(void) {
-    static const char PROGMEM qmk_logo[] = {
-        0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x8b,0x8c,0x8d,0x8e,0x8f,0x90,0x91,0x92,0x93,0x94,
-        0xa0,0xa1,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,0xa8,0xa9,0xaa,0xab,0xac,0xad,0xae,0xaf,0xb0,0xb1,0xb2,0xb3,0xb4,
-        0xc0,0xc1,0xc2,0xc3,0xc4,0xc5,0xc6,0xc7,0xc8,0xc9,0xca,0xcb,0xcc,0xcd,0xce,0xcf,0xd0,0xd1,0xd2,0xd3,0xd4,0
-    };
-
-    oled_write_P(qmk_logo, false);
-}
 
 static void print_status_narrow(void) {
     // Print current mode
@@ -196,12 +206,11 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 void oled_task_user(void) {
     if (is_keyboard_master()) {
         print_status_narrow();
-    } else {
-        render_logo();
     }
 }
 
-#endif
+#endif // OLED_ENABLE
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -357,6 +366,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+
 #ifdef ENCODER_ENABLE
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
@@ -376,4 +386,77 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     return true;
 }
 
-#endif
+#endif // ENCODER_ENABLE
+
+
+// The "led_set_user" is called in initialization and any time the "lock" state is changed for any of the states.
+// It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
+void led_set_user(uint8_t usb_led) {
+  if (!IS_LED_ON(usb_led, USB_LED_NUM_LOCK)) {
+    tap_code(KC_NUMLOCK);
+  }
+}
+
+
+#ifdef TAP_DANCE_ENABLE
+
+bool dance_lsft_unregister_pending = false;
+bool dance_rsft_unregister_pending = false;
+
+void dance_lsft_finished(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->pressed) {
+    register_mods(MOD_LSFT);
+    dance_lsft_unregister_pending = true;
+  } else if (state->count == 1) {
+    register_mods(MOD_LALT|MOD_LSFT);
+    tap_code(KC_0);
+    unregister_mods(MOD_LALT|MOD_LSFT);
+  }
+}
+
+void dance_lsft_reset(qk_tap_dance_state_t *state, void *user_data) {
+  if (dance_lsft_unregister_pending) {
+    dance_lsft_unregister_pending = false;
+    unregister_mods(MOD_LSFT);
+  }
+}
+
+void dance_rsft_finished(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->pressed) {
+    register_mods(MOD_BIT(KC_RSFT));
+    dance_rsft_unregister_pending = true;
+  } else if (state->count == 1) {
+    register_mods(MOD_LALT|MOD_LSFT);
+    tap_code(KC_7);
+    unregister_mods(MOD_LALT|MOD_LSFT);
+  }
+}
+
+void dance_rsft_reset(qk_tap_dance_state_t *state, void *user_data) {
+  if (dance_rsft_unregister_pending) {
+    dance_rsft_unregister_pending = false;
+    unregister_mods(MOD_BIT(KC_RSFT));
+  }
+}
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+  [TAP_DANCE_LSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lsft_finished, dance_lsft_reset),
+  [TAP_DANCE_RSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_rsft_finished, dance_rsft_reset),
+};
+
+#endif // TAP_DANCE_ENABLE
+
+
+#ifdef KEY_OVERRIDE_ENABLE
+
+#define MOD_MASK_RALT MOD_BIT(KC_RALT)
+const key_override_t russian_e_override = ko_make_basic(MOD_MASK_RALT, KC_T, KC_GRV);
+const key_override_t russian_hard_sign_override = ko_make_basic(MOD_MASK_RALT, KC_M, KC_RBRC);
+
+const key_override_t **key_overrides = (const key_override_t *[]){
+    &russian_e_override,
+    &russian_hard_sign_override,
+    NULL
+};
+
+#endif // KEY_OVERRIDE_ENABLE

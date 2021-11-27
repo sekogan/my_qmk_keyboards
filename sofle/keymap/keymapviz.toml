@@ -32,3 +32,5 @@ KC_SCLN=; :
 KC_SLSH=/ ?
 KC_TILD=~
 KC_UNDS=_
+TD_LSFT=Shift
+TD_RSFT=Shift
