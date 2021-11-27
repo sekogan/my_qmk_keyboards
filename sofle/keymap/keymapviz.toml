@@ -7,9 +7,9 @@ KC_AT=@
 KC_BSLS=\ |
 KC_CIRC=^
 KC_COLN=:
-KC_COMM=, >
+KC_COMM=, <
 KC_DLR=$
-KC_DOT=. <
+KC_DOT=. >
 KC_DQUO="
 KC_EQL== +
 KC_EXLM=!
