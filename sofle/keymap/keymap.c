@@ -13,7 +13,6 @@ enum custom_keycodes {
     KC_COLEMK,
     KC_LOWER,
     KC_RAISE,
-    KC_ADJUST,
     KC_PRVWD,
     KC_NXTWD,
     KC_LSTRT,
@@ -232,13 +231,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 layer_off(_RAISE);
                 update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            }
-            return false;
-        case KC_ADJUST:
-            if (record->event.pressed) {
-                layer_on(_ADJUST);
-            } else {
-                layer_off(_ADJUST);
             }
             return false;
         case KC_PRVWD:
