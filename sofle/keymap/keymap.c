@@ -13,11 +13,11 @@ enum custom_keycodes {
     KC_COLEMK,
     KC_LOWER,
     KC_RAISE,
-    KC_PRVWD,
-    KC_NXTWD,
-    KC_LSTRT,
-    KC_LEND,
-    KC_DLINE
+    KC_PRVWD,   // Previous word
+    KC_NXTWD,   // Next word
+    KC_LSTRT,   // Line start
+    KC_LEND,    // Line end
+    KC_DLINE,   // Delete line
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
