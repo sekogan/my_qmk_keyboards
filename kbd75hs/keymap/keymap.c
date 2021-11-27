@@ -121,3 +121,14 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   [TAP_DANCE_LSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lsft_finished, dance_lsft_reset),
   [TAP_DANCE_RSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_rsft_finished, dance_rsft_reset),
 };
+
+
+#define MOD_MASK_RALT MOD_BIT(KC_RALT)
+const key_override_t russian_e_override = ko_make_basic(MOD_MASK_RALT, KC_T, KC_GRV);
+const key_override_t russian_hard_sign_override = ko_make_basic(MOD_MASK_RALT, KC_M, KC_RBRC);
+
+const key_override_t **key_overrides = (const key_override_t *[]){
+    &russian_e_override,
+    &russian_hard_sign_override,
+    NULL
+};
