@@ -6,5 +6,5 @@ Derived from the [default keymap](https://github.com/qmk/qmk_firmware/tree/maste
 Update ascii art in `keymap.c` with:
 
 ```
-keymapviz -k sofle -r sofle/keymap/keymap.c
+keymapviz -k sofle -r my_qmk_keyboards/sofle/keymap/keymap.c -c my_qmk_keyboards/sofle/keymap/keymapviz.toml
 ```
