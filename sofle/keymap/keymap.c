@@ -358,9 +358,9 @@ void led_set_user(uint8_t usb_led) {
 
 
 enum languages {
-    UNKNOWN_LANGUAGE,
     PRIMARY_LANGUAGE,
     SECONDARY_LANGUAGE,
+    UNKNOWN_LANGUAGE = 100,
 };
 
 enum languages current_language = UNKNOWN_LANGUAGE;
