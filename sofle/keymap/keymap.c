@@ -153,14 +153,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   )
 };
 
+void language_reset(void);
+
 enum platforms {
     LINUX_PLATFORM,
     WINDOWS_PLATFORM,
     MAC_PLATFORM,
+    UNKNOWN_PLATFORM,
 };
 
-enum platforms current_platform = LINUX_PLATFORM;
+enum platforms current_platform = UNKNOWN_PLATFORM;
 
+void platform_set(enum platforms platform) {
+    current_platform = platform;
+    language_reset();
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -314,15 +321,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case KC_LIN:
             if (record->event.pressed)
-                current_platform = LINUX_PLATFORM;
+                platform_set(LINUX_PLATFORM);
             return false;
         case KC_WIN:
             if (record->event.pressed)
-                current_platform = WINDOWS_PLATFORM;
+                platform_set(WINDOWS_PLATFORM);
             return false;
         case KC_MAC:
             if (record->event.pressed)
-                current_platform = MAC_PLATFORM;
+                platform_set(MAC_PLATFORM);
             return false;
     }
     return true;
@@ -377,6 +384,10 @@ uint8_t swap_mods(uint8_t desired_mods) {
   if (missing_mods)
     register_mods(missing_mods);
   return before_mods;
+}
+
+void language_reset(void) {
+    current_language = UNKNOWN_LANGUAGE;
 }
 
 void language_set(enum languages language) {
@@ -465,17 +476,23 @@ const key_override_t **key_overrides = (const key_override_t *[]){
 
 #ifdef OLED_ENABLE
 
-static void print_status_narrow(void) {
-    // Print current mode
-    oled_write_P(PSTR("\n\n"), false);
-    oled_write_ln_P(PSTR("MODE"), false);
-    oled_write_ln_P(PSTR(""), false);
-    if (keymap_config.swap_lctl_lgui) {
-        oled_write_ln_P(PSTR("MAC"), false);
-    } else {
-        oled_write_ln_P(PSTR("WIN"), false);
+static void print_status_master(void) {
+    oled_write_ln_P(PSTR("OS\n"), false);
+    switch (current_platform) {
+        case WINDOWS_PLATFORM:
+            oled_write_ln_P(PSTR("Win"), false);
+            break;
+        case LINUX_PLATFORM:
+            oled_write_P(PSTR("Linux"), false);
+            break;
+        case MAC_PLATFORM:
+            oled_write_ln_P(PSTR("Mac"), false);
+            break;
+        default:
+            oled_write_ln_P(PSTR("?"), false);
     }
 
+    oled_write_ln_P(PSTR("\n\nMODE\n"), false);
     switch (get_highest_layer(default_layer_state)) {
         case _QWERTY:
             oled_write_ln_P(PSTR("Qwrt"), false);
@@ -484,15 +501,28 @@ static void print_status_narrow(void) {
             oled_write_ln_P(PSTR("Clmk"), false);
             break;
         default:
-            oled_write_P(PSTR("Undef"), false);
+            oled_write_ln_P(PSTR("?"), false);
     }
-    oled_write_P(PSTR("\n\n"), false);
-    // Print current layer
-    oled_write_ln_P(PSTR("LAYER"), false);
+
+    oled_write_ln_P(PSTR("\n\nLANG\n"), false);
+    switch (current_language) {
+        case PRIMARY_LANGUAGE:
+            oled_write_ln_P(PSTR("Prim"), false);
+            break;
+        case SECONDARY_LANGUAGE:
+            oled_write_ln_P(PSTR("Alt"), false);
+            break;
+        default:
+            oled_write_ln_P(PSTR("?"), false);
+    }
+}
+
+static void print_status_slave(void) {
+    oled_write_ln_P(PSTR("\n\nLAYER"), false);
     switch (get_highest_layer(layer_state)) {
         case _COLEMAK:
         case _QWERTY:
-            oled_write_P(PSTR("Base\n"), false);
+            oled_write_ln_P(PSTR("Base"), false);
             break;
         case _RAISE:
             oled_write_P(PSTR("Raise"), false);
@@ -501,26 +531,26 @@ static void print_status_narrow(void) {
             oled_write_P(PSTR("Lower"), false);
             break;
         case _ADJUST:
-            oled_write_P(PSTR("Adj\n"), false);
+            oled_write_ln_P(PSTR("Adj"), false);
             break;
         default:
-            oled_write_ln_P(PSTR("Undef"), false);
+            oled_write_ln_P(PSTR("?"), false);
     }
-    oled_write_P(PSTR("\n\n"), false);
+
+    oled_write_ln_P(PSTR("\n"), false);
     led_t led_usb_state = host_keyboard_led_state();
-    oled_write_ln_P(PSTR("CPSLK"), led_usb_state.caps_lock);
+    oled_write_ln_P(PSTR("CAPS"), led_usb_state.caps_lock);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    if (is_keyboard_master()) {
-        return OLED_ROTATION_270;
-    }
-    return rotation;
+    return OLED_ROTATION_270;
 }
 
 void oled_task_user(void) {
     if (is_keyboard_master()) {
-        print_status_narrow();
+        print_status_master();
+    } else {
+        print_status_slave();
     }
 }
 
