@@ -518,7 +518,7 @@ static void print_status_master(void) {
 }
 
 static void print_status_slave(void) {
-    oled_write_ln_P(PSTR("\n\nLAYER"), false);
+    oled_write_ln_P(PSTR("LAYER"), false);
     switch (get_highest_layer(layer_state)) {
         case _COLEMAK:
         case _QWERTY:
