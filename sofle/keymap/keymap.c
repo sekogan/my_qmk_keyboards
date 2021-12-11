@@ -19,7 +19,7 @@ enum custom_keycodes {
     KC_LOWER,
     KC_RAISE,
 
-    KC_TALAJ,               // Toggle auto language adjustment
+    KC_TALNG,               // Toggle auto language adjustment
 
     KC_PRVWD,               // Previous word
     KC_NXTWD,               // Next word
@@ -142,7 +142,7 @@ _______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, KC_REDO,  _______,  _______,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      | QWRT |                    | LIN  |      |      |      |      |RESET |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |      |      |      | CLMK |,------.    ,------.| WIN  |      |      |TALAJ |      |      |
+ * |      |      |      |      |      | CLMK |,------.    ,------.| WIN  |      |      |TALNG |      |      |
  * |------+------+------+------+------+------||      |    |      ||------+------+------+------+------+------|
  * | ___  |      |      |      |      |      |`------'    `------'| MAC  |      |      |      |      | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
@@ -153,7 +153,7 @@ _______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, KC_REDO,  _______,  _______,  
 [_ADJUST] = LAYOUT( \
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, \
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_QWRT,                      KC_LIN,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  RESET, \
-XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CLMK,                      KC_WIN,   XXXXXXX,  XXXXXXX,  KC_TALAJ, XXXXXXX,  XXXXXXX, \
+XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CLMK,                      KC_WIN,   XXXXXXX,  XXXXXXX,  KC_TALNG, XXXXXXX,  XXXXXXX, \
 _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_MAC,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  _______, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______ \
 )
@@ -345,7 +345,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed)
                 platform_set(MAC_PLATFORM);
             return false;
-        case KC_TALAJ:
+        case KC_TALNG:
             if (record->event.pressed)
                 toggle_auto_language_adjustment();
             return false;
