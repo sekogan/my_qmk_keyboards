@@ -412,7 +412,7 @@ void language_set(enum languages language) {
       tap_code(KC_1 + language);
       swap_mods(mods);
       break;
-    case MAC_PLATFORM:
+    default:
       return;
   }
   current_language = language;
