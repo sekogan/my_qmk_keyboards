@@ -495,10 +495,10 @@ static void print_status_master(void) {
     oled_write_ln_P(PSTR("\n\nMODE\n"), false);
     switch (get_highest_layer(default_layer_state)) {
         case _QWERTY:
-            oled_write_ln_P(PSTR("Qwrt"), false);
+            oled_write_P(PSTR("Qwrty"), false);
             break;
         case _COLEMAK:
-            oled_write_ln_P(PSTR("Clmk"), false);
+            oled_write_P(PSTR("Colmk"), false);
             break;
         default:
             oled_write_ln_P(PSTR("?"), false);
@@ -507,7 +507,7 @@ static void print_status_master(void) {
     oled_write_ln_P(PSTR("\n\nLANG\n"), false);
     switch (current_language) {
         case PRIMARY_LANGUAGE:
-            oled_write_ln_P(PSTR("Prim"), false);
+            oled_write_ln_P(PSTR("Pri"), false);
             break;
         case SECONDARY_LANGUAGE:
             oled_write_ln_P(PSTR("Alt"), false);
@@ -525,13 +525,13 @@ static void print_status_slave(void) {
             oled_write_ln_P(PSTR("Base"), false);
             break;
         case _RAISE:
-            oled_write_P(PSTR("Raise"), false);
+            oled_write_P(PSTR("RAISE"), false);
             break;
         case _LOWER:
-            oled_write_P(PSTR("Lower"), false);
+            oled_write_P(PSTR("lower"), false);
             break;
         case _ADJUST:
-            oled_write_ln_P(PSTR("Adj"), false);
+            oled_write_ln_P(PSTR("*"), false);
             break;
         default:
             oled_write_ln_P(PSTR("?"), false);
