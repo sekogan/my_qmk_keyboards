@@ -515,6 +515,13 @@ static void print_status_master(void) {
         default:
             oled_write_ln_P(PSTR("?"), false);
     }
+
+    oled_write_ln_P(PSTR("\n"), false);
+    uint8_t mods = get_mods() | get_oneshot_mods();
+    oled_write_P(PSTR("S"), mods & MOD_MASK_SHIFT);
+    oled_write_P(PSTR("G"), mods & MOD_MASK_GUI);
+    oled_write_P(PSTR("A"), mods & MOD_MASK_ALT);
+    oled_write_P(PSTR("C"), mods & MOD_MASK_CTRL);
 }
 
 static void print_status_slave(void) {
