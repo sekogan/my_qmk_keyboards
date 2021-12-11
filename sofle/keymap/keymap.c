@@ -26,6 +26,7 @@ enum custom_keycodes {
     KC_LSTRT,               // Line start
     KC_LEND,                // Line end
     KC_DLINE,               // Delete line
+    KC_REDO,
 };
 
 
@@ -122,7 +123,7 @@ _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | CAPS | LSFT | LALT | LCTL |      |      |,------.    ,------.| PGDN | LEFT | DOWN | RGHT |DLINE |      |
  * |------+------+------+------+------+------|| ___  |    | ___  ||------+------+------+------+------+------|
- * | ___  | UNDO | CUT  | COPY |PASTE |      |`------'    `------'|LSTRT | LEND |      |      |      | ___  |
+ * | ___  | UNDO | CUT  | COPY |PASTE | REDO |`------'    `------'|LSTRT | LEND |      |      |      | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | ___  | ___  | ___  |/ ___  / ___  /    \ ___  \ ___  \| ___  | ___  | ___  |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -132,7 +133,7 @@ _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_PSCR,  KC_INS,    KC_PAUS, \
 KC_ESC,   KC_MEH,   KC_HYPR,  XXXXXXX,  XXXXXXX,  KC_TAB,                       KC_PGUP,  KC_PRVWD, KC_UP,    KC_NXTWD, KC_DEL,    KC_BSPC, \
 KC_CAPS,  KC_LSFT,  KC_LALT,  KC_LCTL,  XXXXXXX,  XXXXXXX,                      KC_PGDN,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_DLINE,  XXXXXXX, \
-_______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, XXXXXXX,  _______,  _______,  KC_LSTRT, KC_LEND,  XXXXXXX,  XXXXXXX,  XXXXXXX,   _______, \
+_______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, KC_REDO,  _______,  _______,  KC_LSTRT, KC_LEND,  XXXXXXX,  XXXXXXX,  XXXXXXX,   _______, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______ \
 ),
 
@@ -321,6 +322,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 unregister_mods(mod_config(MOD_LCTL));
                 unregister_code(KC_Z);
+            }
+            return false;
+        case KC_REDO:
+            if (record->event.pressed) {
+                register_mods(mod_config(MOD_LCTL));
+                register_code(KC_Y);
+            } else {
+                unregister_mods(mod_config(MOD_LCTL));
+                unregister_code(KC_Y);
             }
             return false;
         case KC_LIN:
