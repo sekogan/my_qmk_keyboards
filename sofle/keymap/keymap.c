@@ -11,11 +11,16 @@ enum layers {
 enum custom_keycodes {
     KC_QWRT = SAFE_RANGE,   // Qwerty
     KC_CLMK,                // Colemak
+
     KC_LIN,
     KC_WIN,
     KC_MAC,
+
     KC_LOWER,
     KC_RAISE,
+
+    KC_TALAJ,               // Toggle auto language adjustment
+
     KC_PRVWD,               // Previous word
     KC_NXTWD,               // Next word
     KC_LSTRT,               // Line start
@@ -96,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | ` ~  |  ~   |  +   | = +  |  _   | - _  |,------.    ,------.| ' "  |  "   |  [   |  ]   |  :   |  |   |
  * |------+------+------+------+------+------|| ___  |    | ___  ||------+------+------+------+------+------|
- * | ___  |OSSft |      |      |      | / ?  |`------'    `------'|  {   |  }   |  <   |  >   |  ?   | ___  |
+ * | ___  |OSSft |      |      | ; :  | / ?  |`------'    `------'|  {   |  }   |  <   |  >   |  ?   | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | ___  | ___  | ___  |/ ___  / ___  /    \ ___  \ ___  \| ___  | ___  | ___  |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -106,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,                        KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12, \
   KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,                      KC_AMPR,  KC_ASTR,  KC_LPRN,  KC_RPRN,  KC_BSLS,  KC_BSPC, \
   KC_GRV,   KC_TILD,  KC_PLUS,  KC_EQL,   KC_UNDS,  KC_MINS,                      KC_QUOT,  KC_DQUO,  KC_LBRC,  KC_RBRC,  KC_COLN,  KC_PIPE, \
-  _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_SLSH,  _______,  _______,  KC_LCBR,  KC_RCBR,  KC_LT,    KC_GT,    KC_QUES,  _______, \
+  _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  KC_LCBR,  KC_RCBR,  KC_LT,    KC_GT,    KC_QUES,  _______, \
                       _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, _______\
 ),
 
@@ -136,7 +141,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      | QWRT |                    | LIN  |      |      |      |      |RESET |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |      |      |      | CLMK |,------.    ,------.| WIN  |      |      |      |      |      |
+ * |      |      |      |      |      | CLMK |,------.    ,------.| WIN  |      |      |TALAJ |      |      |
  * |------+------+------+------+------+------||      |    |      ||------+------+------+------+------+------|
  * | ___  |      |      |      |      |      |`------'    `------'| MAC  |      |      |      |      | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
@@ -147,13 +152,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ADJUST] = LAYOUT( \
   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, \
   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_QWRT,                      KC_LIN,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  RESET, \
-  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CLMK,                      KC_WIN,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, \
+  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CLMK,                      KC_WIN,   XXXXXXX,  XXXXXXX,  KC_TALAJ, XXXXXXX,  XXXXXXX, \
   _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_MAC,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  _______, \
                       _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______ \
   )
 };
 
 void language_reset(void);
+void toggle_auto_language_adjustment(void);
+void update_auto_language_adjustment(void);
 
 enum platforms {
     LINUX_PLATFORM,
@@ -184,20 +191,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_LOWER:
             if (record->event.pressed) {
                 layer_on(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
             } else {
                 layer_off(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
             }
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            update_auto_language_adjustment();
             return false;
         case KC_RAISE:
             if (record->event.pressed) {
                 layer_on(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
             } else {
                 layer_off(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
             }
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            update_auto_language_adjustment();
             return false;
         case KC_PRVWD:
             if (record->event.pressed) {
@@ -331,6 +338,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed)
                 platform_set(MAC_PLATFORM);
             return false;
+        case KC_TALAJ:
+            if (record->event.pressed)
+                toggle_auto_language_adjustment();
+            return false;
     }
     return true;
 }
@@ -436,6 +447,30 @@ void language_set(enum languages language) {
 }
 
 
+bool auto_language_adjustment_enabled = true;
+bool current_language_adjusted = false;
+
+void toggle_auto_language_adjustment(void) {
+    auto_language_adjustment_enabled = !auto_language_adjustment_enabled;
+}
+
+void update_auto_language_adjustment(void) {
+    if (!auto_language_adjustment_enabled)
+        return;
+    if (get_highest_layer(layer_state) == _LOWER) {
+        if (current_language != PRIMARY_LANGUAGE) {
+            language_set(PRIMARY_LANGUAGE);
+            current_language_adjusted = true;
+        }
+    } else {
+        if (current_language_adjusted && current_language == PRIMARY_LANGUAGE) {
+            language_set(SECONDARY_LANGUAGE);
+            current_language_adjusted = false;
+        }
+    }
+}
+
+
 #ifdef TAP_DANCE_ENABLE
 
 void dance_language_mod_finished(
@@ -527,7 +562,7 @@ static void print_status_master(void) {
             oled_write_ln_P(PSTR("Pri"), false);
             break;
         case SECONDARY_LANGUAGE:
-            oled_write_ln_P(PSTR("Alt"), false);
+            oled_write_ln_P(auto_language_adjustment_enabled ? PSTR("Alt*") : PSTR("Alt"), false);
             break;
         default:
             oled_write_ln_P(PSTR("?"), false);
