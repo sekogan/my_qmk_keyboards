@@ -376,6 +376,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 
+void suspend_power_down_user(void) {
+    oled_off();
+}
+
+
 #ifdef ENCODER_ENABLE
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
