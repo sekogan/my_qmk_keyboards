@@ -163,7 +163,9 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 
 void language_reset(void);
 void toggle_auto_language_adjustment(void);
-void update_auto_language_adjustment(void);
+void adjust_language(void);
+void restore_language_if_adjusted(void);
+
 
 enum platforms {
     LINUX_PLATFORM,
@@ -195,7 +197,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             else
                 layer_off(_LOWER);
             update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            update_auto_language_adjustment();
             return false;
         case KC_RAISE:
             if (record->event.pressed)
@@ -203,7 +204,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             else
                 layer_off(_RAISE);
             update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            update_auto_language_adjustment();
             return false;
         case KC_WPREV:
             if (record->event.pressed) {
@@ -364,6 +364,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 
+layer_state_t layer_state_set_user(layer_state_t state) {
+    switch (get_highest_layer(state)) {
+    case _LOWER:
+        adjust_language();
+        break;
+    default:
+        restore_language_if_adjusted();
+    }
+    return state;
+}
+
+
 #ifdef ENCODER_ENABLE
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
@@ -466,19 +478,21 @@ void toggle_auto_language_adjustment(void) {
     auto_language_adjustment_enabled = !auto_language_adjustment_enabled;
 }
 
-void update_auto_language_adjustment(void) {
+void adjust_language(void) {
     if (!auto_language_adjustment_enabled)
         return;
-    if (get_highest_layer(layer_state) == _LOWER) {
-        if (current_language != PRIMARY_LANGUAGE) {
-            language_set(PRIMARY_LANGUAGE);
-            current_language_adjusted = true;
-        }
-    } else {
-        if (current_language_adjusted && current_language == PRIMARY_LANGUAGE) {
-            language_set(SECONDARY_LANGUAGE);
-            current_language_adjusted = false;
-        }
+    if (current_language != PRIMARY_LANGUAGE) {
+        language_set(PRIMARY_LANGUAGE);
+        current_language_adjusted = true;
+    }
+}
+
+void restore_language_if_adjusted(void) {
+    if (!auto_language_adjustment_enabled)
+        return;
+    if (current_language_adjusted && current_language == PRIMARY_LANGUAGE) {
+        language_set(SECONDARY_LANGUAGE);
+        current_language_adjusted = false;
     }
 }
 
