@@ -491,25 +491,26 @@ void language_set(enum languages language) {
 
 bool auto_language_adjustment_enabled = true;
 bool current_language_adjusted = false;
+enum languages language_before_adjustment = UNKNOWN_LANGUAGE;
 
 void toggle_auto_language_adjustment(void) {
     auto_language_adjustment_enabled = !auto_language_adjustment_enabled;
 }
 
 void adjust_language(void) {
-    if (!auto_language_adjustment_enabled)
+    if (!auto_language_adjustment_enabled || current_language == UNKNOWN_LANGUAGE)
         return;
     if (current_language != PRIMARY_LANGUAGE) {
-        language_set(PRIMARY_LANGUAGE);
+        language_before_adjustment = current_language;
         current_language_adjusted = true;
+        language_set(PRIMARY_LANGUAGE);
     }
 }
 
 void restore_language_if_adjusted(void) {
-    if (!auto_language_adjustment_enabled)
-        return;
-    if (current_language_adjusted && current_language == PRIMARY_LANGUAGE) {
-        language_set(SECONDARY_LANGUAGE);
+    if (current_language_adjusted) {
+        if (current_language != language_before_adjustment && current_language != UNKNOWN_LANGUAGE)
+            language_set(language_before_adjustment);
         current_language_adjusted = false;
     }
 }
