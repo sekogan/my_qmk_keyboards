@@ -127,7 +127,7 @@ _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | TAB  | LSFT | LALT | LCTL |      | TAB  |,------.    ,------.| PGDN | LEFT | DOWN | RGHT | DEL  |      |
  * |------+------+------+------+------+------|| ___  |    | ___  ||------+------+------+------+------+------|
- * | ___  | UNDO | CUT  | COPY |PASTE | REDO |`------'    `------'|LSTRT | LEND |FDOWN |      | LDEL | ___  |
+ * | ___  | UNDO | CUT  | COPY |PASTE | REDO |`------'    `------'|      |LSTRT |FDOWN | LEND | LDEL | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | ___  | ___  | ___  |/ ___  / ___  /    \ ___  \ ___  \| ___  | ___  | ___  |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -137,7 +137,7 @@ _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  KC_FUP,   KC_PSCR,  KC_INS,    KC_PAUS, \
 KC_ESC,   KC_MEH,   KC_HYPR,  XXXXXXX,  KC_CAPS,  KC_GRV,                       KC_PGUP,  KC_WPREV, KC_UP,    KC_WNEXT, KC_WDEL,   KC_BSPC, \
 KC_TAB,   KC_LSFT,  KC_LALT,  KC_LCTL,  XXXXXXX,  KC_TAB,                       KC_PGDN,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_DEL,    XXXXXXX, \
-_______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, KC_REDO,  _______,  _______,  KC_LSTRT, KC_LEND,  KC_FDOWN, XXXXXXX,  KC_LDEL,   _______, \
+_______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, KC_REDO,  _______,  _______,  XXXXXXX,  KC_LSTRT, KC_FDOWN, KC_LEND,  KC_LDEL,   _______, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______ \
 ),
 
