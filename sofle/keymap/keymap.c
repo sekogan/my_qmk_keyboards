@@ -101,7 +101,7 @@ TD_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |  !   |  @   |  #   |  $   |  %   |  ^   |                    |  &   |  *   |  (   |  )   | \ |  | BSPC |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * | ` ~  |  ~   |  +   | = +  |  _   | - _  |,------.    ,------.| ' "  |  "   |  [   |  ]   |  :   |  |   |
+ * | ` ~  |  ~   |  +   | = +  | - _  |  _   |,------.    ,------.| ' "  |  "   |  [   |  ]   |  :   |  |   |
  * |------+------+------+------+------+------|| ___  |    | ___  ||------+------+------+------+------+------|
  * | ___  |OSSft |      |      | ; :  | / ?  |`------'    `------'|  {   |  }   |  <   |  >   |  ?   | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
@@ -112,7 +112,7 @@ TD_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  
 [_LOWER] = LAYOUT( \
 KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,                        KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12, \
 KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,                      KC_AMPR,  KC_ASTR,  KC_LPRN,  KC_RPRN,  KC_BSLS,  KC_BSPC, \
-KC_GRV,   KC_TILD,  KC_PLUS,  KC_EQL,   KC_UNDS,  KC_MINS,                      KC_QUOT,  KC_DQUO,  KC_LBRC,  KC_RBRC,  KC_COLN,  KC_PIPE, \
+KC_GRV,   KC_TILD,  KC_PLUS,  KC_EQL,   KC_MINS,  KC_UNDS,                      KC_QUOT,  KC_DQUO,  KC_LBRC,  KC_RBRC,  KC_COLN,  KC_PIPE, \
 _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  KC_LCBR,  KC_RCBR,  KC_LT,    KC_GT,    KC_QUES,  _______, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, _______\
 ),
