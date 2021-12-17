@@ -228,18 +228,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_WPREV:
             if (record->event.pressed) {
                 if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_LALT));
+                    register_mods(mod_config(MOD_BIT(KC_LALT)));
                     register_code(KC_LEFT);
                 } else {
-                    register_mods(mod_config(MOD_LCTL));
+                    register_mods(mod_config(MOD_BIT(KC_LCTL)));
                     register_code(KC_LEFT);
                 }
             } else {
                 if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LALT));
+                    unregister_mods(mod_config(MOD_BIT(KC_LALT)));
                     unregister_code(KC_LEFT);
                 } else {
-                    unregister_mods(mod_config(MOD_LCTL));
+                    unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                     unregister_code(KC_LEFT);
                 }
             }
@@ -247,18 +247,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_WNEXT:
              if (record->event.pressed) {
                 if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_LALT));
+                    register_mods(mod_config(MOD_BIT(KC_LALT)));
                     register_code(KC_RIGHT);
                 } else {
-                    register_mods(mod_config(MOD_LCTL));
+                    register_mods(mod_config(MOD_BIT(KC_LCTL)));
                     register_code(KC_RIGHT);
                 }
             } else {
                 if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LALT));
+                    unregister_mods(mod_config(MOD_BIT(KC_LALT)));
                     unregister_code(KC_RIGHT);
                 } else {
-                    unregister_mods(mod_config(MOD_LCTL));
+                    unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                     unregister_code(KC_RIGHT);
                 }
             }
@@ -267,14 +267,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (keymap_config.swap_lctl_lgui) {
                      // CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_LCTL));
+                    register_mods(mod_config(MOD_BIT(KC_LCTL)));
                     register_code(KC_LEFT);
                 } else {
                     register_code(KC_HOME);
                 }
             } else {
                 if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LCTL));
+                    unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                     unregister_code(KC_LEFT);
                 } else {
                     unregister_code(KC_HOME);
@@ -285,14 +285,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (keymap_config.swap_lctl_lgui) {
                     // CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_LCTL));
+                    register_mods(mod_config(MOD_BIT(KC_LCTL)));
                     register_code(KC_RIGHT);
                 } else {
                     register_code(KC_END);
                 }
             } else {
                 if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LCTL));
+                    unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                     unregister_code(KC_RIGHT);
                 } else {
                     unregister_code(KC_END);
@@ -301,47 +301,47 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case KC_COPY:
             if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
+                register_mods(mod_config(MOD_BIT(KC_LCTL)));
                 register_code(KC_C);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                 unregister_code(KC_C);
             }
             return false;
         case KC_PASTE:
             if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
+                register_mods(mod_config(MOD_BIT(KC_LCTL)));
                 register_code(KC_V);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                 unregister_code(KC_V);
             }
             return false;
         case KC_CUT:
             if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
+                register_mods(mod_config(MOD_BIT(KC_LCTL)));
                 register_code(KC_X);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                 unregister_code(KC_X);
             }
             return false;
             break;
         case KC_UNDO:
             if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
+                register_mods(mod_config(MOD_BIT(KC_LCTL)));
                 register_code(KC_Z);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                 unregister_code(KC_Z);
             }
             return false;
         case KC_REDO:
             if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
+                register_mods(mod_config(MOD_BIT(KC_LCTL)));
                 register_code(KC_Y);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                 unregister_code(KC_Y);
             }
             return false;
@@ -466,7 +466,7 @@ void language_set(enum languages language) {
                     swap_mods(0);
                     break;
                 case SECONDARY_LANGUAGE:
-                    swap_mods(MOD_LSFT);
+                    swap_mods(MOD_BIT(KC_LSFT));
                     break;
                 default:
                     return;
@@ -475,7 +475,7 @@ void language_set(enum languages language) {
             swap_mods(mods);
             break;
         case WINDOWS_PLATFORM:
-            swap_mods(MOD_LALT|MOD_LSFT);
+            swap_mods(MOD_BIT(KC_LALT)|MOD_BIT(KC_LSFT));
             tap_code(KC_1 + language);
             swap_mods(mods);
             break;
@@ -530,11 +530,11 @@ void dance_language_mod_reset(qk_tap_dance_state_t *state, uint8_t mod) {
 }
 
 void dance_lsft_finished(qk_tap_dance_state_t *state, void *user_data) {
-    dance_language_mod_finished(state, PRIMARY_LANGUAGE, MOD_LSFT);
+    dance_language_mod_finished(state, PRIMARY_LANGUAGE, MOD_BIT(KC_LSFT));
 }
 
 void dance_lsft_reset(qk_tap_dance_state_t *state, void *user_data) {
-    dance_language_mod_reset(state, MOD_LSFT);
+    dance_language_mod_reset(state, MOD_BIT(KC_LSFT));
 }
 
 void dance_rsft_finished(qk_tap_dance_state_t *state, void *user_data) {
