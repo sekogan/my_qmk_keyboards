@@ -210,14 +210,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             update_tri_layer(_LOWER, _RAISE, _ADJUST);
             return false;
         case KC_FUP:
-            tap_code(KC_UP);
-            tap_code(KC_UP);
-            tap_code(KC_UP);
+            if (record->event.pressed) {
+                tap_code(KC_UP);
+                tap_code(KC_UP);
+                tap_code(KC_UP);
+            }
             return false;
         case KC_FDOWN:
-            tap_code(KC_DOWN);
-            tap_code(KC_DOWN);
-            tap_code(KC_DOWN);
+            if (record->event.pressed) {
+                tap_code(KC_DOWN);
+                tap_code(KC_DOWN);
+                tap_code(KC_DOWN);
+            }
             return false;
         case KC_WPREV:
             if (record->event.pressed) {
