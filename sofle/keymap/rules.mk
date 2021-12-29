@@ -13,3 +13,5 @@ RGBLIGHT_ENABLE = no
 SLEEP_LED_ENABLE = no
 SWAP_HANDS_ENABLE = no
 TAP_DANCE_ENABLE = yes
+
+SRC += features/caps_word.c

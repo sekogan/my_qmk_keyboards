@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "features/caps_word.h"
 
 enum layers {
     _QWERTY,
@@ -188,6 +189,8 @@ void platform_set(enum platforms platform) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_caps_word(keycode, record)) return false;
+
     switch (keycode) {
         case KC_QWRT:
             if (record->event.pressed)
