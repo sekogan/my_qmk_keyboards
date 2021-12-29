@@ -1,3 +1,6 @@
+// Adds user selectable platform.
+// Used by other features.
+
 #pragma once
 
 #include QMK_KEYBOARD_H
