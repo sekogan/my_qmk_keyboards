@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "features/caps_word.h"
+#include "features/platform.h"
 
 enum layers {
     _QWERTY,
@@ -175,23 +176,12 @@ void restore_language_if_adjusted(void);
 bool process_language(uint16_t keycode, keyrecord_t* record);
 
 
-enum platforms {
-    LINUX_PLATFORM,
-    WINDOWS_PLATFORM,
-    MAC_PLATFORM,
-    UNKNOWN_PLATFORM,
-};
-
-enum platforms current_platform = UNKNOWN_PLATFORM;
-
-void platform_set(enum platforms platform) {
-    current_platform = platform;
-    language_reset();
-}
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_language(keycode, record)) return false;
     if (!process_caps_word(keycode, record)) return false;
+    if (!process_platform(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
+    if (!process_platform(keycode, record, KC_WIN, WINDOWS_PLATFORM)) return false;
+    if (!process_platform(keycode, record, KC_MAC, MAC_PLATFORM)) return false;
 
     switch (keycode) {
         case KC_QWRT:
@@ -350,18 +340,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_Y);
             }
             return false;
-        case KC_LIN:
-            if (record->event.pressed)
-                platform_set(LINUX_PLATFORM);
-            return false;
-        case KC_WIN:
-            if (record->event.pressed)
-                platform_set(WINDOWS_PLATFORM);
-            return false;
-        case KC_MAC:
-            if (record->event.pressed)
-                platform_set(MAC_PLATFORM);
-            return false;
         case KC_TALNG:
             if (record->event.pressed)
                 toggle_auto_language_adjustment();
@@ -388,6 +366,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         restore_language_if_adjusted();
     }
     return state;
+}
+
+
+void platform_set_user(void) {
+    language_reset();
 }
 
 
@@ -464,7 +447,7 @@ void language_reset(void) {
 
 void language_set(enum languages language) {
     uint8_t mods = get_mods();
-    switch (current_platform) {
+    switch (get_platform()) {
         case LINUX_PLATFORM:
             switch (language) {
                 case PRIMARY_LANGUAGE:
@@ -591,7 +574,7 @@ const key_override_t **key_overrides = (const key_override_t *[]){
 
 static void print_status_master(void) {
     oled_write_ln_P(PSTR("OS\n"), false);
-    switch (current_platform) {
+    switch (get_platform()) {
         case WINDOWS_PLATFORM:
             oled_write_ln_P(PSTR("Win"), false);
             break;
