@@ -110,7 +110,7 @@ TD_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | ` ~  |  ~   |  +   | = +  | - _  |  _   |,------.    ,------.| ' "  |  "   |  [   |  ]   |  :   |  |   |
  * |------+------+------+------+------+------|| ___  |    | ___  ||------+------+------+------+------+------|
- * | ___  |OSSft |      |      | ; :  | / ?  |`------'    `------'|  {   |  }   |  <   |  >   |  ?   | ___  |
+ * |LANG1 |OSSft |      |      | ; :  | / ?  |`------'    `------'|  {   |  }   |  <   |  >   |  ?   |LANG2 |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | ___  | ___  | ___  |/ ___  / ___  /    \ ___  \ ___  \| ___  | ___  | ___  |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -120,7 +120,7 @@ TD_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  
 KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,                        KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12, \
 KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,                      KC_AMPR,  KC_ASTR,  KC_LPRN,  KC_RPRN,  KC_BSLS,  KC_BSPC, \
 KC_GRV,   KC_TILD,  KC_PLUS,  KC_EQL,   KC_MINS,  KC_UNDS,                      KC_QUOT,  KC_DQUO,  KC_LBRC,  KC_RBRC,  KC_COLN,  KC_PIPE, \
-_______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  KC_LCBR,  KC_RCBR,  KC_LT,    KC_GT,    KC_QUES,  _______, \
+KC_LANG1, OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  KC_LCBR,  KC_RCBR,  KC_LT,    KC_GT,    KC_QUES,  KC_LANG2, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, _______\
 ),
 
@@ -131,7 +131,7 @@ _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | TAB  | LSFT | LALT | LCTL |      | TAB  |,------.    ,------.| PGDN | LEFT | DOWN | RGHT | WDEL |WBSPC |
  * |------+------+------+------+------+------|| ___  |    | ___  ||------+------+------+------+------+------|
- * | ___  | UNDO | CUT  | COPY |PASTE | REDO |`------'    `------'|      |LSTRT |FDOWN | LEND | LDEL | ___  |
+ * |LANG1 | UNDO | CUT  | COPY |PASTE | REDO |`------'    `------'|      |LSTRT |FDOWN | LEND | LDEL |LANG2 |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | ___  | ___  | ___  |/ ___  / ___  /    \ ___  \ ___  \| ___  | ___  | ___  |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -141,7 +141,7 @@ _______,  OSM_LSFT, XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CAPS,                      XXXXXXX,  XXXXXXX,  KC_FUP,   KC_PSCR,  KC_INS,    KC_PAUS, \
 KC_ESC,   KC_MEH,   KC_HYPR,  XXXXXXX,  KC_LKSH , KC_GRV,                       KC_PGUP,  KC_WPREV, KC_UP,    KC_WNEXT, KC_DEL,    KC_BSPC, \
 KC_TAB,   KC_LSFT,  KC_LALT,  KC_LCTL,  XXXXXXX,  KC_TAB,                       KC_PGDN,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_WDEL,   KC_WBSPC, \
-_______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, KC_REDO,  _______,  _______,  XXXXXXX,  KC_LSTRT, KC_FDOWN, KC_LEND,  KC_LDEL,   _______, \
+KC_LANG1, KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, KC_REDO,  _______,  _______,  XXXXXXX,  KC_LSTRT, KC_FDOWN, KC_LEND,  KC_LDEL,   KC_LANG2, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______ \
 ),
 
@@ -172,6 +172,7 @@ void language_reset(void);
 void toggle_auto_language_adjustment(void);
 void adjust_language(void);
 void restore_language_if_adjusted(void);
+bool process_language(uint16_t keycode, keyrecord_t* record);
 
 
 enum platforms {
@@ -189,6 +190,7 @@ void platform_set(enum platforms platform) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_language(keycode, record)) return false;
     if (!process_caps_word(keycode, record)) return false;
 
     switch (keycode) {
@@ -486,6 +488,20 @@ void language_set(enum languages language) {
             return;
     }
     current_language = language;
+}
+
+bool process_language(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case KC_LANG1:
+            if (record->event.pressed)
+                language_set(PRIMARY_LANGUAGE);
+            return false;
+        case KC_LANG2:
+            if (record->event.pressed)
+                language_set(SECONDARY_LANGUAGE);
+            return false;
+    }
+    return true;
 }
 
 
