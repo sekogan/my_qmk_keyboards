@@ -15,4 +15,5 @@ SWAP_HANDS_ENABLE = no
 TAP_DANCE_ENABLE = no
 
 SRC += features/caps_word.c
+SRC += features/language.c
 SRC += features/platform.c

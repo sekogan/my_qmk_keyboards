@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "features/caps_word.h"
+#include "features/language.h"
 #include "features/platform.h"
 
 enum layers {
@@ -169,11 +170,9 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 
 };
 
-void language_reset(void);
 void toggle_auto_language_adjustment(void);
 void adjust_language(void);
 void restore_language_if_adjusted(void);
-bool process_language(uint16_t keycode, keyrecord_t* record);
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -370,7 +369,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 
 void platform_set_user(void) {
-    language_reset();
+    reset_language();
 }
 
 
@@ -422,94 +421,32 @@ void led_set_user(uint8_t usb_led) {
 }
 
 
-enum languages {
-    PRIMARY_LANGUAGE,
-    SECONDARY_LANGUAGE,
-    UNKNOWN_LANGUAGE = 100,
-};
-
-enum languages current_language = UNKNOWN_LANGUAGE;
-
-uint8_t swap_mods(uint8_t desired_mods) {
-    uint8_t before_mods = get_mods();
-    uint8_t missing_mods = (~before_mods) & desired_mods;
-    uint8_t undesired_mods = before_mods & (~desired_mods);
-    if (undesired_mods)
-        unregister_mods(undesired_mods);
-    if (missing_mods)
-        register_mods(missing_mods);
-    return before_mods;
-}
-
-void language_reset(void) {
-    current_language = UNKNOWN_LANGUAGE;
-}
-
-void language_set(enum languages language) {
-    uint8_t mods = get_mods();
-    switch (get_platform()) {
-        case LINUX_PLATFORM:
-            switch (language) {
-                case PRIMARY_LANGUAGE:
-                    swap_mods(0);
-                    break;
-                case SECONDARY_LANGUAGE:
-                    swap_mods(MOD_BIT(KC_LSFT));
-                    break;
-                default:
-                    return;
-            }
-            tap_code(KC_CAPS);
-            swap_mods(mods);
-            break;
-        case WINDOWS_PLATFORM:
-            swap_mods(MOD_BIT(KC_LALT)|MOD_BIT(KC_LSFT));
-            tap_code(KC_1 + language);
-            swap_mods(mods);
-            break;
-        default:
-            return;
-    }
-    current_language = language;
-}
-
-bool process_language(uint16_t keycode, keyrecord_t* record) {
-    switch (keycode) {
-        case KC_LANG1:
-            if (record->event.pressed)
-                language_set(PRIMARY_LANGUAGE);
-            return false;
-        case KC_LANG2:
-            if (record->event.pressed)
-                language_set(SECONDARY_LANGUAGE);
-            return false;
-    }
-    return true;
-}
-
-
 bool auto_language_adjustment_enabled = true;
 bool current_language_adjusted = false;
-enum languages language_before_adjustment = UNKNOWN_LANGUAGE;
+language_t language_before_adjustment = UNKNOWN_LANGUAGE;
 
 void toggle_auto_language_adjustment(void) {
     auto_language_adjustment_enabled = !auto_language_adjustment_enabled;
 }
 
 void adjust_language(void) {
-    if (!auto_language_adjustment_enabled || current_language == UNKNOWN_LANGUAGE)
+    if (!auto_language_adjustment_enabled)
         return;
-    if (current_language != PRIMARY_LANGUAGE) {
-        language_before_adjustment = current_language;
+    language_t language = get_language();
+    if (language == UNKNOWN_LANGUAGE)
+        return;
+    if (language != PRIMARY_LANGUAGE) {
+        language_before_adjustment = language;
         current_language_adjusted = true;
-        language_set(PRIMARY_LANGUAGE);
+        switch_language(PRIMARY_LANGUAGE);
     }
 }
 
 void restore_language_if_adjusted(void) {
     if (current_language_adjusted) {
-        if (current_language != language_before_adjustment && current_language != UNKNOWN_LANGUAGE)
-            language_set(language_before_adjustment);
+        language_t language = get_language();
+        if (language != language_before_adjustment && language != UNKNOWN_LANGUAGE)
+            switch_language(language_before_adjustment);
         current_language_adjusted = false;
     }
 }
@@ -517,13 +454,11 @@ void restore_language_if_adjusted(void) {
 
 #ifdef TAP_DANCE_ENABLE
 
-void dance_language_mod_finished(
-  qk_tap_dance_state_t *state, enum languages language, uint8_t mod
-) {
+void dance_language_mod_finished(qk_tap_dance_state_t *state, language_t language, uint8_t mod) {
     if (state->pressed)
         register_mods(mod);
     else if (state->count == 1)
-        language_set(language);
+        switch_language(language);
 }
 
 void dance_language_mod_reset(qk_tap_dance_state_t *state, uint8_t mod) {
@@ -601,7 +536,7 @@ static void print_status_master(void) {
     }
 
     oled_write_ln_P(PSTR("\n\nLANG\n"), false);
-    switch (current_language) {
+    switch (get_language()) {
         case PRIMARY_LANGUAGE:
             oled_write_ln_P(PSTR("Pri"), false);
             break;
