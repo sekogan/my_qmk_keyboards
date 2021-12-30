@@ -35,5 +35,5 @@ KC_TILD=~
 KC_UNDS=_
 OSM_LSFT=Shift
 OSM_RSFT=Shift
-MD_LGUI=Super
-MD_RGUI=Super
+MT_LGUI=Super
+MT_RGUI=Super

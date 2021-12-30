@@ -37,8 +37,8 @@ enum custom_keycodes {
 };
 
 
-#define MD_LGUI     LGUI_T(KC_LNG1)
-#define MD_RGUI     RGUI_T(KC_LNG2)
+#define MT_LGUI     LGUI_T(KC_LNG1)
+#define MT_RGUI     RGUI_T(KC_LNG2)
 
 #define KC_LDEL     C(S(KC_K))
 #define KC_WBSPC    C(KC_BSPC)
@@ -68,7 +68,7 @@ KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,                         
 KC_ESC,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSPC, \
 KC_TAB,   KC_A,     KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT, \
 OSM_LSFT, KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  OSM_RSFT, \
-                    MD_LGUI,  KC_LALT,  KC_LCTRL, KC_LOWER, KC_SPC,   KC_ENT,   KC_RAISE, KC_RCTRL, KC_RALT,  MD_RGUI \
+                    MT_LGUI,  KC_LALT,  KC_LCTRL, KC_LOWER, KC_SPC,   KC_ENT,   KC_RAISE, KC_RCTRL, KC_RALT,  MT_RGUI \
 ),
 
 /* ,-----------------------------------------.                    ,-----------------------------------------.
@@ -89,7 +89,7 @@ KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,                         
 KC_ESC,   KC_Q,     KC_W,     KC_F,     KC_P,     KC_G,                         KC_J,     KC_L,     KC_U,     KC_Y,     KC_SCLN,  KC_BSPC, \
 KC_TAB,   KC_A,     KC_R,     KC_S,     KC_T,     KC_D,                         KC_H,     KC_N,     KC_E,     KC_I,     KC_O,     KC_QUOT, \
 OSM_LSFT, KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  KC_K,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  OSM_RSFT, \
-                    MD_LGUI,  KC_LALT,  KC_LCTRL, KC_LOWER, KC_SPC,   KC_ENT,   KC_RAISE, KC_RCTRL, KC_RALT,  MD_RGUI \
+                    MT_LGUI,  KC_LALT,  KC_LCTRL, KC_LOWER, KC_SPC,   KC_ENT,   KC_RAISE, KC_RCTRL, KC_RALT,  MT_RGUI \
 ),
 
 /* ,-----------------------------------------.                    ,-----------------------------------------.
@@ -339,11 +339,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     register_mods(MOD_BIT(KC_LSFT));
             }
             return false;
-        case MD_LGUI:
+        case MT_LGUI:
             if (record->tap.count == 1 && record->event.pressed)
                 return process_record_user(KC_LNG1, record);
             break;
-        case MD_RGUI:
+        case MT_RGUI:
             if (record->tap.count == 1 && record->event.pressed)
                 return process_record_user(KC_LNG2, record);
             break;
