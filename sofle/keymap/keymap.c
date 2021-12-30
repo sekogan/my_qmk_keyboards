@@ -177,7 +177,8 @@ void restore_language_if_adjusted(void);
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_language(keycode, record)) return false;
-    if (!process_caps_word(keycode, record)) return false;
+    if (keycode != KC_LOWER && keycode != KC_RAISE)
+        if (!process_caps_word(keycode, record)) return false;
     if (!process_platform(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
     if (!process_platform(keycode, record, KC_WIN, WINDOWS_PLATFORM)) return false;
     if (!process_platform(keycode, record, KC_MAC, MAC_PLATFORM)) return false;
