@@ -52,11 +52,11 @@ void switch_language(language_t language) {
 
 bool process_language(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
-        case KC_LANG1:
+        case KC_LNG1:
             if (record->event.pressed)
                 switch_language(PRIMARY_LANGUAGE);
             return false;
-        case KC_LANG2:
+        case KC_LNG2:
             if (record->event.pressed)
                 switch_language(SECONDARY_LANGUAGE);
             return false;
