@@ -493,13 +493,13 @@ static void print_status_slave(void) {
             oled_write_ln_P(PSTR("Base"), false);
             break;
         case _RAISE:
-            oled_write_P(PSTR("RAISE"), false);
+            oled_write_P(PSTR("Raise"), false);
             break;
         case _LOWER:
-            oled_write_P(PSTR("lower"), false);
+            oled_write_P(PSTR("Lower"), false);
             break;
         case _ADJUST:
-            oled_write_ln_P(PSTR("*"), false);
+            oled_write_P(PSTR("Setup"), false);
             break;
         default:
             oled_write_ln_P(PSTR("?"), false);
