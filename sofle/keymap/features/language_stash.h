@@ -25,3 +25,8 @@ bool is_language_stash_enabled(void);
 // Enables or disables the language stash feature. The stash is considered empty and all
 // the commands do nothing if the feature is disabled.
 void enable_language_stash(bool enable);
+
+// Should be called from process_record_user.
+bool process_language_stash(
+    uint16_t keycode, keyrecord_t *record, uint16_t toggle_feature_keycode
+);

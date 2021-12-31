@@ -161,6 +161,7 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_language(keycode, record)) return false;
+    if (!process_language_stash(keycode, record, KC_LNGST)) return false;
     if (keycode != KC_LOWER && keycode != KC_RAISE)
         if (!process_caps_word(keycode, record)) return false;
     if (!process_platform(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
@@ -323,10 +324,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                 unregister_code(KC_Y);
             }
-            return false;
-        case KC_LNGST:
-            if (record->event.pressed)
-                enable_language_stash(!is_language_stash_enabled());
             return false;
         case KC_LKSH:
             if (record->event.pressed) {

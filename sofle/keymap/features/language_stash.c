@@ -42,3 +42,16 @@ bool is_language_stash_enabled(void) {
 void enable_language_stash(bool enable) {
     _feature_enabled = enable;
 }
+
+bool process_language_stash(
+    uint16_t keycode, keyrecord_t *record, uint16_t toggle_feature_keycode
+) {
+    if (keycode == toggle_feature_keycode) {
+        if (record->event.pressed) {
+            enable_language_stash(!is_language_stash_enabled());
+            clear_language_stash();
+        }
+        return false;
+    }
+    return true;
+}
