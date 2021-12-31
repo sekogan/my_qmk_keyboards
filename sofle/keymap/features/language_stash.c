@@ -12,9 +12,9 @@ void stash_current_language(void) {
     if (language == UNKNOWN_LANGUAGE)
         return;
     if (language != PRIMARY_LANGUAGE) {
+        switch_language(PRIMARY_LANGUAGE);
         _stashed_language = language;
         _stash_empty = false;
-        switch_language(PRIMARY_LANGUAGE);
     }
 }
 
