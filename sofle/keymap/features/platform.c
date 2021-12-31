@@ -6,13 +6,9 @@ platform_t get_platform(void) {
     return _current_platform;
 }
 
-__attribute__((weak)) void platform_set_user(void) {}
-
 void set_platform(platform_t platform) {
-    if (platform != _current_platform) {
-        _current_platform = platform;
-        platform_set_user();
-    }
+    _current_platform = platform;
+    platform_set_user();
 }
 
 bool process_platform(
@@ -25,3 +21,5 @@ bool process_platform(
     }
     return true;
 }
+
+__attribute__((weak)) void platform_set_user(void) {}

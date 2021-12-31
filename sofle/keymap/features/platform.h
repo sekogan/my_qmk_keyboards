@@ -24,5 +24,5 @@ bool process_platform(
     uint16_t keycode, keyrecord_t* record, uint16_t platform_keycode, platform_t platform
 );
 
-// Implement this function to get notified when currently selected platform is changed.
+// Implement this function to get notified when currently selected platform is set.
 void platform_set_user(void);
