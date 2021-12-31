@@ -48,6 +48,7 @@ void switch_language(language_t language) {
             return;
     }
     _current_language = language;
+    language_set_user();
 }
 
 bool process_language(uint16_t keycode, keyrecord_t* record) {
@@ -63,3 +64,5 @@ bool process_language(uint16_t keycode, keyrecord_t* record) {
     }
     return true;
 }
+
+__attribute__((weak)) void language_set_user(void) {}

@@ -22,3 +22,6 @@ void switch_language(language_t language);
 
 // Should be called from process_record_user.
 bool process_language(uint16_t keycode, keyrecord_t* record);
+
+// Implement this function to get notified when language is set.
+void language_set_user(void);

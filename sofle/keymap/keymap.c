@@ -367,6 +367,11 @@ void platform_set_user(void) {
 }
 
 
+void language_set_user(void) {
+    clear_language_stash();
+}
+
+
 void suspend_power_down_user(void) {
     oled_off();
 }
