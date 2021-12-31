@@ -16,4 +16,5 @@ TAP_DANCE_ENABLE = no
 
 SRC += features/caps_word.c
 SRC += features/language.c
+SRC += features/language_stash.c
 SRC += features/platform.c

@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "features/caps_word.h"
 #include "features/language.h"
+#include "features/language_stash.h"
 #include "features/platform.h"
 
 enum layers {
@@ -22,7 +23,7 @@ enum custom_keycodes {
     KC_LOWER,
     KC_RAISE,
 
-    KC_TALNG,               // Toggle auto language adjustment
+    KC_LNGST,               // Toggle language stash feature
 
     KC_WPREV,               // Previous word
     KC_WNEXT,               // Next word
@@ -139,7 +140,7 @@ _______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, XXXXXXX,  _______,  _______,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      | QWRT |                    | LIN  |      |      |      |      |RESET |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |      |      |      | CLMK |,------.    ,------.| WIN  |      |      |TALNG |      |      |
+ * |      |      |      |      |      | CLMK |,------.    ,------.| WIN  |      |      |LNGST |      |      |
  * |------+------+------+------+------+------||      |    |      ||------+------+------+------+------+------|
  * | ___  |      |      |      |      |      |`------'    `------'| MAC  |      |      |      |      | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
@@ -150,16 +151,12 @@ _______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, XXXXXXX,  _______,  _______,  
 [_ADJUST] = LAYOUT( \
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, \
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_QWRT,                      KC_LIN,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  RESET, \
-XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CLMK,                      KC_WIN,   XXXXXXX,  XXXXXXX,  KC_TALNG, XXXXXXX,  XXXXXXX, \
+XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CLMK,                      KC_WIN,   XXXXXXX,  XXXXXXX,  KC_LNGST, XXXXXXX,  XXXXXXX, \
 _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_MAC,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  _______, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______ \
 )
 
 };
-
-void toggle_auto_language_adjustment(void);
-void adjust_language(void);
-void restore_language_if_adjusted(void);
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -327,9 +324,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_Y);
             }
             return false;
-        case KC_TALNG:
+        case KC_LNGST:
             if (record->event.pressed)
-                toggle_auto_language_adjustment();
+                enable_language_stash(!is_language_stash_enabled());
             return false;
         case KC_LKSH:
             if (record->event.pressed) {
@@ -355,10 +352,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
     case _LOWER:
-        adjust_language();
+        stash_current_language();
         break;
     default:
-        restore_language_if_adjusted();
+        restore_stashed_language();
     }
     return state;
 }
@@ -366,6 +363,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 void platform_set_user(void) {
     reset_language();
+    clear_language_stash();
 }
 
 
@@ -417,37 +415,6 @@ void led_set_user(uint8_t usb_led) {
 }
 
 
-bool auto_language_adjustment_enabled = true;
-bool current_language_adjusted = false;
-language_t language_before_adjustment = UNKNOWN_LANGUAGE;
-
-void toggle_auto_language_adjustment(void) {
-    auto_language_adjustment_enabled = !auto_language_adjustment_enabled;
-}
-
-void adjust_language(void) {
-    if (!auto_language_adjustment_enabled)
-        return;
-    language_t language = get_language();
-    if (language == UNKNOWN_LANGUAGE)
-        return;
-    if (language != PRIMARY_LANGUAGE) {
-        language_before_adjustment = language;
-        current_language_adjusted = true;
-        switch_language(PRIMARY_LANGUAGE);
-    }
-}
-
-void restore_language_if_adjusted(void) {
-    if (current_language_adjusted) {
-        language_t language = get_language();
-        if (language != language_before_adjustment && language != UNKNOWN_LANGUAGE)
-            switch_language(language_before_adjustment);
-        current_language_adjusted = false;
-    }
-}
-
-
 #ifdef KEY_OVERRIDE_ENABLE
 
 #define MOD_MASK_RALT MOD_BIT(KC_RALT)
@@ -496,10 +463,10 @@ static void print_status_master(void) {
     oled_write_ln_P(PSTR("\n\nLANG\n"), false);
     switch (get_language()) {
         case PRIMARY_LANGUAGE:
-            oled_write_ln_P(PSTR("Pri"), false);
+            oled_write_ln_P(is_language_stash_empty() ? PSTR("Pri") : PSTR("Pri*"), false);
             break;
         case SECONDARY_LANGUAGE:
-            oled_write_ln_P(auto_language_adjustment_enabled ? PSTR("Alt*") : PSTR("Alt"), false);
+            oled_write_ln_P(is_language_stash_enabled() ? PSTR("Alt*") : PSTR("Alt"), false);
             break;
         default:
             oled_write_ln_P(PSTR("?"), false);
