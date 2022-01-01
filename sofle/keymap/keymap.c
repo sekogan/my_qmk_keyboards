@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "features/caps_word.h"
+#include "features/clipboard_shortcuts.h"
 #include "features/compact_russian.h"
 #include "features/fast_keycode.h"
 #include "features/language.h"
@@ -166,6 +167,7 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_fast_keycode(keycode, record, KC_FUP, KC_UP, 3)) return false;
     if (!process_fast_keycode(keycode, record, KC_FDOWN, KC_DOWN, 3)) return false;
+    if (!process_clipboard_shortcuts(keycode, record)) return false;
     if (keycode != KC_LOWER && keycode != KC_RAISE)
         if (!process_caps_word(keycode, record)) return false;
     if (!process_select_word(keycode, record, KC_WSEL)) return false;
@@ -272,34 +274,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     unregister_code(KC_END);
                 }
             }
-            break;
-        case KC_COPY:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                register_code(KC_C);
-            } else {
-                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                unregister_code(KC_C);
-            }
-            return false;
-        case KC_PASTE:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                register_code(KC_V);
-            } else {
-                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                unregister_code(KC_V);
-            }
-            return false;
-        case KC_CUT:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                register_code(KC_X);
-            } else {
-                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                unregister_code(KC_X);
-            }
-            return false;
             break;
         case KC_UNDO:
             if (record->event.pressed) {

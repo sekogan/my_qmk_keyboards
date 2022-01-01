@@ -15,6 +15,7 @@ SWAP_HANDS_ENABLE = no
 TAP_DANCE_ENABLE = no
 
 SRC += features/caps_word.c
+SRC += features/clipboard_shortcuts.c
 SRC += features/compact_russian.c
 SRC += features/fast_keycode.c
 SRC += features/language.c
