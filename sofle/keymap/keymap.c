@@ -457,7 +457,11 @@ static void print_status_master(void) {
     }
 
     oled_write_ln_P(PSTR("\n"), false);
-    uint8_t mods = get_mods() | get_oneshot_mods();
+    uint8_t mods = get_mods()
+#ifndef NO_ACTION_ONESHOT
+        | get_oneshot_mods()
+#endif // NO_ACTION_ONESHOT
+        ;
     oled_write_P(mods & MOD_MASK_SHIFT ? PSTR("S") : PSTR(" "), false);
     oled_write_P(mods & MOD_MASK_GUI ? PSTR("G") : PSTR(" "), false);
     oled_write_P(mods & MOD_MASK_ALT ? PSTR("A") : PSTR(" "), false);
