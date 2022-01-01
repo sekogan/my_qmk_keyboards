@@ -45,7 +45,7 @@ bool process_select_word(
                 tap_code(KC_LEFT);
 
             register_code(KC_LSFT);
-            register_code(KC_RGHT);
+            register_code(KC_RIGHT);
             state = STATE_WORD;
         } else {  // Select line.
             if (state == STATE_NONE) {
@@ -66,7 +66,7 @@ bool process_select_word(
     // `sel_keycode` was released, or another key was pressed.
     switch (state) {
         case STATE_WORD:
-            unregister_code(KC_RGHT);
+            unregister_code(KC_RIGHT);
             unregister_code(KC_LSFT);
             unregister_code(KC_LCTL);
             state = STATE_SELECTED;
@@ -83,7 +83,7 @@ bool process_select_word(
 
         case STATE_SELECTED:
             if (keycode == KC_ESC) {
-                tap_code(KC_RGHT);
+                tap_code(KC_RIGHT);
                 state = STATE_NONE;
                 return false;
             }
