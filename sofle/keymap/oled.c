@@ -7,7 +7,7 @@
 
 #ifdef OLED_ENABLE
 
-static void print_status_master(void) {
+static void _print_status_master(void) {
     oled_write_ln_P(PSTR("OS\n"), false);
     switch (get_platform()) {
         case WINDOWS_PLATFORM:
@@ -59,7 +59,7 @@ static void print_status_master(void) {
     oled_write_P(mods & MOD_MASK_CTRL ? PSTR("C") : PSTR(" "), false);
 }
 
-static void print_status_slave(void) {
+static void _print_status_slave(void) {
     oled_write_ln_P(PSTR("LAYER"), false);
     switch (get_highest_layer(layer_state)) {
         case _COLEMAK:
@@ -90,9 +90,9 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 
 bool oled_task_user(void) {
     if (is_keyboard_master())
-        print_status_master();
+        _print_status_master();
     else
-        print_status_slave();
+        _print_status_slave();
     return false;
 }
 

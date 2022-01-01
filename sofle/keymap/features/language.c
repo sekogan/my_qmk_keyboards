@@ -3,7 +3,7 @@
 
 static language_t _current_language = UNKNOWN_LANGUAGE;
 
-uint8_t _swap_mods(uint8_t desired_mods) {
+static uint8_t _swap_mods(uint8_t desired_mods) {
     const uint8_t before_mods = get_mods();
     const uint8_t missing_mods = ~before_mods & desired_mods;
     const uint8_t undesired_mods = before_mods & ~desired_mods;

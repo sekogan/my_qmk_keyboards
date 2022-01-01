@@ -13,7 +13,7 @@ void enable_compact_russian_layout(bool enable) {
     _feature_enabled = enable;
 }
 
-bool _process_keycode(
+static bool _process_keycode(
     uint16_t keycode, keyrecord_t* record,
     uint16_t replaced_keycode, uint16_t replacement_keycode, uint8_t replacement_keycode_bit
 ) {
