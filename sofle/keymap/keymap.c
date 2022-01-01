@@ -7,6 +7,7 @@
 #include "features/language_stash.h"
 #include "features/platform.h"
 #include "features/select_word.h"
+#include "features/text_editing.h"
 
 enum layers {
     _QWERTY,
@@ -163,9 +164,12 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_text_navigation_shortcuts(keycode, record, KC_WPREV, KC_WNEXT, KC_LSTRT, KC_LEND))
+        return false;
     if (!process_fast_keycode(keycode, record, KC_FUP, KC_UP, 3)) return false;
     if (!process_fast_keycode(keycode, record, KC_FDOWN, KC_DOWN, 3)) return false;
     if (!process_clipboard_shortcuts(keycode, record)) return false;
+    if (!process_editing_history_shortcuts(keycode, record)) return false;
     if (keycode != KC_LOWER && keycode != KC_RAISE)
         if (!process_caps_word(keycode, record)) return false;
     if (!process_select_word(keycode, record, KC_WSEL)) return false;
@@ -198,89 +202,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             else
                 layer_off(_RAISE);
             update_tri_layer(_LOWER, _RAISE, _EXTRA);
-            return false;
-        case KC_WPREV:
-            if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_BIT(KC_LALT)));
-                    register_code(KC_LEFT);
-                } else {
-                    register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                    register_code(KC_LEFT);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_BIT(KC_LALT)));
-                    unregister_code(KC_LEFT);
-                } else {
-                    unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                    unregister_code(KC_LEFT);
-                }
-            }
-            break;
-        case KC_WNEXT:
-             if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_BIT(KC_LALT)));
-                    register_code(KC_RIGHT);
-                } else {
-                    register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                    register_code(KC_RIGHT);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_BIT(KC_LALT)));
-                    unregister_code(KC_RIGHT);
-                } else {
-                    unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                    unregister_code(KC_RIGHT);
-                }
-            }
-            break;
-        case KC_LSTRT:
-            if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                     // CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                    register_code(KC_LEFT);
-                } else {
-                    register_code(KC_HOME);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                    unregister_code(KC_LEFT);
-                } else {
-                    unregister_code(KC_HOME);
-                }
-            }
-            break;
-        case KC_LEND:
-            if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    // CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                    register_code(KC_RIGHT);
-                } else {
-                    register_code(KC_END);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                    unregister_code(KC_RIGHT);
-                } else {
-                    unregister_code(KC_END);
-                }
-            }
-            break;
-        case KC_UNDO:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                register_code(KC_Z);
-            } else {
-                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                unregister_code(KC_Z);
-            }
             return false;
         case MT_LGUI:
             if (record->tap.count == 1 && record->event.pressed)
