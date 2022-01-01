@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "features/caps_word.h"
+#include "features/compact_russian.h"
 #include "features/language.h"
 #include "features/language_stash.h"
 #include "features/platform.h"
@@ -165,6 +166,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (keycode != KC_LOWER && keycode != KC_RAISE)
         if (!process_caps_word(keycode, record)) return false;
     if (!process_select_word(keycode, record, KC_WSEL)) return false;
+    if (!process_compact_russian(keycode, record)) return false;
     if (!process_language(keycode, record)) return false;
     if (!process_language_stash(keycode, record, KC_LNGST)) return false;
     if (!process_platform_selector(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
@@ -360,6 +362,7 @@ void platform_set_user(void) {
 
 void language_set_user(void) {
     clear_language_stash();
+    enable_compact_russian(get_language() == SECONDARY_LANGUAGE);
 }
 
 
@@ -409,21 +412,6 @@ void led_set_user(uint8_t usb_led) {
     if (!IS_LED_ON(usb_led, USB_LED_NUM_LOCK))
         tap_code(KC_NUMLOCK);
 }
-
-
-#ifdef KEY_OVERRIDE_ENABLE
-
-#define MOD_MASK_RALT MOD_BIT(KC_RALT)
-const key_override_t russian_e_override = ko_make_basic(MOD_MASK_RALT, KC_T, KC_GRV);
-const key_override_t russian_hard_sign_override = ko_make_basic(MOD_MASK_RALT, KC_M, KC_RBRC);
-
-const key_override_t **key_overrides = (const key_override_t *[]){
-    &russian_e_override,
-    &russian_hard_sign_override,
-    NULL
-};
-
-#endif // KEY_OVERRIDE_ENABLE
 
 
 #ifdef OLED_ENABLE

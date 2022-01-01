@@ -5,7 +5,7 @@ CONSOLE_ENABLE = no
 ENCODER_ENABLE = yes
 EXTRAFLAGS += -flto
 EXTRAKEY_ENABLE = yes
-KEY_OVERRIDE_ENABLE = yes
+KEY_OVERRIDE_ENABLE = no
 MOUSEKEY_ENABLE = no
 OLED_DRIVER = SSD1306
 OLED_ENABLE = yes
@@ -15,6 +15,7 @@ SWAP_HANDS_ENABLE = no
 TAP_DANCE_ENABLE = no
 
 SRC += features/caps_word.c
+SRC += features/compact_russian.c
 SRC += features/language.c
 SRC += features/language_stash.c
 SRC += features/platform.c
