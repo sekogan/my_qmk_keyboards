@@ -32,7 +32,6 @@ enum custom_keycodes {
     KC_WNEXT,               // Next word
     KC_LSTRT,               // Line start
     KC_LEND,                // Line end
-    KC_REDO,
 
     KC_FUP,                 // Fast up
     KC_FDOWN,               // Fast down
@@ -318,15 +317,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
                 unregister_code(KC_Z);
-            }
-            return false;
-        case KC_REDO:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_BIT(KC_LCTL)));
-                register_code(KC_Y);
-            } else {
-                unregister_mods(mod_config(MOD_BIT(KC_LCTL)));
-                unregister_code(KC_Y);
             }
             return false;
         case KC_LKSH:
