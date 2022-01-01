@@ -1,4 +1,4 @@
-// Platform independent non-modal input language switcher.
+// Platform independent (for user) non-modal input language switcher.
 
 #pragma once
 
