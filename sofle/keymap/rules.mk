@@ -23,5 +23,5 @@ SRC += features/language_stash.c
 SRC += features/platform.c
 SRC += features/select_word.c
 SRC += features/text_editing.c
-SRC += encoders.c
-SRC += oleds.c
+SRC += encoder.c
+SRC += oled.c

@@ -98,7 +98,7 @@ bool oled_task_user(void) {
 
 #endif // OLED_ENABLE
 
-void suspend_power_down_oleds(void) {
+void suspend_power_down_oled(void) {
 #ifdef OLED_ENABLE
     oled_off();
 #endif // OLED_ENABLE
