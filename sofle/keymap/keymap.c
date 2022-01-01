@@ -3,6 +3,7 @@
 #include "features/language.h"
 #include "features/language_stash.h"
 #include "features/platform.h"
+#include "features/select_word.h"
 
 enum layers {
     _QWERTY,
@@ -24,6 +25,8 @@ enum custom_keycodes {
     KC_RAISE,
 
     KC_LNGST,               // Toggle language stash feature
+
+    KC_WSEL,                // Select word
 
     KC_WPREV,               // Previous word
     KC_WNEXT,               // Next word
@@ -121,7 +124,7 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | TAB  | LSFT | LALT | LCTL | TAB  |      |,------.    ,------.| PGDN | LEFT | DOWN | RGHT | WDEL |WBSPC |
  * |------+------+------+------+------+------|| ___  |    | ___  ||------+------+------+------+------+------|
- * | ___  | UNDO | CUT  | COPY |PASTE |      |`------'    `------'|      |LSTRT |FDOWN | LEND | LDEL | ___  |
+ * | ___  | UNDO | CUT  | COPY |PASTE |      |`------'    `------'| WSEL |LSTRT |FDOWN | LEND | LDEL | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | ___  | ___  | ___  |/ ___  / ___  /    \ ___  \ ___  \| ___  | ___  | ___  |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -131,7 +134,7 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_SCLN,  KC_SLSH,  _______,  _______,  
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CAPS,                      XXXXXXX,  XXXXXXX,  KC_FUP,   KC_PSCR,  KC_INS,    KC_PAUS, \
 KC_ESC,   KC_MEH,   KC_HYPR,  XXXXXXX,  KC_LKSH,  KC_GRV,                       KC_PGUP,  KC_WPREV, KC_UP,    KC_WNEXT, KC_DEL,    KC_BSPC, \
 KC_TAB,   KC_LSFT,  KC_LALT,  KC_LCTL,  KC_TAB,   XXXXXXX,                      KC_PGDN,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_WDEL,   KC_WBSPC, \
-_______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, XXXXXXX,  _______,  _______,  XXXXXXX,  KC_LSTRT, KC_FDOWN, KC_LEND,  KC_LDEL,   _______, \
+_______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, XXXXXXX,  _______,  _______,  KC_WSEL,  KC_LSTRT, KC_FDOWN, KC_LEND,  KC_LDEL,   _______, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______ \
 ),
 
@@ -160,10 +163,11 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_language(keycode, record)) return false;
-    if (!process_language_stash(keycode, record, KC_LNGST)) return false;
     if (keycode != KC_LOWER && keycode != KC_RAISE)
         if (!process_caps_word(keycode, record)) return false;
+    if (!process_select_word(keycode, record, KC_WSEL)) return false;
+    if (!process_language(keycode, record)) return false;
+    if (!process_language_stash(keycode, record, KC_LNGST)) return false;
     if (!process_platform(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
     if (!process_platform(keycode, record, KC_WIN, WINDOWS_PLATFORM)) return false;
     if (!process_platform(keycode, record, KC_MAC, MAC_PLATFORM)) return false;
