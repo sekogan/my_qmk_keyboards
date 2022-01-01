@@ -11,10 +11,10 @@ void set_platform(platform_t platform) {
     platform_set_user();
 }
 
-bool process_platform(
-    uint16_t keycode, keyrecord_t* record, uint16_t platform_keycode, platform_t platform
+bool process_platform_selector(
+    uint16_t keycode, keyrecord_t* record, uint16_t selector_keycode, platform_t platform
 ) {
-    if (keycode == platform_keycode) {
+    if (keycode == selector_keycode) {
         if (record->event.pressed)
             set_platform(platform);
         return false;

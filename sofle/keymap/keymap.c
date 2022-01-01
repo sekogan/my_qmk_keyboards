@@ -168,9 +168,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_select_word(keycode, record, KC_WSEL)) return false;
     if (!process_language(keycode, record)) return false;
     if (!process_language_stash(keycode, record, KC_LNGST)) return false;
-    if (!process_platform(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
-    if (!process_platform(keycode, record, KC_WIN, WINDOWS_PLATFORM)) return false;
-    if (!process_platform(keycode, record, KC_MAC, MAC_PLATFORM)) return false;
+    if (!process_platform_selector(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
+    if (!process_platform_selector(keycode, record, KC_WIN, WINDOWS_PLATFORM)) return false;
+    if (!process_platform_selector(keycode, record, KC_MAC, MAC_PLATFORM)) return false;
 
     switch (keycode) {
         case KC_QWRT:
