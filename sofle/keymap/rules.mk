@@ -16,7 +16,7 @@ TAP_DANCE_ENABLE = no
 
 SRC += features/caps_word.c
 SRC += features/clipboard_shortcuts.c
-SRC += features/compact_russian.c
+SRC += features/compact_russian_layout.c
 SRC += features/fast_keycode.c
 SRC += features/language.c
 SRC += features/language_stash.c

@@ -1,4 +1,4 @@
-#include "compact_russian.h"
+#include "compact_russian_layout.h"
 
 static bool _feature_enabled = false;
 static uint8_t _registered_keycodes = 0;
@@ -9,7 +9,7 @@ enum {
     _RBRC_BIT = 2,
 };
 
-void enable_compact_russian(bool enable) {
+void enable_compact_russian_layout(bool enable) {
     _feature_enabled = enable;
 }
 
@@ -42,7 +42,7 @@ bool _process_keycode(
     return true;
 }
 
-bool process_compact_russian(uint16_t keycode, keyrecord_t* record) {
+bool process_compact_russian_layout(uint16_t keycode, keyrecord_t* record) {
     if (keycode == KC_RALT) {
         _ralt_pressed = record->event.pressed;
         if (_registered_keycodes)

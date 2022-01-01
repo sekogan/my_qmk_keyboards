@@ -1,7 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "features/caps_word.h"
 #include "features/clipboard_shortcuts.h"
-#include "features/compact_russian.h"
+#include "features/compact_russian_layout.h"
 #include "features/fast_keycode.h"
 #include "features/language.h"
 #include "features/language_stash.h"
@@ -171,7 +171,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (keycode != KC_LOWER && keycode != KC_RAISE)
         if (!process_caps_word(keycode, record)) return false;
     if (!process_select_word(keycode, record, KC_WSEL)) return false;
-    if (!process_compact_russian(keycode, record)) return false;
+    if (!process_compact_russian_layout(keycode, record)) return false;
     if (!process_language(keycode, record)) return false;
     if (!process_language_stash(keycode, record, KC_LNGST)) return false;
     if (!process_platform_selector(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
@@ -325,7 +325,7 @@ void platform_set_user(void) {
 
 void language_set_user(void) {
     clear_language_stash();
-    enable_compact_russian(get_language() == SECONDARY_LANGUAGE);
+    enable_compact_russian_layout(get_language() == SECONDARY_LANGUAGE);
 }
 
 
