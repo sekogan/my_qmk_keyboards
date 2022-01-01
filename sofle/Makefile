@@ -8,6 +8,7 @@ keymapviz:
 	rm keymap/keymap.c.bac
 
 sync: keymapviz
+	rm -rf $(QMK_DIR)/keyboards/sofle/keymaps/$(KEYMAP)
 	cp -r keymap/. $(QMK_DIR)/keyboards/sofle/keymaps/$(KEYMAP)
 
 build: sync
