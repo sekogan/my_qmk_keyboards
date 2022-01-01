@@ -39,14 +39,18 @@ bool process_select_word(
         const uint8_t all_mods = mods;
 #endif  // NO_ACTION_ONESHOT
         if ((all_mods & MOD_MASK_SHIFT) == 0) {  // Select word.
+            if (state == STATE_NONE)
+                tap_code(KC_RIGHT);
+
 #ifdef MAC_HOTKEYS
             register_code(KC_LALT);
 #else
             register_code(KC_LCTL);
 #endif  // MAC_HOTKEYS
-            if (state == STATE_NONE) {
-                SEND_STRING(SS_TAP(X_RGHT) SS_TAP(X_LEFT));
-            }
+
+            if (state == STATE_NONE)
+                tap_code(KC_LEFT);
+
             register_code(KC_LSFT);
             register_code(KC_RGHT);
             state = STATE_WORD;
@@ -59,7 +63,7 @@ bool process_select_word(
 #ifdef MAC_HOTKEYS
                 SEND_STRING(SS_LCTL("a" SS_LSFT("e")));
 #else
-                SEND_STRING(SS_TAP(X_HOME) SS_LSFT(SS_TAP(X_END)));
+                SEND_STRING(SS_TAP(X_END) SS_LSFT( SS_TAP(X_HOME) SS_TAP(X_HOME) ));
 #endif  // MAC_HOTKEYS
                 set_mods(mods);
                 state = STATE_FIRST_LINE;
