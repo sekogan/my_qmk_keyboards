@@ -63,14 +63,13 @@ bool process_select_word(
 #ifdef MAC_HOTKEYS
                 SEND_STRING(SS_LCTL("a" SS_LSFT("e")));
 #else
-                SEND_STRING(SS_TAP(X_END) SS_LSFT( SS_TAP(X_HOME) SS_TAP(X_HOME) ));
+                SEND_STRING(SS_TAP(X_END) SS_TAP(X_HOME) SS_TAP(X_HOME));
 #endif  // MAC_HOTKEYS
                 set_mods(mods);
-                state = STATE_FIRST_LINE;
-            } else {
-                register_code(KC_DOWN);
-                state = STATE_LINE;
             }
+
+            register_code(KC_DOWN);
+            state = STATE_LINE;
         }
         return false;
     }
