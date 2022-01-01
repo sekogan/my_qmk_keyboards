@@ -337,7 +337,7 @@ void suspend_power_down_user(void) {
 #ifdef ENCODER_ENABLE
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    uint8_t mods = get_mods();
+    const uint8_t mods = get_mods();
     if (index == 0) {
         if (mods & MOD_MASK_CTRL) {
             if (clockwise)
@@ -420,7 +420,7 @@ static void print_status_master(void) {
     }
 
     oled_write_ln_P(PSTR("\n"), false);
-    uint8_t mods = get_mods()
+    const uint8_t mods = get_mods()
 #ifndef NO_ACTION_ONESHOT
         | get_oneshot_mods()
 #endif // NO_ACTION_ONESHOT
@@ -452,7 +452,7 @@ static void print_status_slave(void) {
     }
 
     oled_write_ln_P(PSTR("\n"), false);
-    led_t led_usb_state = host_keyboard_led_state();
+    const led_t led_usb_state = host_keyboard_led_state();
     oled_write_ln_P(led_usb_state.caps_lock ? PSTR("CAPS") : PSTR(""), false);
 }
 

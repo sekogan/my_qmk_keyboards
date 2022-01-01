@@ -8,7 +8,7 @@ static language_t _stashed_language = UNKNOWN_LANGUAGE;
 void stash_current_language(void) {
     if (!_feature_enabled)
         return;
-    language_t language = get_language();
+    const language_t language = get_language();
     if (language == UNKNOWN_LANGUAGE)
         return;
     if (language != PRIMARY_LANGUAGE) {
@@ -20,7 +20,7 @@ void stash_current_language(void) {
 
 void restore_stashed_language(void) {
     if (!_stash_empty) {
-        language_t language = get_language();
+        const language_t language = get_language();
         if (language != _stashed_language && language != UNKNOWN_LANGUAGE)
             switch_language(_stashed_language);
         _stash_empty = true;

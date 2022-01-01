@@ -4,9 +4,9 @@
 static language_t _current_language = UNKNOWN_LANGUAGE;
 
 uint8_t _swap_mods(uint8_t desired_mods) {
-    uint8_t before_mods = get_mods();
-    uint8_t missing_mods = ~before_mods & desired_mods;
-    uint8_t undesired_mods = before_mods & ~desired_mods;
+    const uint8_t before_mods = get_mods();
+    const uint8_t missing_mods = ~before_mods & desired_mods;
+    const uint8_t undesired_mods = before_mods & ~desired_mods;
     if (undesired_mods)
         unregister_mods(undesired_mods);
     if (missing_mods)
@@ -23,7 +23,7 @@ void reset_language(void) {
 }
 
 void switch_language(language_t language) {
-    uint8_t mods = get_mods();
+    const uint8_t mods = get_mods();
     switch (get_platform()) {
         case LINUX_PLATFORM:
             switch (language) {
