@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "features/caps_word.h"
 #include "features/compact_russian.h"
+#include "features/fast_keycode.h"
 #include "features/language.h"
 #include "features/language_stash.h"
 #include "features/platform.h"
@@ -163,6 +164,8 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_fast_keycode(keycode, record, KC_FUP, KC_UP, 3)) return false;
+    if (!process_fast_keycode(keycode, record, KC_FDOWN, KC_DOWN, 3)) return false;
     if (keycode != KC_LOWER && keycode != KC_RAISE)
         if (!process_caps_word(keycode, record)) return false;
     if (!process_select_word(keycode, record, KC_WSEL)) return false;
@@ -195,20 +198,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             else
                 layer_off(_RAISE);
             update_tri_layer(_LOWER, _RAISE, _EXTRA);
-            return false;
-        case KC_FUP:
-            if (record->event.pressed) {
-                tap_code(KC_UP);
-                tap_code(KC_UP);
-                tap_code(KC_UP);
-            }
-            return false;
-        case KC_FDOWN:
-            if (record->event.pressed) {
-                tap_code(KC_DOWN);
-                tap_code(KC_DOWN);
-                tap_code(KC_DOWN);
-            }
             return false;
         case KC_WPREV:
             if (record->event.pressed) {
