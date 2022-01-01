@@ -1,3 +1,5 @@
+// NOTE: this version was modified. For the original version go to the original author's site.
+//
 // Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +20,7 @@
 
 #include "select_word.h"
 
-enum { STATE_NONE, STATE_SELECTED, STATE_WORD, STATE_FIRST_LINE, STATE_LINE };
+enum { STATE_NONE, STATE_WORD, STATE_LINE, STATE_SELECTED };
 
 bool process_select_word(
     uint16_t keycode, keyrecord_t* record,
@@ -69,10 +71,6 @@ bool process_select_word(
             unregister_code(KC_RIGHT);
             unregister_code(KC_LSFT);
             unregister_code(KC_LCTL);
-            state = STATE_SELECTED;
-            break;
-
-        case STATE_FIRST_LINE:
             state = STATE_SELECTED;
             break;
 
