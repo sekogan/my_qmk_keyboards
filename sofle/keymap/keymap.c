@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "layers.h"
+#include "oleds.h"
 #include "features/caps_word.h"
 #include "features/clipboard_shortcuts.h"
 #include "features/compact_russian_layout.h"
@@ -235,7 +236,7 @@ void language_set_user(void) {
 
 
 void suspend_power_down_user(void) {
-    oled_off();
+    suspend_power_down_oleds();
 }
 
 
