@@ -18,9 +18,6 @@
 
 #include "select_word.h"
 
-// Mac users, uncomment this line:
-// #define MAC_HOTKEYS
-
 enum { STATE_NONE, STATE_SELECTED, STATE_WORD, STATE_FIRST_LINE, STATE_LINE };
 
 bool process_select_word(
@@ -42,11 +39,7 @@ bool process_select_word(
             if (state == STATE_NONE)
                 tap_code(KC_RIGHT);
 
-#ifdef MAC_HOTKEYS
-            register_code(KC_LALT);
-#else
             register_code(KC_LCTL);
-#endif  // MAC_HOTKEYS
 
             if (state == STATE_NONE)
                 tap_code(KC_LEFT);
@@ -60,11 +53,7 @@ bool process_select_word(
 #ifndef NO_ACTION_ONESHOT
                 clear_oneshot_mods();
 #endif  // NO_ACTION_ONESHOT
-#ifdef MAC_HOTKEYS
-                SEND_STRING(SS_LCTL("a" SS_LSFT("e")));
-#else
                 SEND_STRING(SS_TAP(X_END) SS_TAP(X_HOME) SS_TAP(X_HOME));
-#endif  // MAC_HOTKEYS
                 set_mods(mods);
             }
 
@@ -79,11 +68,7 @@ bool process_select_word(
         case STATE_WORD:
             unregister_code(KC_RGHT);
             unregister_code(KC_LSFT);
-#ifdef MAC_HOTKEYS
-            unregister_code(KC_LALT);
-#else
             unregister_code(KC_LCTL);
-#endif  // MAC_HOTKEYS
             state = STATE_SELECTED;
             break;
 
