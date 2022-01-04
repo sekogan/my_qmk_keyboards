@@ -3,6 +3,7 @@
 #include "oled.h"
 #include "features/caps_word.h"
 #include "features/clipboard_shortcuts.h"
+#include "features/default_layer_stash.h"
 #include "features/compact_russian_layout.h"
 #include "features/fast_keycode.h"
 #include "features/language.h"
@@ -177,12 +178,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
         case KC_QWRT:
-            if (record->event.pressed)
+            if (record->event.pressed) {
+                restore_stashed_default_layer();
                 set_single_persistent_default_layer(_QWERTY);
+            }
             return false;
         case KC_CLMK:
-            if (record->event.pressed)
+            if (record->event.pressed) {
+                restore_stashed_default_layer();
                 set_single_persistent_default_layer(_COLEMAK);
+            }
             return false;
         case KC_LOWER:
             if (record->event.pressed)
@@ -231,7 +236,13 @@ void platform_set_user(void) {
 
 void language_set_user(void) {
     clear_language_stash();
-    enable_compact_russian_layout(get_language() == SECONDARY_LANGUAGE);
+    const bool is_secondary = get_language() == SECONDARY_LANGUAGE;
+    enable_compact_russian_layout(is_secondary);
+
+    if (get_language() == PRIMARY_LANGUAGE)
+        restore_stashed_default_layer();
+    else if (is_default_layer_stash_empty())
+        stash_current_default_layer();
 }
 
 
