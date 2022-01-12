@@ -1,13 +1,14 @@
 #include QMK_KEYBOARD_H
+#include "instant_qwerty_reasons.h"
 #include "layers.h"
 #include "oled.h"
 #include "features/caps_word.h"
 #include "features/clipboard_shortcuts.h"
-#include "features/default_layer_stash.h"
 #include "features/compact_russian_layout.h"
 #include "features/fast_keycode.h"
-#include "features/language.h"
+#include "features/instant_qwerty.h"
 #include "features/language_stash.h"
+#include "features/language.h"
 #include "features/platform.h"
 #include "features/select_word.h"
 #include "features/text_editing.h"
@@ -179,13 +180,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case KC_QWRT:
             if (record->event.pressed) {
-                restore_stashed_default_layer();
+                del_instant_qwerty_activation_reasons(~0);
                 set_single_persistent_default_layer(_QWERTY);
             }
             return false;
         case KC_CLMK:
             if (record->event.pressed) {
-                restore_stashed_default_layer();
+                del_instant_qwerty_activation_reasons(~0);
                 set_single_persistent_default_layer(_COLEMAK);
             }
             return false;
@@ -240,9 +241,9 @@ void language_set_user(void) {
     enable_compact_russian_layout(is_secondary);
 
     if (get_language() == PRIMARY_LANGUAGE)
-        restore_stashed_default_layer();
-    else if (is_default_layer_stash_empty())
-        stash_current_default_layer();
+        del_instant_qwerty_activation_reasons(NON_ENGLISH_LANGUAGE);
+    else
+        add_instant_qwerty_activation_reasons(NON_ENGLISH_LANGUAGE);
 }
 
 

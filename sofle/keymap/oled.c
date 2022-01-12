@@ -1,8 +1,8 @@
 #include QMK_KEYBOARD_H
 #include "layers.h"
-#include "features/default_layer_stash.h"
-#include "features/language.h"
+#include "features/instant_qwerty.h"
 #include "features/language_stash.h"
+#include "features/language.h"
 #include "features/platform.h"
 
 
@@ -27,7 +27,7 @@ static void _print_status_master(void) {
     oled_write_ln_P(PSTR("\n\nMODE\n"), false);
     switch (get_highest_layer(default_layer_state)) {
         case _QWERTY:
-            oled_write_P(is_default_layer_stash_empty() ? PSTR("Qwrty") : PSTR("Qwrt*"), false);
+            oled_write_P(is_instant_qwerty_activated() ? PSTR("Qwrt*") : PSTR("Qwrty"), false);
             break;
         case _COLEMAK:
             oled_write_P(PSTR("Colmk"), false);
