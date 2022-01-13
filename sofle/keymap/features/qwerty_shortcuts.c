@@ -49,7 +49,7 @@ void post_process_record_qwerty_shortcuts(uint16_t keycode, keyrecord_t *record)
 
     const bool were_shortcut_mods = _is_shortcut_mods(_mods);
     _mods = mods;
-    if (were_shortcut_mods != _is_shortcut_mods(_mods)) {
+    if (_feature_enabled && were_shortcut_mods != _is_shortcut_mods(_mods)) {
         if (were_shortcut_mods)
             del_instant_qwerty_activation_reasons(_instant_qwerty_reason);
         else
