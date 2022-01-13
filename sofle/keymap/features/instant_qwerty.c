@@ -4,6 +4,7 @@ static bool _feature_enabled = true;
 static bool _stash_empty = true;
 static layer_state_t _stashed_default_layer_state = 0;
 static uint8_t _activation_reasons = 0;
+static uint16_t _toggle_feature_keycode = 0;
 
 enum {
     _FIRST_DEFAULT_LAYER
@@ -49,7 +50,7 @@ bool is_instant_qwerty_enabled(void) {
     return _feature_enabled;
 }
 
-void enable_instant_qwerty(bool enable) {
+void _enable_instant_qwerty(bool enable) {
     if (_feature_enabled == enable)
         return;
 
@@ -63,12 +64,14 @@ void enable_instant_qwerty(bool enable) {
     }
 }
 
-bool process_record_instant_qwerty(
-    uint16_t keycode, keyrecord_t *record, uint16_t toggle_feature_keycode
-) {
-    if (keycode == toggle_feature_keycode) {
+void init_instant_qwerty(uint16_t toggle_feature_keycode) {
+    _toggle_feature_keycode = toggle_feature_keycode;
+}
+
+bool process_record_instant_qwerty(uint16_t keycode, keyrecord_t *record) {
+    if (keycode && keycode == _toggle_feature_keycode) {
         if (record->event.pressed)
-            enable_instant_qwerty(!is_instant_qwerty_enabled());
+            _enable_instant_qwerty(!is_instant_qwerty_enabled());
         return false;
     }
     return true;
