@@ -10,6 +10,7 @@
 #include "features/language_stash.h"
 #include "features/language.h"
 #include "features/platform.h"
+#include "features/qwerty_shortcuts.h"
 #include "features/select_word.h"
 #include "features/text_editing.h"
 
@@ -25,8 +26,9 @@ enum custom_keycodes {
     KC_LOWER,
     KC_RAISE,
 
-    KC_LNGST,               // Toggle "Language stash" feature
+    TF_LNGST,               // Toggle "Language stash" feature
     TF_IQWRT,               // Toggle "Instant Qwerty" feature
+    TF_QWRTS,               // Toggle "Qwerty shortcuts" feature
 
     KC_WSEL,                // Select word
 
@@ -142,7 +144,7 @@ _______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, XXXXXXX,  _______,  _______,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |TF_IQW|      |      |      | QWRT |                    | LIN  |      |      |      |      |RESET |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |      |      |      | CLMK |,------.    ,------.| WIN  |      |      |LNGST |      |      |
+ * |      |TF_QWR|      |      |      | CLMK |,------.    ,------.| WIN  |      |      |TF_LNG|      |      |
  * |------+------+------+------+------+------||      |    |      ||------+------+------+------+------+------|
  * | ___  |      |      |      |      |      |`------'    `------'| MAC  |      |      |      |      | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
@@ -153,7 +155,7 @@ _______,  KC_UNDO,  KC_CUT,   KC_COPY,  KC_PASTE, XXXXXXX,  _______,  _______,  
 [_EXTRA] = LAYOUT( \
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, \
 XXXXXXX,  TF_IQWRT, XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_QWRT,                      KC_LIN,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  RESET, \
-XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CLMK,                      KC_WIN,   XXXXXXX,  XXXXXXX,  KC_LNGST, XXXXXXX,  XXXXXXX, \
+XXXXXXX,  TF_QWRTS, XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_CLMK,                      KC_WIN,   XXXXXXX,  XXXXXXX,  TF_LNGST, XXXXXXX,  XXXXXXX, \
 _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_MAC,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  _______, \
                     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______ \
 )
@@ -173,11 +175,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_select_word(keycode, record, KC_WSEL)) return false;
     if (!process_compact_russian_layout(keycode, record)) return false;
     if (!process_language(keycode, record)) return false;
-    if (!process_language_stash(keycode, record, KC_LNGST)) return false;
+    if (!process_language_stash(keycode, record, TF_LNGST)) return false;
     if (!process_platform_selector(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
     if (!process_platform_selector(keycode, record, KC_WIN, WINDOWS_PLATFORM)) return false;
     if (!process_platform_selector(keycode, record, KC_MAC, MAC_PLATFORM)) return false;
     if (!process_record_instant_qwerty(keycode, record)) return false;
+    if (!process_record_qwerty_shortcuts(keycode, record)) return false;
 
     switch (keycode) {
         case KC_QWRT:
@@ -219,8 +222,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    post_process_record_qwerty_shortcuts(keycode, record);
+}
+
+
 void keyboard_post_init_user(void) {
     init_instant_qwerty(TF_IQWRT);
+    init_qwerty_shortcuts(TF_QWRTS, SHORTCUT_MODS_ACTIVATED);
 }
 
 

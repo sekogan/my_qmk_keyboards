@@ -22,6 +22,7 @@ SRC += features/instant_qwerty.c
 SRC += features/language_stash.c
 SRC += features/language.c
 SRC += features/platform.c
+SRC += features/qwerty_shortcuts.c
 SRC += features/select_word.c
 SRC += features/text_editing.c
 SRC += encoder.c

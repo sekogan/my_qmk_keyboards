@@ -4,7 +4,7 @@ static bool _feature_enabled = true;
 static bool _stash_empty = true;
 static layer_state_t _stashed_default_layer_state = 0;
 static uint8_t _activation_reasons = 0;
-static uint16_t _toggle_feature_keycode = 0;
+static uint16_t _toggle_feature_keycode = KC_NO;
 
 enum {
     _FIRST_DEFAULT_LAYER
