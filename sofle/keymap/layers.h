@@ -2,9 +2,9 @@
 
 
 enum layers {
-    _QWERTY,
-    _COLEMAK,
-    _LOWER,
-    _RAISE,
-    _EXTRA,
+    QWERTY,
+    COLEMAK,
+    LOWER,
+    RAISE,
+    EXTRA,
 };

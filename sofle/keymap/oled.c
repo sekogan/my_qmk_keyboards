@@ -26,10 +26,10 @@ static void _print_status_master(void) {
 
     oled_write_ln_P(PSTR("\n\nMODE\n"), false);
     switch (get_highest_layer(default_layer_state)) {
-        case _QWERTY:
+        case QWERTY:
             oled_write_P(is_instant_qwerty_activated() ? PSTR("Qwrt*") : PSTR("Qwrty"), false);
             break;
-        case _COLEMAK:
+        case COLEMAK:
             oled_write_P(PSTR("Colmk"), false);
             break;
         default:
@@ -63,17 +63,17 @@ static void _print_status_master(void) {
 static void _print_status_slave(void) {
     oled_write_ln_P(PSTR("LAYER"), false);
     switch (get_highest_layer(layer_state)) {
-        case _COLEMAK:
-        case _QWERTY:
+        case COLEMAK:
+        case QWERTY:
             oled_write_ln_P(PSTR("Base"), false);
             break;
-        case _RAISE:
+        case RAISE:
             oled_write_P(PSTR("Raise"), false);
             break;
-        case _LOWER:
+        case LOWER:
             oled_write_P(PSTR("Lower"), false);
             break;
-        case _EXTRA:
+        case EXTRA:
             oled_write_P(PSTR("Extra"), false);
             break;
         default:
