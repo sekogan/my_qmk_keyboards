@@ -179,20 +179,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_platform_selector(keycode, record, KC_LIN, LINUX_PLATFORM)) return false;
     if (!process_platform_selector(keycode, record, KC_WIN, WINDOWS_PLATFORM)) return false;
     if (!process_platform_selector(keycode, record, KC_MAC, MAC_PLATFORM)) return false;
-    if (!process_record_instant_qwerty(keycode, record)) return false;
-    if (!process_record_qwerty_shortcuts(keycode, record)) return false;
+    if (!process_instant_qwerty(keycode, record, TF_IQWRT)) return false;
+    if (!process_qwerty_shortcuts(keycode, record, TF_QWRTS)) return false;
 
     switch (keycode) {
         case KC_QWRT:
             if (record->event.pressed) {
-                del_instant_qwerty_activation_reasons(~0);
+                const bool instant_qwerty_enabled = is_instant_qwerty_enabled();
+                enable_instant_qwerty(false);
                 set_single_persistent_default_layer(_QWERTY);
+                enable_instant_qwerty(instant_qwerty_enabled);
             }
             return false;
         case KC_CLMK:
             if (record->event.pressed) {
-                del_instant_qwerty_activation_reasons(~0);
+                const bool instant_qwerty_enabled = is_instant_qwerty_enabled();
+                enable_instant_qwerty(false);
                 set_single_persistent_default_layer(_COLEMAK);
+                enable_instant_qwerty(instant_qwerty_enabled);
             }
             return false;
         case KC_LOWER:
@@ -228,8 +232,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
 void keyboard_post_init_user(void) {
-    init_instant_qwerty(TF_IQWRT);
-    init_qwerty_shortcuts(TF_QWRTS, SHORTCUT_MODS_ACTIVATED);
+    init_qwerty_shortcuts(SHORTCUT_MODS_ACTIVATED);
 }
 
 

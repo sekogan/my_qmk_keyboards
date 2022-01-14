@@ -4,13 +4,12 @@
 static bool _feature_enabled = true;
 static uint8_t _mods = 0;
 static uint8_t _instant_qwerty_reason = 0;
-static uint16_t _toggle_feature_keycode = KC_NO;
 
 inline bool _is_shortcut_mods(uint8_t mods) {
     return mods & MOD_MASK_CAG;
 }
 
-void _enable_qwerty_shortcuts(bool enable) {
+void enable_qwerty_shortcuts(bool enable) {
     if (_feature_enabled == enable)
         return;
 
@@ -28,15 +27,16 @@ bool is_qwerty_shortcuts_enabled(void) {
     return _feature_enabled;
 }
 
-void init_qwerty_shortcuts(uint16_t toggle_feature_keycode, uint8_t instant_qwerty_reason) {
-    _toggle_feature_keycode = toggle_feature_keycode;
+void init_qwerty_shortcuts(uint8_t instant_qwerty_reason) {
     _instant_qwerty_reason = instant_qwerty_reason;
 }
 
-bool process_record_qwerty_shortcuts(uint16_t keycode, keyrecord_t *record) {
-    if (keycode == _toggle_feature_keycode) {
+bool process_qwerty_shortcuts(
+    uint16_t keycode, keyrecord_t *record, uint16_t toggle_feature_keycode
+) {
+    if (keycode == toggle_feature_keycode) {
         if (record->event.pressed)
-            _enable_qwerty_shortcuts(!is_qwerty_shortcuts_enabled());
+            enable_qwerty_shortcuts(!is_qwerty_shortcuts_enabled());
         return false;
     }
     return true;

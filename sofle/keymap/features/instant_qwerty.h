@@ -6,6 +6,12 @@
 #include QMK_KEYBOARD_H
 
 
+// Enables or disables the feature.
+void enable_instant_qwerty(bool enable);
+
+// Returns true if the feature is enabled.
+bool is_instant_qwerty_enabled(void);
+
 // Add reasons to activate Qwerty layout. reasons is a bitmap allowing up to 8 reasons to be used.
 void add_instant_qwerty_activation_reasons(uint8_t reasons);
 
@@ -15,11 +21,5 @@ void del_instant_qwerty_activation_reasons(uint8_t reasons);
 // Returns true if the Qwerty layout is activated.
 bool is_instant_qwerty_activated(void);
 
-// Returns true if the feature is enabled.
-bool is_instant_qwerty_enabled(void);
-
-// Should be called from keyboard_post_init_user.
-void init_instant_qwerty(uint16_t toggle_feature_keycode);
-
 // Should be called from process_record_user.
-bool process_record_instant_qwerty(uint16_t keycode, keyrecord_t *record);
+bool process_instant_qwerty(uint16_t keycode, keyrecord_t *record, uint16_t toggle_feature_keycode);
