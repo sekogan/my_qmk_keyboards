@@ -55,8 +55,10 @@ bool process_select_word(
 #ifndef NO_ACTION_ONESHOT
                 clear_oneshot_mods();
 #endif  // NO_ACTION_ONESHOT
+                send_keyboard_report();
                 SEND_STRING(SS_TAP(X_END) SS_TAP(X_HOME) SS_TAP(X_HOME));
                 set_mods(mods);
+                send_keyboard_report();
             }
 
             register_code(KC_DOWN);
