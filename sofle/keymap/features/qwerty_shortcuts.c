@@ -11,8 +11,8 @@ static uint8_t _mods = 0;
 static uint8_t _instant_qwerty_reason = 0;
 static bool _selected_layout_shortcuts_mode = true;
 
-inline bool _are_shortcut_mods(uint8_t mods) {
-    return mods & MOD_MASK_CAG;
+static bool _are_shortcut_mods(uint8_t mods) {
+    return (mods & MOD_MASK_CAG) && mods != MOD_BIT(KC_RALT);
 }
 
 static uint8_t _get_effective_mods(void) {
