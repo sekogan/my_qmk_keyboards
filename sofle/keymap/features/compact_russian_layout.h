@@ -6,8 +6,8 @@
 
 #include QMK_KEYBOARD_H
 
-// Enables or disables the feature.
-void enable_compact_russian_layout(bool enable);
-
 // Should be called from process_record_user.
 bool process_compact_russian_layout(uint16_t keycode, keyrecord_t* record);
+
+// Enables or disables the feature.
+void enable_compact_russian_layout(bool enable);
