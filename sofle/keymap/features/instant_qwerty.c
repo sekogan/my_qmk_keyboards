@@ -4,14 +4,13 @@ static bool _feature_enabled = true;
 static bool _stash_empty = true;
 static layer_state_t _stashed_default_layer_state = 0;
 static uint8_t _activation_reasons = 0;
+static uint8_t _activation_reasons_mask = 0xff;
 
 enum {
     _FIRST_DEFAULT_LAYER
 };
 
-void _stash_current_default_layer(void) {
-    if (!_feature_enabled)
-        return;
+static void _stash_current_default_layer(void) {
     if (get_highest_layer(default_layer_state) != _FIRST_DEFAULT_LAYER) {
         _stashed_default_layer_state = default_layer_state;
         default_layer_set(1 << _FIRST_DEFAULT_LAYER);
@@ -19,12 +18,24 @@ void _stash_current_default_layer(void) {
     }
 }
 
-void _restore_stashed_default_layer(void) {
+static void _restore_stashed_default_layer(void) {
     if (!_stash_empty) {
         if (default_layer_state != _stashed_default_layer_state)
             default_layer_set(_stashed_default_layer_state);
         _stash_empty = true;
     }
+}
+
+static uint8_t _get_effective_activation_reasons(void) {
+    return _feature_enabled ? _activation_reasons & _activation_reasons_mask : 0;
+}
+
+static void _process_activation_reason_change(uint8_t prev_reasons) {
+    const uint8_t current_reasons = _get_effective_activation_reasons();
+    if (prev_reasons && !current_reasons)
+        _restore_stashed_default_layer();
+    else if (!prev_reasons && current_reasons)
+        _stash_current_default_layer();
 }
 
 bool is_instant_qwerty_enabled(void) {
@@ -35,28 +46,33 @@ void enable_instant_qwerty(bool enable) {
     if (_feature_enabled == enable)
         return;
 
+    const uint8_t prev_reasons = _get_effective_activation_reasons();
     _feature_enabled = enable;
-    if (_feature_enabled) {
-        if (_activation_reasons)
-            _stash_current_default_layer();
-    } else {
-        if (_activation_reasons)
-            _restore_stashed_default_layer();
-    }
+    _process_activation_reason_change(prev_reasons);
 }
 
 void add_instant_qwerty_activation_reasons(uint8_t reasons) {
-    const uint8_t prev_reasons = _activation_reasons;
+    const uint8_t prev_reasons = _get_effective_activation_reasons();
     _activation_reasons |= reasons;
-    if (!prev_reasons && _activation_reasons)
-        _stash_current_default_layer();
+    _process_activation_reason_change(prev_reasons);
 }
 
 void del_instant_qwerty_activation_reasons(uint8_t reasons) {
-    const uint8_t prev_reasons = _activation_reasons;
+    const uint8_t prev_reasons = _get_effective_activation_reasons();
     _activation_reasons &= ~reasons;
-    if (prev_reasons && !_activation_reasons)
-        _restore_stashed_default_layer();
+    _process_activation_reason_change(prev_reasons);
+}
+
+void mask_instant_qwerty_activation_reasons(uint8_t reasons) {
+    const uint8_t prev_reasons = _get_effective_activation_reasons();
+    _activation_reasons_mask &= ~reasons;
+    _process_activation_reason_change(prev_reasons);
+}
+
+void unmask_instant_qwerty_activation_reasons(uint8_t reasons) {
+    const uint8_t prev_reasons = _get_effective_activation_reasons();
+    _activation_reasons_mask |= reasons;
+    _process_activation_reason_change(prev_reasons);
 }
 
 bool is_instant_qwerty_activated(void) {
