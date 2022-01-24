@@ -166,8 +166,8 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_text_navigation_shortcuts(keycode, record, KC_WPREV, KC_WNEXT, KC_LSTRT, KC_LEND))
         return false;
-    if (!process_fast_keycode(keycode, record, KC_FUP, KC_UP, 3)) return false;
-    if (!process_fast_keycode(keycode, record, KC_FDOWN, KC_DOWN, 3)) return false;
+    if (!process_fast_keycode(keycode, record, KC_FUP, KC_UP, 5)) return false;
+    if (!process_fast_keycode(keycode, record, KC_FDOWN, KC_DOWN, 5)) return false;
     if (!process_clipboard_shortcuts(keycode, record)) return false;
     if (!process_editing_history_shortcuts(keycode, record)) return false;
     if (keycode != KC_LOWER && keycode != KC_RAISE)
