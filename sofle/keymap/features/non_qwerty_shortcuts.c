@@ -1,8 +1,8 @@
-#include "qwerty_shortcuts.h"
+#include "non_qwerty_shortcuts.h"
 #include "instant_qwerty.h"
 
 typedef enum {
-    QWERTY_SHORTCUTS_MODE,
+    NON_QWERTY_SHORTCUTS_MODE,
     SELECTED_LAYOUT_SHORTCUTS_MODE,
 } working_mode_t;
 
@@ -35,7 +35,7 @@ static void _process_mods_change(uint8_t prev_mods) {
     }
 }
 
-void enable_qwerty_shortcuts(bool enable) {
+void enable_non_qwerty_shortcuts(bool enable) {
     if (_feature_enabled == enable)
         return;
 
@@ -44,32 +44,32 @@ void enable_qwerty_shortcuts(bool enable) {
     _process_mods_change(prev_mods);
 }
 
-bool is_qwerty_shortcuts_enabled(void) {
+bool is_non_qwerty_shortcuts_enabled(void) {
     return _feature_enabled;
 }
 
-void init_qwerty_shortcuts(uint8_t instant_qwerty_reason) {
+void init_non_qwerty_shortcuts(uint8_t instant_qwerty_reason) {
     _instant_qwerty_reason = instant_qwerty_reason;
 }
 
-bool process_qwerty_shortcuts(
+bool process_non_qwerty_shortcuts(
     uint16_t keycode, keyrecord_t *record, uint16_t toggle_feature_keycode
 ) {
     if (keycode == toggle_feature_keycode) {
         if (record->event.pressed) {
-            if (is_qwerty_shortcuts_enabled() && _selected_layout_shortcuts_mode) {
+            if (is_non_qwerty_shortcuts_enabled() && _selected_layout_shortcuts_mode) {
                 _selected_layout_shortcuts_mode = false;
                 return false;
             }
             _selected_layout_shortcuts_mode = true;
-            enable_qwerty_shortcuts(!is_qwerty_shortcuts_enabled());
+            enable_non_qwerty_shortcuts(!is_non_qwerty_shortcuts_enabled());
         }
         return false;
     }
     return true;
 }
 
-void post_process_record_qwerty_shortcuts(uint16_t keycode, keyrecord_t *record) {
+void post_process_record_non_qwerty_shortcuts(uint16_t keycode, keyrecord_t *record) {
     const uint8_t mods = get_mods() | get_oneshot_mods();
     if (mods == _mods)
         return;

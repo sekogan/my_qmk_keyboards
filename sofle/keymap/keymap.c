@@ -9,8 +9,8 @@
 #include "features/instant_qwerty.h"
 #include "features/language_stash.h"
 #include "features/language.h"
+#include "features/non_qwerty_shortcuts.h"
 #include "features/platform.h"
-#include "features/qwerty_shortcuts.h"
 #include "features/select_word.h"
 #include "features/text_editing.h"
 
@@ -28,7 +28,7 @@ enum custom_keycodes {
 
     TF_LNGST,               // Toggle "Language stash" feature
     TF_IQWRT,               // Toggle "Instant Qwerty" feature
-    TF_QWRTS,               // Toggle "Qwerty shortcuts" feature
+    TF_QWRTS,               // Toggle "Non qwerty shortcuts" feature
 
     KC_WSEL,                // Select word
 
@@ -180,7 +180,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_platform_selector(keycode, record, KC_WIN, WINDOWS_PLATFORM)) return false;
     if (!process_platform_selector(keycode, record, KC_MAC, MAC_PLATFORM)) return false;
     if (!process_instant_qwerty(keycode, record, TF_IQWRT)) return false;
-    if (!process_qwerty_shortcuts(keycode, record, TF_QWRTS)) return false;
+    if (!process_non_qwerty_shortcuts(keycode, record, TF_QWRTS)) return false;
 
     switch (keycode) {
         case KC_QWRT:
@@ -227,12 +227,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-    post_process_record_qwerty_shortcuts(keycode, record);
+    post_process_record_non_qwerty_shortcuts(keycode, record);
 }
 
 
 void keyboard_post_init_user(void) {
-    init_qwerty_shortcuts(SHORTCUT_MODS_ACTIVATED);
+    init_non_qwerty_shortcuts(SHORTCUT_MODS_ACTIVATED);
 }
 
 
