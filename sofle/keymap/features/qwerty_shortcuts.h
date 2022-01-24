@@ -1,4 +1,5 @@
-// Temporarily activates the first default layer if any mod except Shift is pressed.
+// Temporarily cancels "instant qwerty" feature if shortcut mods are pressed.
+// Depends on "instant qwerty" feature.
 
 #pragma once
 

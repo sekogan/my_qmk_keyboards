@@ -1,5 +1,6 @@
 // Temporarily activates the primary language saving currently selected language to
 // the stash.
+// Depends on "language" feature.
 
 #pragma once
 
