@@ -42,7 +42,7 @@ static void _print_status_master(void) {
             oled_write_ln_P(is_language_stash_empty() ? PSTR("Pri") : PSTR("Pri*"), false);
             break;
         case SECONDARY_LANGUAGE:
-            oled_write_ln_P(is_language_stash_enabled() ? PSTR("Alt*") : PSTR("Alt"), false);
+            oled_write_ln_P(PSTR("Alt"), false);
             break;
         default:
             oled_write_ln_P(PSTR("?"), false);
