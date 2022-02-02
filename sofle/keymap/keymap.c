@@ -33,6 +33,9 @@ enum custom_keycodes {
     KC_LSTRT,               // Line start
     KC_LEND,                // Line end
 
+    KC_WBSPC,               // Delete from the cursor to the beginning of the word
+    KC_WDEL,                // Delete from the cursor to the end of the word
+
     KC_FUP,                 // Fast up
     KC_FDOWN,               // Fast down
 };
@@ -42,8 +45,6 @@ enum custom_keycodes {
 #define MT_RGUI     RGUI_T(KC_LNG2)
 
 #define KC_LDEL     C(S(KC_K))
-#define KC_WBSPC    C(KC_BSPC)
-#define KC_WDEL     C(KC_DEL)
 
 #define OSM_LSFT    OSM(MOD_LSFT)
 #define OSM_RSFT    OSM(MOD_RSFT)
@@ -166,6 +167,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_fast_keycode(keycode, record, KC_FDOWN, KC_DOWN, 5)) return false;
     if (!process_clipboard_shortcuts(keycode, record)) return false;
     if (!process_editing_history_shortcuts(keycode, record)) return false;
+    if (!process_text_deleting_macros(keycode, record, KC_WDEL, KC_WBSPC)) return false;
     if (keycode != KC_LOWER && keycode != KC_RAISE)
         if (!process_caps_word(keycode, record)) return false;
     if (!process_select_word(keycode, record, KC_WSEL)) return false;

@@ -117,3 +117,35 @@ bool process_editing_history_shortcuts(uint16_t keycode, keyrecord_t* record) {
     }
     return true;
 }
+
+bool process_text_deleting_macros(
+    uint16_t keycode, keyrecord_t* record,
+    uint16_t delete_forward_keycode, uint16_t delete_backward_keycode
+) {
+    if (keycode == delete_forward_keycode) {
+        if (record->event.pressed) {
+            const uint8_t mods = get_mods();
+            if (mods & MOD_MASK_CTRL) {
+                unregister_mods(mods);
+                SEND_STRING(SS_LSFT(SS_TAP(X_END)) SS_TAP(X_DEL));
+                register_mods(mods);
+            } else {
+                SEND_STRING(SS_LCTL(SS_TAP(X_DEL)));
+            }
+        }
+        return false;
+    } else if (keycode == delete_backward_keycode) {
+        if (record->event.pressed) {
+            const uint8_t mods = get_mods();
+            if (mods & MOD_MASK_CTRL) {
+                unregister_mods(mods);
+                SEND_STRING(SS_LSFT(SS_TAP(X_HOME)SS_TAP(X_HOME)) SS_TAP(X_DEL));
+                register_mods(mods);
+            } else {
+                SEND_STRING(SS_LCTL(SS_TAP(X_BSPC)));
+            }
+        }
+        return false;
+    }
+    return true;
+}

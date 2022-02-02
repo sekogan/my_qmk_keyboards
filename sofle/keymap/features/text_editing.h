@@ -13,3 +13,9 @@ bool process_text_navigation_shortcuts(
 
 // Should be called from process_record_user.
 bool process_editing_history_shortcuts(uint16_t keycode, keyrecord_t* record);
+
+// Should be called from process_record_user.
+bool process_text_deleting_macros(
+    uint16_t keycode, keyrecord_t* record,
+    uint16_t delete_forward_keycode, uint16_t delete_backward_keycode
+);
