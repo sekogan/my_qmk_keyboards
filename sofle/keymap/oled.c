@@ -73,6 +73,9 @@ static void _print_status_slave(void) {
         case LOWER:
             oled_write_P(PSTR("Lower"), false);
             break;
+        case NUMPAD:
+            oled_write_P(PSTR("Numpd"), false);
+            break;
         case EXTRA:
             oled_write_P(PSTR("Extra"), false);
             break;
