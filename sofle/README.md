@@ -13,6 +13,15 @@ mkdir qmk
 cd qmk
 git clone https://github.com/sekogan/my_qmk_keyboards
 git clone https://github.com/qmk/qmk_firmware
+cd qmk_firmware
+git checkout 0.15.11
+```
+
+NOTE: more recent versions of QMK are not compatible with the language feature.
+It was broken somewhere between 0.15.11 and 0.16.9.
+
+```bash
+cd ..
 virtualenv venv
 . venv/bin/activate
 pip3 install qmk
