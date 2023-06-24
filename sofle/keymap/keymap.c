@@ -102,7 +102,7 @@ OSM_LSFT, KC_Z,     KC_X,     KC_C,     KC_D,     KC_V,     KC_MPLY,  XXXXXXX,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |  ~   | = +  |  +   | - _  |  _   |,------.    ,------.| ' "  |  "   |  [   |  ]   |  :   |  |   |
  * |------+------+------+------+------+------|| ___  |    | ___  ||------+------+------+------+------+------|
- * | ___  | ` ~  |  !   |  ?   | / ?  | \ |  |`------'    `------'|  {   |  }   |  <   |  >   | , <  | ___  |
+ * | ___  | ` ~  |  ?   |  !   | / ?  | \ |  |`------'    `------'|  {   |  }   |  <   |  >   | , <  | ___  |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | LGUI | ___  | ___  |/ ___  / ___  /    \ ENT  \ ___  \| ___  | ___  | RGUI |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -112,7 +112,7 @@ OSM_LSFT, KC_Z,     KC_X,     KC_C,     KC_D,     KC_V,     KC_MPLY,  XXXXXXX,  
 KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,                        KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12, \
 XXXXXXX,  KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,                      KC_AMPR,  KC_ASTR,  KC_LPRN,  KC_RPRN,  KC_SCLN , KC_BSPC, \
 XXXXXXX,  KC_TILD,  KC_EQL,   KC_PLUS,  KC_MINS,  KC_UNDS,                      KC_QUOT,  KC_DQUO,  KC_LBRC,  KC_RBRC,  KC_COLN,  KC_PIPE, \
-_______,  KC_GRV,   KC_EXLM,  KC_QUES,  KC_SLSH,  KC_BSLS,  _______,  _______,  KC_LCBR,  KC_RCBR,  KC_LT,    KC_GT,    KC_COMM,  _______, \
+_______,  KC_GRV,   KC_QUES,  KC_EXLM,  KC_SLSH,  KC_BSLS,  _______,  _______,  KC_LCBR,  KC_RCBR,  KC_LT,    KC_GT,    KC_COMM,  _______, \
                     KC_LGUI,  _______,  _______,  _______,  _______,  KC_ENT,   _______,  _______,  _______,  KC_RGUI \
 ),
 
