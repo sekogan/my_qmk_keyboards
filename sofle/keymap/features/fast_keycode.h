@@ -5,9 +5,15 @@
 
 #include QMK_KEYBOARD_H
 
-// Sends event_count events instead of a single event.
-// Should be called from process_record_user for each fast_keycode.
-bool process_fast_keycode(
+struct fast_keycode {
+    uint16_t fast_keycode;
+    uint16_t real_keycode;
+    uint8_t real_count;
+};
+
+// Sends multiple events instead of a single event.
+// Should be called from process_record_user.
+bool process_fast_keycodes(
     uint16_t keycode, keyrecord_t* record,
-    uint16_t fast_keycode, uint16_t sent_keycode, uint8_t event_count
+    const struct fast_keycode* begin, const struct fast_keycode* end
 );

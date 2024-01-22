@@ -1,18 +1,22 @@
 #include "fast_keycode.h"
 
-bool process_fast_keycode(
+bool process_fast_keycodes(
     uint16_t keycode, keyrecord_t* record,
-    uint16_t fast_keycode, uint16_t sent_keycode, uint8_t event_count
+    const struct fast_keycode* begin, const struct fast_keycode* end
 ) {
-    if (keycode != fast_keycode)
-        return true;
+    for (const struct fast_keycode* it = begin; it != end; ++it) {
+        if (keycode != it->fast_keycode)
+            continue;
 
-    if (record->event.pressed) {
-        for (uint8_t i = 1; i < event_count; ++i)
-            tap_code(sent_keycode);
-        register_code(sent_keycode);
-    } else {
-        unregister_code(sent_keycode);
+        keycode = it->real_keycode;
+        if (record->event.pressed) {
+            for (uint8_t i = 1; i < it->real_count; ++i)
+                tap_code(keycode);
+            register_code(keycode);
+        } else {
+            unregister_code(keycode);
+        }
+        return false;
     }
-    return false;
+    return true;
 }
