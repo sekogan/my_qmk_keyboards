@@ -6,27 +6,35 @@ Derived from the [default keymap](https://github.com/qmk/qmk_firmware/tree/maste
 
 ## How to flash
 
-The following recipe is for Fedora 38.
+The following recipe is for Fedora 38, 39.
 
 ```bash
+# On Fedora 39 only
+sudo dnf copr enable erovia/dfu-programmer
+
+sudo dnf groupinstall "Development Tools"
+sudo dnf install git python3-pip avr-gcc avr-libc dfu-programmer dfu-util arm-none-eabi-gcc
+
+
 mkdir qmk
 cd qmk
 git clone https://github.com/sekogan/my_qmk_keyboards
 git clone https://github.com/qmk/qmk_firmware
 cd qmk_firmware
-git checkout 0.21.3  # version 0.15.11 also works, see notes below
+git checkout 0.23.6  # version 0.15.11 also works, see notes below
 ```
 
 NOTE: more recent versions of QMK are not compatible with the language feature.
 It was broken somewhere between 0.15.11 and 0.16.9.
-UPD: 0.21.3 seems okay at least on Linux.
+UPD: 0.21.3, 0.23.6 seem okay at least on Linux.
 
 ```bash
+# go back to "qmk" directory
 cd ..
+rm -rf venv
 virtualenv venv
 . venv/bin/activate
-pip3 install qmk
-pip3 install keymapviz
+pip3 install qmk keymapviz
 QMK_HOME=./qmk_firmware qmk setup
 ```
 

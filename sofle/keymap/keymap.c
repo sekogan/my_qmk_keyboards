@@ -283,10 +283,8 @@ void suspend_power_down_user(void) {
     suspend_power_down_oled();
 }
 
-
-// The "led_set_user" is called in initialization and any time the "lock" state is changed for any of the states.
-// It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
-void led_set_user(uint8_t usb_led) {
-    if (!IS_LED_ON(usb_led, USB_LED_NUM_LOCK))
+void matrix_init_user (void) {
+    if (!host_keyboard_led_state ().num_lock) {
         tap_code(KC_NUM_LOCK);
+    }
 }
