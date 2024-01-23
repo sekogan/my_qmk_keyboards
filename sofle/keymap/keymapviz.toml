@@ -38,7 +38,6 @@ KC_SCLN=; :
 KC_SLSH=/ ?
 KC_TILD=~
 KC_UNDS=_
-MT_ENT=ENT+Numpad
 MT_LGUI=Super
 MT_RGUI=Super
 OSM_LSFT=Shift
