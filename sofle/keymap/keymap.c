@@ -124,7 +124,7 @@ XXXXXXX,  KC_GRV,   KC_QUES,  KC_EXLM,  KC_SLSH,  KC_BSLS,  XXXXXXX,  XXXXXXX,  
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      | LSFT | LALT | LCTL |      |      |,------.    ,------.|      |  4   |  5   |  6   |  -   |      |
  * |------+------+------+------+------+------||      |    |      ||------+------+------+------+------+------|
- * |      |      |      |      |      |      |`------'    `------'|      |  7   |  8   |  9   |  +   | PENT |
+ * |      |      |      |      |      |      |`------'    `------'|  .   |  7   |  8   |  9   |  +   | PENT |
  * `-------------+------+------+------+-.------------.    ,------------.-+------+------+------+-------------'
  *               | LGUI | ___  | ___  |/      / ___  /    \ ___  \      \| ___  | ___  | RGUI |
  *               |      |      |      /      /      /      \      \      \      |      |      |
@@ -134,7 +134,7 @@ XXXXXXX,  KC_GRV,   KC_QUES,  KC_EXLM,  KC_SLSH,  KC_BSLS,  XXXXXXX,  XXXXXXX,  
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      KC_NUM,   XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_PSLS,  XXXXXXX, \
 XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      KC_0,     KC_1,     KC_2,     KC_3,     KC_PAST,  KC_BSPC, \
 XXXXXXX,  KC_LSFT,  KC_LALT,  KC_LCTL,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  KC_4,     KC_5,     KC_6,     KC_PMNS,  XXXXXXX, \
-XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_7,     KC_8,     KC_9,     KC_PPLS,  KC_PENT, \
+XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_PDOT,  KC_7,     KC_8,     KC_9,     KC_PPLS,  KC_PENT, \
                     KC_LGUI,  _______,  _______,  XXXXXXX,  _______,  _______,  XXXXXXX,  _______,  _______,  KC_RGUI \
 ),
 
