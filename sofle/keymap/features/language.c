@@ -1,7 +1,7 @@
 #include "language.h"
-#include "platform.h"
+#include "os.h"
 
-static language_t _current_language = UNKNOWN_LANGUAGE;
+static language_t _current_language = PRIMARY_LANGUAGE;
 
 static uint8_t _swap_mods(uint8_t desired_mods) {
     const uint8_t before_mods = get_mods();
@@ -19,13 +19,13 @@ language_t get_language(void) {
 }
 
 void reset_language(void) {
-    _current_language = UNKNOWN_LANGUAGE;
+    switch_language(_current_language);
 }
 
 void switch_language(language_t language) {
     const uint8_t mods = get_mods();
-    switch (get_platform()) {
-        case LINUX_PLATFORM:
+    switch (get_os()) {
+        case LINUX_OS:
             switch (language) {
                 case PRIMARY_LANGUAGE:
                     _swap_mods(0);
@@ -39,7 +39,7 @@ void switch_language(language_t language) {
             tap_code(KC_CAPS);
             _swap_mods(mods);
             break;
-        case WINDOWS_PLATFORM:
+        case WINDOWS_OS:
             _swap_mods(MOD_BIT(KC_LALT)|MOD_BIT(KC_LSFT));
             tap_code(KC_1 + language);
             _swap_mods(mods);

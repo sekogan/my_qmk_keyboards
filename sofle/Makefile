@@ -1,15 +1,15 @@
-.PHONY: keymapviz sync build flash
+.PHONY: keymapviz sync
 
 QMK_DIR=../../qmk_firmware
 KEYMAP=sekogan
 
-keymapviz:
+keymapviz: keymap/keymap.c keymap/keymapviz.toml
 	keymapviz -k sofle -r keymap/keymap.c -c keymap/keymapviz.toml
 	rm keymap/keymap.c.bac
 
 sync: keymapviz
 	rm -rf $(QMK_DIR)/keyboards/sofle/keymaps/$(KEYMAP)
-	cp -r keymap/. $(QMK_DIR)/keyboards/sofle/keymaps/$(KEYMAP)
+	cp -a keymap/. $(QMK_DIR)/keyboards/sofle/keymaps/$(KEYMAP)
 
 build: sync
 	pushd $(QMK_DIR) && \

@@ -1,5 +1,5 @@
-// Platform independent (for user) non-modal input language switcher.
-// Depends on "platform" feature.
+// OS independent (for user) non-modal input language switcher.
+// Depends on "OS" feature.
 
 #pragma once
 
