@@ -16,7 +16,7 @@ typedef enum {
 os_t get_os(void);
 
 // Enables autodetection mode. This is the default.
-void enable_os_autodetection(void);
+void enable_os_autodetect(void);
 
 bool is_os_autodetection_enabled(void);
 
