@@ -184,14 +184,10 @@ const struct fast_keycode fast_keycodes[] = {
     {.fast_keycode=SEK_FDOWN,   .real_keycode=KC_DOWN,  .real_count=5},
 };
 
-#ifndef countof
-#define countof(array)  (sizeof(array)/sizeof(array[0]))
-#endif
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_text_navigation_shortcuts(keycode, record, SEK_WPREV, SEK_WNEXT, SEK_LSTRT, SEK_LEND))
         return false;
-    if (!process_fast_keycodes(keycode, record, fast_keycodes, fast_keycodes+countof(fast_keycodes))) return false;
+    if (!process_fast_keycodes(keycode, record, fast_keycodes, fast_keycodes+ARRAY_SIZE(fast_keycodes))) return false;
     if (!process_clipboard_shortcuts(keycode, record)) return false;
     if (!process_editing_history_shortcuts(keycode, record)) return false;
     if (!process_text_deleting_macros(keycode, record, SEK_WDEL, SEK_WBSPC)) return false;
