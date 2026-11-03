@@ -1,6 +1,5 @@
 #pragma once
 
 // https://precondition.github.io/home-row-mods#how-to-use-home-row-mods
-#define IGNORE_MOD_TAP_INTERRUPT
-#define TAPPING_FORCE_HOLD
+#define QUICK_TAP_TERM      0
 #define TAPPING_TERM        200
