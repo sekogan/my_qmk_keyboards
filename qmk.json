@@ -1,4 +1,8 @@
 {
     "userspace_version": "1.0",
-    "build_targets": []
+    "build_targets": [
+        ["sofle/rev1", "sekogan"],
+        ["kbdfans/kbd75hs", "sekogan"],
+        ["kbdfans/kbd75/rev2", "sekogan"]
+    ]
 }

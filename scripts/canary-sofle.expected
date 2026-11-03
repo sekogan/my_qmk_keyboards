@@ -1,0 +1,10 @@
+# Sofle hooks that must be strong (T) symbols in the non-LTO build (scripts/canary.sh).
+# One per line. Every commit that adds or removes a hook edits this file (plan §6).
+encoder_update_user
+layer_state_set_user
+matrix_init_user
+oled_init_user
+oled_task_user
+post_process_record_user
+process_record_user
+suspend_power_down_user
