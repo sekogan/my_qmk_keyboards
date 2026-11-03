@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include QMK_KEYBOARD_H
+#include "quantum.h"
 
 // Should be called from process_record_user.
 bool process_text_navigation_shortcuts(

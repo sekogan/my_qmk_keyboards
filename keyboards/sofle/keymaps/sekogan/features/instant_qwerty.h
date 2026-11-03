@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include QMK_KEYBOARD_H
+#include "quantum.h"
 
 // Add reasons to activate Qwerty layout. reasons is a bitmap allowing up to 8 reasons to be used.
 void add_instant_qwerty_activation_reasons(uint8_t reasons);

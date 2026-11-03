@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include QMK_KEYBOARD_H
+#include "quantum.h"
 
 struct fast_keycode {
     uint16_t fast_keycode;

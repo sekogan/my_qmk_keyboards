@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include QMK_KEYBOARD_H
+#include "quantum.h"
 
 // Makes sure the primary language is selected.
 // If it is not the case, puts current language to the stash (overwriting existing value

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include QMK_KEYBOARD_H
+#include "quantum.h"
 
 
 // Should be called from post_process_record_user.
