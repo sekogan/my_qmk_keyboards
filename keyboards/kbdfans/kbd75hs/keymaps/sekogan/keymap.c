@@ -125,4 +125,7 @@ tap_dance_action_t tap_dance_actions[] = {
 const key_override_t russian_e_override         = ko_make_basic(MOD_BIT_RALT, KC_T, KC_GRV);
 const key_override_t russian_hard_sign_override = ko_make_basic(MOD_BIT_RALT, KC_M, KC_RBRC);
 
-const key_override_t **key_overrides = (const key_override_t *[]){&russian_e_override, &russian_hard_sign_override, NULL};
+const key_override_t *key_overrides[] = {
+    &russian_e_override,
+    &russian_hard_sign_override,
+};
