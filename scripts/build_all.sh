@@ -2,7 +2,8 @@
 # SV-build (plan §6): build every target in the pinned image, print size + sha256,
 # append them to build-results.txt (git-ignored).
 #   scripts/build_all.sh            build all three targets
-#   scripts/build_all.sh --archive  also copy the hex files to ../qmk-data/qmk-artifacts/<git-describe>/
+#   scripts/build_all.sh --archive  also store an immutable copy in ../qmk-data/qmk-artifacts/<git-describe>/
+#                                   (hex files + BUILDINFO + SHA256SUMS; clean commits only). Flash from there.
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 QMK_DATA=$(cd "$root/.." && pwd)/qmk-data
@@ -37,9 +38,27 @@ sizes=$(podman run --rm --pull=never -v "$build":/b:ro,Z -w /b "$QMK_IMAGE" \
 } | tee -a "$root/build-results.txt"
 
 if [ $archive = yes ]; then
+  # Immutable copy for flashing/bisection: only from a clean commit, never overwritten.
+  case "$describe" in *-dirty) echo "--archive refused: uncommitted changes ($describe)" >&2; exit 1;; esac
   dest="$QMK_DATA/qmk-artifacts/$describe"
-  mkdir -p "$dest"
-  for h in "${hexes[@]}"; do cp "$build/$h" "$dest/"; done
-  (cd "$dest" && sha256sum "${hexes[@]}" > SHA256SUMS)
-  echo "archived to $dest"
+  if [ -e "$dest" ]; then
+    # Builds are reproducible (SKIP_VERSION=yes), so an existing archive must match exactly.
+    for h in "${hexes[@]}"; do
+      cmp -s "$build/$h" "$dest/$h" || { echo "--archive refused: $dest/$h exists and differs" >&2; exit 1; }
+    done
+    echo "already archived (identical): $dest"
+  else
+    tmpdest="$dest.tmp.$$"; mkdir -p "$tmpdest"
+    for h in "${hexes[@]}"; do cp "$build/$h" "$tmpdest/"; done
+    {
+      echo "commit=$(git -C "$root" rev-parse HEAD)"
+      echo "describe=$describe"
+      echo "qmk=$qmkver $(git -C "$root/qmk_firmware" rev-parse HEAD)"
+      echo "image_id=$QMK_IMAGE_ID"
+      echo "built=$(date -u +%FT%TZ)"
+    } > "$tmpdest/BUILDINFO"
+    (cd "$tmpdest" && sha256sum "${hexes[@]}" BUILDINFO > SHA256SUMS && chmod a-w ./*)
+    mv "$tmpdest" "$dest"
+    echo "archived to $dest"
+  fi
 fi

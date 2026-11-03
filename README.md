@@ -85,17 +85,21 @@ Checks used when changing things:
 
 Flashing runs on the host, not in the container.
 
-- **Sofle** (Pro Micro, Caterina bootloader): flash **each half**.
+- **Sofle** (Pro Micro, Caterina bootloader): flash **each half** from an archived build,
+  never from `qmk_firmware/.build` (any build may replace or delete files there):
   ```bash
-  scripts/flash-sofle.sh            # default: qmk_firmware/.build/sofle_rev1_sekogan.hex
+  scripts/build_all.sh --archive    # immutable copy in ../qmk-data/qmk-artifacts/<git describe>/
+  scripts/flash-sofle.sh            # flashes that archive's sofle_rev1_sekogan.hex
+  scripts/flash-sofle.sh <dir|hex>  # or another archive/baseline directory with a SHA256SUMS file
   ```
-  then double-tap the reset button of the half; the script waits for the
-  bootloader port and runs avrdude.
+  The script prints the hex's sha256 and the commit it was built from, refuses a file
+  whose hash does not match its `SHA256SUMS`, then waits for you to double-tap the
+  reset button of the half and runs avrdude.
 - **KBD75** (atmel-dfu): put the board into the bootloader (Caps Lock + Esc + F12),
   then
   ```bash
   sudo dfu-programmer atmega32u4 erase
-  sudo dfu-programmer atmega32u4 flash qmk_firmware/.build/kbdfans_kbd75hs_sekogan.hex   # or kbdfans_kbd75_rev2_sekogan.hex
+  sudo dfu-programmer atmega32u4 flash ../qmk-data/qmk-artifacts/<git describe>/kbdfans_kbd75hs_sekogan.hex   # or kbdfans_kbd75_rev2_sekogan.hex
   sudo dfu-programmer atmega32u4 launch
   ```
 
