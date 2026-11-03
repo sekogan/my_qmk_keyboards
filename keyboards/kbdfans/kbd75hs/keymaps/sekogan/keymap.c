@@ -26,7 +26,7 @@ enum tap_dances {
   TAP_DANCE_RSFT,
 };
 
-#define CAPS_FN     LT(SECOND_LAYER, KC_CAPSLOCK)
+#define CAPS_FN     LT(SECOND_LAYER, KC_CAPS)
 #define ESC_FN2     LT(THIRD_LAYER, KC_ESCAPE)
 
 #define LSFT_A      LSFT_T(KC_A)
@@ -74,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
 void led_set_user(uint8_t usb_led) {
   if (!IS_LED_ON(usb_led, USB_LED_NUM_LOCK)) {
-    tap_code(KC_NUMLOCK);
+    tap_code(KC_NUM);
   }
 }
 

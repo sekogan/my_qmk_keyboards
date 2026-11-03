@@ -6,7 +6,7 @@ enum layer_id {
   THIRD_LAYER
 };
 
-#define CAPS_FN     LT(SECOND_LAYER, KC_CAPSLOCK)
+#define CAPS_FN     LT(SECOND_LAYER, KC_CAPS)
 #define ESC_FN2     LT(THIRD_LAYER, KC_ESCAPE)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -16,7 +16,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,            KC_END,
     CAPS_FN,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,                      KC_ENT,   KC_PGUP,
     KC_LSFT,  KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,            KC_UP,    KC_PGDN,
-    KC_LCTL,  KC_LGUI,  KC_LALT,                      KC_SPC,   KC_SPC,   KC_SPC,                       KC_RALT,  KC_RCTRL, KC_RCTRL, KC_LEFT,  KC_DOWN,  KC_RGHT
+    KC_LCTL,  KC_LGUI,  KC_LALT,                      KC_SPC,   KC_SPC,   KC_SPC,                       KC_RALT,  KC_RCTL,  KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
   ),
 
   [SECOND_LAYER] = LAYOUT(
@@ -42,7 +42,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
 void led_set_user(uint8_t usb_led) {
   if (!IS_LED_ON(usb_led, USB_LED_NUM_LOCK)) {
-    register_code(KC_NUMLOCK);
-    unregister_code(KC_NUMLOCK);
+    register_code(KC_NUM);
+    unregister_code(KC_NUM);
   }
 }
