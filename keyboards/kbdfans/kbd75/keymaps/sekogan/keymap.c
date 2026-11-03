@@ -9,6 +9,7 @@ enum layer_id {
 #define CAPS_FN     LT(SECOND_LAYER, KC_CAPS)
 #define ESC_FN2     LT(THIRD_LAYER, KC_ESCAPE)
 
+// clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [BASE_LAYER] = LAYOUT(
     KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_PSCR,  KC_INS,   KC_DEL,
@@ -37,6 +38,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,  XXXXXXX,  _______,                      XXXXXXX,  XXXXXXX,  XXXXXXX,                      _______,  _______,  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX
   ),
 };
+// clang-format on
 
 // "led_update_user" is called whenever the host changes the lock LED state.
 // It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.

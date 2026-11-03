@@ -40,6 +40,7 @@ enum tap_dances {
 #define TD_LSFT     TD(TAP_DANCE_LSFT)
 #define TD_RSFT     TD(TAP_DANCE_RSFT)
 
+// clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [BASE_LAYER] = LAYOUT_75_ansi(
@@ -69,6 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,  _______,  _______,                                XXXXXXX,                                _______,  _______,  _______,  XXXXXXX,  XXXXXXX,  XXXXXXX
   ),
 };
+// clang-format on
 
 // "led_update_user" is called whenever the host changes the lock LED state.
 // It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
