@@ -1,13 +1,11 @@
 #include "instant_qwerty.h"
 
-static bool _stash_empty = true;
+static bool          _stash_empty                 = true;
 static layer_state_t _stashed_default_layer_state = 0;
-static uint8_t _activation_reasons = 0;
-static uint8_t _activation_reasons_mask = 0xff;
+static uint8_t       _activation_reasons          = 0;
+static uint8_t       _activation_reasons_mask     = 0xff;
 
-enum {
-    _FIRST_DEFAULT_LAYER
-};
+enum { _FIRST_DEFAULT_LAYER };
 
 static void _stash_current_default_layer(void) {
     if (get_highest_layer(default_layer_state) != _FIRST_DEFAULT_LAYER) {
@@ -19,8 +17,7 @@ static void _stash_current_default_layer(void) {
 
 static void _restore_stashed_default_layer(void) {
     if (!_stash_empty) {
-        if (default_layer_state != _stashed_default_layer_state)
-            default_layer_set(_stashed_default_layer_state);
+        if (default_layer_state != _stashed_default_layer_state) default_layer_set(_stashed_default_layer_state);
         _stash_empty = true;
     }
 }

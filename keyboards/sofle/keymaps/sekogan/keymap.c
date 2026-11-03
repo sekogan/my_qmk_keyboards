@@ -14,39 +14,36 @@
 #include "features/select_word.h"
 #include "features/text_editing.h"
 
-
 enum custom_keycodes {
-    SEK_BASE = SAFE_RANGE,  // Cycle through base layouts (Qwerty, Colemak)
-    SEK_OS,                 // Cycle through operating systems
+    SEK_BASE = SAFE_RANGE, // Cycle through base layouts (Qwerty, Colemak)
+    SEK_OS,                // Cycle through operating systems
 
     SEK_LOWER,
     SEK_RAISE,
 
-    SEK_WSEL,               // Select word
+    SEK_WSEL, // Select word
 
-    SEK_WPREV,              // Previous word
-    SEK_WNEXT,              // Next word
-    SEK_LSTRT,              // Line start
-    SEK_LEND,               // Line end
+    SEK_WPREV, // Previous word
+    SEK_WNEXT, // Next word
+    SEK_LSTRT, // Line start
+    SEK_LEND,  // Line end
 
-    SEK_WBSPC,              // Delete from the cursor to the beginning of the word
-    SEK_WDEL,               // Delete from the cursor to the end of the word
+    SEK_WBSPC, // Delete from the cursor to the beginning of the word
+    SEK_WDEL,  // Delete from the cursor to the end of the word
 
-    SEK_FUP,                // Fast up
-    SEK_FDOWN,              // Fast down
-    SEK_FSPC,               // Fast space
+    SEK_FUP,   // Fast up
+    SEK_FDOWN, // Fast down
+    SEK_FSPC,  // Fast space
 };
 
+#define MT_LGUI LGUI_T(KC_LNG1)
+#define MT_RGUI RGUI_T(KC_LNG2)
+#define L_NUM MO(NUMPAD)
 
-#define MT_LGUI     LGUI_T(KC_LNG1)
-#define MT_RGUI     RGUI_T(KC_LNG2)
-#define L_NUM       MO(NUMPAD)
+#define SEK_LDEL C(S(KC_K))
 
-#define SEK_LDEL    C(S(KC_K))
-
-#define OSM_LSFT    OSM(MOD_LSFT)
-#define OSM_RSFT    OSM(MOD_RSFT)
-
+#define OSM_LSFT OSM(MOD_LSFT)
+#define OSM_RSFT OSM(MOD_RSFT)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -181,15 +178,14 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 // clang-format on
 
 const struct fast_keycode fast_keycodes[] = {
-    {.fast_keycode=SEK_FSPC,    .real_keycode=KC_SPC,   .real_count=3},
-    {.fast_keycode=SEK_FUP,     .real_keycode=KC_UP,    .real_count=5},
-    {.fast_keycode=SEK_FDOWN,   .real_keycode=KC_DOWN,  .real_count=5},
+    {.fast_keycode = SEK_FSPC, .real_keycode = KC_SPC, .real_count = 3},
+    {.fast_keycode = SEK_FUP, .real_keycode = KC_UP, .real_count = 5},
+    {.fast_keycode = SEK_FDOWN, .real_keycode = KC_DOWN, .real_count = 5},
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_text_navigation_shortcuts(keycode, record, SEK_WPREV, SEK_WNEXT, SEK_LSTRT, SEK_LEND))
-        return false;
-    if (!process_fast_keycodes(keycode, record, fast_keycodes, fast_keycodes+ARRAY_SIZE(fast_keycodes))) return false;
+    if (!process_text_navigation_shortcuts(keycode, record, SEK_WPREV, SEK_WNEXT, SEK_LSTRT, SEK_LEND)) return false;
+    if (!process_fast_keycodes(keycode, record, fast_keycodes, fast_keycodes + ARRAY_SIZE(fast_keycodes))) return false;
     if (!process_clipboard_shortcuts(keycode, record)) return false;
     if (!process_editing_history_shortcuts(keycode, record)) return false;
     if (!process_text_deleting_macros(keycode, record, SEK_WDEL, SEK_WBSPC)) return false;
@@ -202,10 +198,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
         case SEK_BASE:
-            if (record->event.pressed)
-                set_single_persistent_default_layer(
-                    IS_LAYER_ON_STATE(default_layer_state, QWERTY) ? COLEMAK : QWERTY
-                );
+            if (record->event.pressed) set_single_persistent_default_layer(IS_LAYER_ON_STATE(default_layer_state, QWERTY) ? COLEMAK : QWERTY);
             return false;
         case SEK_LOWER:
             if (record->event.pressed)
@@ -222,40 +215,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             update_tri_layer(LOWER, RAISE, EXTRA);
             return false;
         case MT_LGUI:
-            if (record->tap.count == 1 && record->event.pressed)
-                return process_record_user(KC_LNG1, record);
+            if (record->tap.count == 1 && record->event.pressed) return process_record_user(KC_LNG1, record);
             break;
         case MT_RGUI:
-            if (record->tap.count == 1 && record->event.pressed)
-                return process_record_user(KC_LNG2, record);
+            if (record->tap.count == 1 && record->event.pressed) return process_record_user(KC_LNG2, record);
             break;
     }
     return true;
 }
 
-
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     post_process_record_non_qwerty_shortcuts(keycode, record);
 }
 
-
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
-    case LOWER:
-        stash_current_language();
-        break;
-    default:
-        restore_stashed_language();
+        case LOWER:
+            stash_current_language();
+            break;
+        default:
+            restore_stashed_language();
     }
     return state;
 }
-
 
 void os_set_user(void) {
     clear_language_stash();
     reset_language();
 }
-
 
 void language_set_user(void) {
     clear_language_stash();
@@ -268,14 +255,12 @@ void language_set_user(void) {
         add_instant_qwerty_activation_reasons(NON_ENGLISH_LANGUAGE);
 }
 
-
 void suspend_power_down_user(void) {
     suspend_power_down_oled();
 }
 
-
-void matrix_init_user (void) {
-    if (!host_keyboard_led_state ().num_lock) {
+void matrix_init_user(void) {
+    if (!host_keyboard_led_state().num_lock) {
         tap_code(KC_NUM_LOCK);
     }
 }

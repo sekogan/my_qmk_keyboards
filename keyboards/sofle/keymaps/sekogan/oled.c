@@ -5,7 +5,6 @@
 #include "features/language.h"
 #include "features/os.h"
 
-
 #ifdef OLED_ENABLE
 
 static void _print_status_master(void) {
@@ -15,48 +14,48 @@ static void _print_status_master(void) {
         oled_write_ln_P(PSTR("OS\n"), false);
 
     switch (get_os()) {
-    case WINDOWS_OS:
-        oled_write_ln_P(PSTR("Win"), false);
-        break;
-    case LINUX_OS:
-        oled_write_P(PSTR("Linux"), false);
-        break;
-    case MAC_OS:
-        oled_write_ln_P(PSTR("Mac"), false);
-        break;
-    default:
-        oled_write_ln_P(PSTR("?"), false);
+        case WINDOWS_OS:
+            oled_write_ln_P(PSTR("Win"), false);
+            break;
+        case LINUX_OS:
+            oled_write_P(PSTR("Linux"), false);
+            break;
+        case MAC_OS:
+            oled_write_ln_P(PSTR("Mac"), false);
+            break;
+        default:
+            oled_write_ln_P(PSTR("?"), false);
     }
 
     oled_write_ln_P(PSTR("\n\nMODE\n"), false);
     switch (get_highest_layer(default_layer_state)) {
-    case QWERTY:
-        oled_write_P(is_instant_qwerty_activated() ? PSTR("Qwrt*") : PSTR("Qwrty"), false);
-        break;
-    case COLEMAK:
-        oled_write_P(PSTR("Colmk"), false);
-        break;
-    default:
-        oled_write_ln_P(PSTR("?"), false);
+        case QWERTY:
+            oled_write_P(is_instant_qwerty_activated() ? PSTR("Qwrt*") : PSTR("Qwrty"), false);
+            break;
+        case COLEMAK:
+            oled_write_P(PSTR("Colmk"), false);
+            break;
+        default:
+            oled_write_ln_P(PSTR("?"), false);
     }
 
     oled_write_ln_P(PSTR("\n\nLANG\n"), false);
     switch (get_language()) {
-    case PRIMARY_LANGUAGE:
-        oled_write_ln_P(is_language_stash_empty() ? PSTR("Pri") : PSTR("Pri*"), false);
-        break;
-    case SECONDARY_LANGUAGE:
-        oled_write_ln_P(PSTR("Alt"), false);
-        break;
-    default:
-        oled_write_ln_P(PSTR("?"), false);
+        case PRIMARY_LANGUAGE:
+            oled_write_ln_P(is_language_stash_empty() ? PSTR("Pri") : PSTR("Pri*"), false);
+            break;
+        case SECONDARY_LANGUAGE:
+            oled_write_ln_P(PSTR("Alt"), false);
+            break;
+        default:
+            oled_write_ln_P(PSTR("?"), false);
     }
 
     oled_write_ln_P(PSTR("\n"), false);
     const uint8_t mods = get_mods()
-#ifndef NO_ACTION_ONESHOT
-        | get_oneshot_mods()
-#endif // NO_ACTION_ONESHOT
+#    ifndef NO_ACTION_ONESHOT
+                         | get_oneshot_mods()
+#    endif // NO_ACTION_ONESHOT
         ;
     oled_write_P(mods & MOD_MASK_SHIFT ? PSTR("S") : PSTR(" "), false);
     oled_write_P(mods & MOD_MASK_GUI ? PSTR("G") : PSTR(" "), false);

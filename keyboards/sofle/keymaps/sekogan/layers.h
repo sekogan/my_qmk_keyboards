@@ -1,6 +1,5 @@
 #pragma once
 
-
 enum layers {
     QWERTY,
     COLEMAK,

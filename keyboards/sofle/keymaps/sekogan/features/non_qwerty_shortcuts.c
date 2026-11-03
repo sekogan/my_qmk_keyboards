@@ -9,7 +9,7 @@ static bool _are_shortcut_mods(uint8_t mods) {
 
 static void _process_mods_change(uint8_t prev_mods) {
     const bool were_shortcut_mods = _are_shortcut_mods(prev_mods);
-    const bool are_shortcut_mods = _are_shortcut_mods(_mods);
+    const bool are_shortcut_mods  = _are_shortcut_mods(_mods);
     if (!were_shortcut_mods && are_shortcut_mods)
         mask_instant_qwerty_activation_reasons(0xff);
     else if (were_shortcut_mods && !are_shortcut_mods)
@@ -18,10 +18,9 @@ static void _process_mods_change(uint8_t prev_mods) {
 
 void post_process_record_non_qwerty_shortcuts(uint16_t keycode, keyrecord_t *record) {
     const uint8_t mods = get_mods() | get_oneshot_mods();
-    if (mods == _mods)
-        return;
+    if (mods == _mods) return;
 
     const uint8_t prev_mods = _mods;
-    _mods = mods;
+    _mods                   = mods;
     _process_mods_change(prev_mods);
 }

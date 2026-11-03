@@ -22,39 +22,36 @@
 
 enum { STATE_NONE, STATE_WORD, STATE_LINE, STATE_SELECTED };
 
-bool process_select_word(
-    uint16_t keycode, keyrecord_t* record,
-    uint16_t sel_keycode
-) {
+bool process_select_word(uint16_t keycode, keyrecord_t* record, uint16_t sel_keycode) {
     static uint8_t state = STATE_NONE;
 
-    if (keycode == KC_LSFT || keycode == KC_RSFT) { return true; }
+    if (keycode == KC_LSFT || keycode == KC_RSFT) {
+        return true;
+    }
 
-    if (keycode == sel_keycode && record->event.pressed) {  // On key press.
+    if (keycode == sel_keycode && record->event.pressed) { // On key press.
         const uint8_t mods = get_mods();
 #ifndef NO_ACTION_ONESHOT
         const uint8_t all_mods = mods | get_oneshot_mods();
 #else
         const uint8_t all_mods = mods;
-#endif  // NO_ACTION_ONESHOT
-        if ((all_mods & MOD_MASK_SHIFT) == 0) {  // Select word.
-            if (state == STATE_NONE)
-                tap_code(KC_RIGHT);
+#endif                                          // NO_ACTION_ONESHOT
+        if ((all_mods & MOD_MASK_SHIFT) == 0) { // Select word.
+            if (state == STATE_NONE) tap_code(KC_RIGHT);
 
             register_code(KC_LCTL);
 
-            if (state == STATE_NONE)
-                tap_code(KC_LEFT);
+            if (state == STATE_NONE) tap_code(KC_LEFT);
 
             register_code(KC_LSFT);
             register_code(KC_RIGHT);
             state = STATE_WORD;
-        } else {  // Select line.
+        } else { // Select line.
             if (state == STATE_NONE) {
                 clear_mods();
 #ifndef NO_ACTION_ONESHOT
                 clear_oneshot_mods();
-#endif  // NO_ACTION_ONESHOT
+#endif // NO_ACTION_ONESHOT
                 send_keyboard_report();
                 SEND_STRING(SS_TAP(X_END) SS_TAP(X_HOME) SS_TAP(X_HOME));
                 register_mods(mods);

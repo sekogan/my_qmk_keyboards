@@ -15,30 +15,26 @@
  */
 #include QMK_KEYBOARD_H
 
-enum layer_id {
-  BASE_LAYER,
-  SECOND_LAYER,
-  THIRD_LAYER
-};
+enum layer_id { BASE_LAYER, SECOND_LAYER, THIRD_LAYER };
 
 enum tap_dances {
-  TAP_DANCE_LSFT,
-  TAP_DANCE_RSFT,
+    TAP_DANCE_LSFT,
+    TAP_DANCE_RSFT,
 };
 
-#define CAPS_FN     LT(SECOND_LAYER, KC_CAPS)
-#define ESC_FN2     LT(THIRD_LAYER, KC_ESCAPE)
+#define CAPS_FN LT(SECOND_LAYER, KC_CAPS)
+#define ESC_FN2 LT(THIRD_LAYER, KC_ESCAPE)
 
-#define LSFT_A      LSFT_T(KC_A)
-#define LALT_S      LALT_T(KC_S)
-#define LCTL_D      LCTL_T(KC_D)
+#define LSFT_A LSFT_T(KC_A)
+#define LALT_S LALT_T(KC_S)
+#define LCTL_D LCTL_T(KC_D)
 
-#define RCTL_K      RCTL_T(KC_K)
-#define RALT_L      RALT_T(KC_L)
-#define RSFT_SCLN   RSFT_T(KC_SCLN)
+#define RCTL_K RCTL_T(KC_K)
+#define RALT_L RALT_T(KC_L)
+#define RSFT_SCLN RSFT_T(KC_SCLN)
 
-#define TD_LSFT     TD(TAP_DANCE_LSFT)
-#define TD_RSFT     TD(TAP_DANCE_RSFT)
+#define TD_LSFT TD(TAP_DANCE_LSFT)
+#define TD_RSFT TD(TAP_DANCE_RSFT)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -75,63 +71,58 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // "led_update_user" is called whenever the host changes the lock LED state.
 // It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
 bool led_update_user(led_t led_state) {
-  if (!led_state.num_lock) {
-    tap_code(KC_NUM);
-  }
-  return true;   // keep the keyboard's Caps Lock indicator working
+    if (!led_state.num_lock) {
+        tap_code(KC_NUM);
+    }
+    return true; // keep the keyboard's Caps Lock indicator working
 }
 
 bool dance_lsft_unregister_pending = false;
 bool dance_rsft_unregister_pending = false;
 
 void dance_lsft_finished(tap_dance_state_t *state, void *user_data) {
-  if (state->pressed) {
-    register_mods(MOD_LSFT);
-    dance_lsft_unregister_pending = true;
-  } else if (state->count == 1) {
-    register_mods(MOD_LALT|MOD_LSFT);
-    tap_code(KC_0);
-    unregister_mods(MOD_LALT|MOD_LSFT);
-  }
+    if (state->pressed) {
+        register_mods(MOD_LSFT);
+        dance_lsft_unregister_pending = true;
+    } else if (state->count == 1) {
+        register_mods(MOD_LALT | MOD_LSFT);
+        tap_code(KC_0);
+        unregister_mods(MOD_LALT | MOD_LSFT);
+    }
 }
 
 void dance_lsft_reset(tap_dance_state_t *state, void *user_data) {
-  if (dance_lsft_unregister_pending) {
-    dance_lsft_unregister_pending = false;
-    unregister_mods(MOD_LSFT);
-  }
+    if (dance_lsft_unregister_pending) {
+        dance_lsft_unregister_pending = false;
+        unregister_mods(MOD_LSFT);
+    }
 }
 
 void dance_rsft_finished(tap_dance_state_t *state, void *user_data) {
-  if (state->pressed) {
-    register_mods(MOD_BIT(KC_RSFT));
-    dance_rsft_unregister_pending = true;
-  } else if (state->count == 1) {
-    register_mods(MOD_LALT|MOD_LSFT);
-    tap_code(KC_7);
-    unregister_mods(MOD_LALT|MOD_LSFT);
-  }
+    if (state->pressed) {
+        register_mods(MOD_BIT(KC_RSFT));
+        dance_rsft_unregister_pending = true;
+    } else if (state->count == 1) {
+        register_mods(MOD_LALT | MOD_LSFT);
+        tap_code(KC_7);
+        unregister_mods(MOD_LALT | MOD_LSFT);
+    }
 }
 
 void dance_rsft_reset(tap_dance_state_t *state, void *user_data) {
-  if (dance_rsft_unregister_pending) {
-    dance_rsft_unregister_pending = false;
-    unregister_mods(MOD_BIT(KC_RSFT));
-  }
+    if (dance_rsft_unregister_pending) {
+        dance_rsft_unregister_pending = false;
+        unregister_mods(MOD_BIT(KC_RSFT));
+    }
 }
 
 tap_dance_action_t tap_dance_actions[] = {
-  [TAP_DANCE_LSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lsft_finished, dance_lsft_reset),
-  [TAP_DANCE_RSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_rsft_finished, dance_rsft_reset),
+    [TAP_DANCE_LSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lsft_finished, dance_lsft_reset),
+    [TAP_DANCE_RSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_rsft_finished, dance_rsft_reset),
 };
-
 
 #define MOD_MASK_RALT MOD_BIT(KC_RALT)
-const key_override_t russian_e_override = ko_make_basic(MOD_MASK_RALT, KC_T, KC_GRV);
+const key_override_t russian_e_override         = ko_make_basic(MOD_MASK_RALT, KC_T, KC_GRV);
 const key_override_t russian_hard_sign_override = ko_make_basic(MOD_MASK_RALT, KC_M, KC_RBRC);
 
-const key_override_t **key_overrides = (const key_override_t *[]){
-    &russian_e_override,
-    &russian_hard_sign_override,
-    NULL
-};
+const key_override_t **key_overrides = (const key_override_t *[]){&russian_e_override, &russian_hard_sign_override, NULL};

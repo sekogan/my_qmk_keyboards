@@ -4,13 +4,11 @@
 static language_t _current_language = PRIMARY_LANGUAGE;
 
 static uint8_t _swap_mods(uint8_t desired_mods) {
-    const uint8_t before_mods = get_mods();
-    const uint8_t missing_mods = ~before_mods & desired_mods;
+    const uint8_t before_mods    = get_mods();
+    const uint8_t missing_mods   = ~before_mods & desired_mods;
     const uint8_t undesired_mods = before_mods & ~desired_mods;
-    if (undesired_mods)
-        unregister_mods(undesired_mods);
-    if (missing_mods)
-        register_mods(missing_mods);
+    if (undesired_mods) unregister_mods(undesired_mods);
+    if (missing_mods) register_mods(missing_mods);
     return before_mods;
 }
 
@@ -40,7 +38,7 @@ void switch_language(language_t language) {
             _swap_mods(mods);
             break;
         case WINDOWS_OS:
-            _swap_mods(MOD_BIT(KC_LALT)|MOD_BIT(KC_LSFT));
+            _swap_mods(MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT));
             tap_code(KC_1 + language);
             _swap_mods(mods);
             break;
@@ -54,12 +52,10 @@ void switch_language(language_t language) {
 bool process_language(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case KC_LNG1:
-            if (record->event.pressed)
-                switch_language(PRIMARY_LANGUAGE);
+            if (record->event.pressed) switch_language(PRIMARY_LANGUAGE);
             return false;
         case KC_LNG2:
-            if (record->event.pressed)
-                switch_language(SECONDARY_LANGUAGE);
+            if (record->event.pressed) switch_language(SECONDARY_LANGUAGE);
             return false;
     }
     return true;

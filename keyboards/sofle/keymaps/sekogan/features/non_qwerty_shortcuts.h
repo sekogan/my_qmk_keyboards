@@ -5,6 +5,5 @@
 
 #include "quantum.h"
 
-
 // Should be called from post_process_record_user.
 void post_process_record_non_qwerty_shortcuts(uint16_t keycode, keyrecord_t *record);

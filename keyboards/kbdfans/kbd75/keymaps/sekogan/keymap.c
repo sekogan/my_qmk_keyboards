@@ -1,13 +1,9 @@
 #include QMK_KEYBOARD_H
 
-enum layer_id {
-  BASE_LAYER,
-  SECOND_LAYER,
-  THIRD_LAYER
-};
+enum layer_id { BASE_LAYER, SECOND_LAYER, THIRD_LAYER };
 
-#define CAPS_FN     LT(SECOND_LAYER, KC_CAPS)
-#define ESC_FN2     LT(THIRD_LAYER, KC_ESCAPE)
+#define CAPS_FN LT(SECOND_LAYER, KC_CAPS)
+#define ESC_FN2 LT(THIRD_LAYER, KC_ESCAPE)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -43,8 +39,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // "led_update_user" is called whenever the host changes the lock LED state.
 // It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
 bool led_update_user(led_t led_state) {
-  if (!led_state.num_lock) {
-    tap_code(KC_NUM);
-  }
-  return true;   // keep the keyboard's Caps Lock indicator working
+    if (!led_state.num_lock) {
+        tap_code(KC_NUM);
+    }
+    return true; // keep the keyboard's Caps Lock indicator working
 }

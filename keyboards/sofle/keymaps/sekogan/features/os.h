@@ -24,9 +24,7 @@ bool is_os_autodetection_enabled(void);
 void set_os(os_t os);
 
 // Should be called from process_record_user.
-bool process_os_selector(
-    uint16_t keycode, keyrecord_t* record, uint16_t selector_keycode
-);
+bool process_os_selector(uint16_t keycode, keyrecord_t* record, uint16_t selector_keycode);
 
 // Implement this function to get notified when currently selected OS is set.
 void os_set_user(void);
