@@ -70,12 +70,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
-// The "led_set_user" is called in initialization and any time the "lock" state is changed for any of the states.
+// "led_update_user" is called whenever the host changes the lock LED state.
 // It checks the NUM LOCK state, and if it's disabled, sends the "numlock" key press to enable it.
-void led_set_user(uint8_t usb_led) {
-  if (!IS_LED_ON(usb_led, USB_LED_NUM_LOCK)) {
+bool led_update_user(led_t led_state) {
+  if (!led_state.num_lock) {
     tap_code(KC_NUM);
   }
+  return true;   // keep the keyboard's Caps Lock indicator working
 }
 
 bool dance_lsft_unregister_pending = false;
