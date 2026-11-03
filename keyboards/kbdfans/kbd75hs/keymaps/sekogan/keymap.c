@@ -81,7 +81,7 @@ void led_set_user(uint8_t usb_led) {
 bool dance_lsft_unregister_pending = false;
 bool dance_rsft_unregister_pending = false;
 
-void dance_lsft_finished(qk_tap_dance_state_t *state, void *user_data) {
+void dance_lsft_finished(tap_dance_state_t *state, void *user_data) {
   if (state->pressed) {
     register_mods(MOD_LSFT);
     dance_lsft_unregister_pending = true;
@@ -92,14 +92,14 @@ void dance_lsft_finished(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void dance_lsft_reset(qk_tap_dance_state_t *state, void *user_data) {
+void dance_lsft_reset(tap_dance_state_t *state, void *user_data) {
   if (dance_lsft_unregister_pending) {
     dance_lsft_unregister_pending = false;
     unregister_mods(MOD_LSFT);
   }
 }
 
-void dance_rsft_finished(qk_tap_dance_state_t *state, void *user_data) {
+void dance_rsft_finished(tap_dance_state_t *state, void *user_data) {
   if (state->pressed) {
     register_mods(MOD_BIT(KC_RSFT));
     dance_rsft_unregister_pending = true;
@@ -110,14 +110,14 @@ void dance_rsft_finished(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void dance_rsft_reset(qk_tap_dance_state_t *state, void *user_data) {
+void dance_rsft_reset(tap_dance_state_t *state, void *user_data) {
   if (dance_rsft_unregister_pending) {
     dance_rsft_unregister_pending = false;
     unregister_mods(MOD_BIT(KC_RSFT));
   }
 }
 
-qk_tap_dance_action_t tap_dance_actions[] = {
+tap_dance_action_t tap_dance_actions[] = {
   [TAP_DANCE_LSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lsft_finished, dance_lsft_reset),
   [TAP_DANCE_RSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_rsft_finished, dance_rsft_reset),
 };
