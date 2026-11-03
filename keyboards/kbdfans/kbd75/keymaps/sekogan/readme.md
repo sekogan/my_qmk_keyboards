@@ -29,5 +29,5 @@ verified by compiling.
 ## Build and flash
 
 See the [root README](../../../../../README.md): `scripts/qmk compile -kb kbdfans/kbd75/rev2 -km sekogan`,
-then put the board into the bootloader and flash `../qmk-data/qmk-artifacts/<git describe>/kbdfans_kbd75_rev2_sekogan.hex` (from `scripts/build_all.sh --archive`) with
+then put the board into the bootloader and flash `../firmware/qmk-<QMK version>-<VERSION>/kbd75v2.hex` (from `scripts/build_all.sh --archive`) with
 `dfu-programmer` (erase, flash, launch).

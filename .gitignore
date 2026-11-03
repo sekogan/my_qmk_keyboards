@@ -15,8 +15,7 @@ compile_commands.json
 .clangd/
 .cache/
 
-# Local build/verification outputs
-build-results.txt
+# Local verification outputs (builds go to ../tmp/; *.hex above stays as a safety net)
 flags-*/
 *-dump.hex
 

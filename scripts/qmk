@@ -3,7 +3,7 @@
 # repo mounted as the External Userspace and its qmk_firmware submodule as QMK_HOME.
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
-QMK_DATA=$(cd "$root/.." && pwd)/qmk-data      # never a home-directory path
+PROJECT_ROOT=$(cd "$root/.." && pwd)   # holds firmware/ toolchain/ backups/ tmp/; never a home directory
 . "$root/scripts/toolchain.env"
 id=$(podman image inspect --format '{{.Id}}' "$QMK_IMAGE" 2>/dev/null || true)
 if [ "sha256:${id#sha256:}" != "$QMK_IMAGE_ID" ]; then
@@ -14,8 +14,16 @@ fi
 # PYTHONPATH: empty appdirs stub. QMK <= 0.26 lists appdirs in requirements.txt and
 # the CLI refuses to start without it, although no QMK code imports it. Remove at
 # QMK >= 0.27 (plan step 3.2).
+# Build output goes to ../tmp/qmk-build (mounted as /qmk_build), never into the repo:
+# BUILD_DIR (env) is read by the qmk CLI, and as a make command-line variable (via
+# MAKEFLAGS) it overrides paths.mk's `BUILD_DIR := .build`. COPY=true disables QMK's
+# copies of the finished .hex into the userspace root and qmk_firmware/ (COPY is only
+# used for those copies).
+mkdir -p "$PROJECT_ROOT/tmp/qmk-build"
 exec podman run --rm --pull=never \
   -v "$root":/qmk_userspace:Z -w /qmk_userspace \
+  -v "$PROJECT_ROOT/tmp/qmk-build":/qmk_build:Z \
   -e QMK_HOME=/qmk_userspace/qmk_firmware -e QMK_USERSPACE=/qmk_userspace \
-  -e PYTHONPATH=/qmk_userspace/scripts/pyshim \
+  -e BUILD_DIR=/qmk_build -e MAKEFLAGS="BUILD_DIR=/qmk_build COPY=true" \
+  -e PYTHONPATH=/qmk_userspace/scripts/pyshim -e PYTHONDONTWRITEBYTECODE=1 \
   "$QMK_IMAGE" qmk "$@"

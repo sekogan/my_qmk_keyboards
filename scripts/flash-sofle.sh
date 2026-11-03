@@ -1,34 +1,43 @@
 #!/usr/bin/env bash
 # Flash one Sofle half (Pro Micro, Caterina bootloader) from the host with avrdude.
 #
-#   scripts/flash-sofle.sh                 the archived build of the current commit:
-#                                          ../qmk-data/qmk-artifacts/<git describe>/sofle_rev1_sekogan.hex
-#                                          (create it with: scripts/build_all.sh --archive)
-#   scripts/flash-sofle.sh <dir|hex>       an archive/baseline directory, or a .hex inside one
+#   scripts/flash-sofle.sh             the archived build of this commit's VERSION:
+#                                      ../firmware/qmk-<QMK version>-<VERSION>/sofle.hex
+#                                      (create it with: scripts/build_all.sh --archive)
+#   scripts/flash-sofle.sh <dir|hex>   a firmware directory such as ../firmware/qmk-0.26.0-1.0.3,
+#                                      a bisect build in ../tmp/bisect/<commit>, or a sofle.hex in one
 #
-# Never flashes from qmk_firmware/.build (or the hex copies next to it), which any
-# concurrent build may delete or replace. The .hex must sit in a directory with a
+# Never flashes from QMK's build directory (../tmp/qmk-build), which any concurrent
+# build may delete or replace. The .hex must sit in a directory with a
 # SHA256SUMS file listing it; the hash is checked before and right before writing.
 # Start the script, then double-tap the reset button of the half to flash; it waits
 # for the bootloader's new /dev/ttyACM* (present for ~8 s). EEPROM is not touched.
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
-QMK_DATA=$(cd "$root/.." && pwd)/qmk-data
-name=sofle_rev1_sekogan.hex
+PROJECT_ROOT=$(cd "$root/.." && pwd)
+name=sofle.hex
 
 if [ $# -eq 0 ]; then
-  describe=$(git -C "$root" describe --always --dirty --tags)
-  case "$describe" in *-dirty) echo "working tree has uncommitted changes; pass an explicit archive path" >&2; exit 1;; esac
-  hex="$QMK_DATA/qmk-artifacts/$describe/$name"
-  [ -f "$hex" ] || { echo "no archived build for $describe: $hex" >&2; echo "run: scripts/build_all.sh --archive" >&2; exit 1; }
+  version=$(git -C "$root" show HEAD:VERSION 2>/dev/null | tr -d '[:space:]') || true
+  [ -n "$version" ] || { echo "no VERSION at HEAD; pass an explicit firmware directory" >&2; exit 1; }
+  qmkver=$(git -C "$root/qmk_firmware" describe --tags --exact-match 2>/dev/null) \
+    || { echo "qmk_firmware is not on a release tag; pass an explicit firmware directory" >&2; exit 1; }
+  if [ -n "$(git -C "$root" status --porcelain --untracked-files=no)" ]; then
+    echo "note: uncommitted changes are NOT in this firmware (it is the archived build of VERSION $version)" >&2
+  fi
+  d="$PROJECT_ROOT/firmware/qmk-$qmkver-$version"
+  [ -d "$d" ] || { echo "no archived build $d" >&2; echo "run: scripts/build_all.sh --archive" >&2; exit 1; }
+  hex="$d/$name"
 elif [ -d "$1" ]; then
-  hex="$1/$name"
+  hex="${1%/}/$name"
 else
   hex=$1
 fi
 [ -f "$hex" ] || { echo "no such file: $hex" >&2; exit 1; }
 hex=$(realpath "$hex"); dir=$(dirname "$hex"); base=$(basename "$hex")
 case "$hex" in
+  "$(realpath -m "$PROJECT_ROOT/tmp/qmk-build")"/*) echo "refusing to flash from QMK's build directory (mutable): $hex" >&2
+                           echo "use ../tmp/build (scripts/build_all.sh) or an archive (scripts/build_all.sh --archive)" >&2; exit 1;;
   "$(realpath "$root")"/*) echo "refusing to flash from inside the repo (mutable build output): $hex" >&2
                            echo "use an archive: scripts/build_all.sh --archive, then scripts/flash-sofle.sh" >&2; exit 1;;
   *_canary*) echo "refusing to flash a canary (non-LTO) build: $hex" >&2; exit 1;;
@@ -43,7 +52,7 @@ check() {
 check
 echo "hex:    $hex"
 echo "sha256: $want (matches SHA256SUMS)"
-if [ -f "$dir/BUILDINFO" ]; then sed 's/^/        /' "$dir/BUILDINFO"; else echo "        (no BUILDINFO: not a build_all.sh archive)"; fi
+if [ -f "$dir/README" ]; then grep -v 'cflags' "$dir/README" | sed 's/^/        /'; else echo "        (no README)"; fi
 
 list() { ls /dev/ttyACM* 2>/dev/null | sort || true; }
 before=$(list)
