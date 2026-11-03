@@ -9,34 +9,37 @@ Custom [QMK](https://qmk.fm) keymaps, organised as a QMK
 | [KBD75 v3.1](keyboards/kbdfans/kbd75hs/keymaps/sekogan/readme.md) | `kbdfans/kbd75hs` | `keyboards/kbdfans/kbd75hs/keymaps/sekogan/` |
 | [KBD75 v2](keyboards/kbdfans/kbd75/keymaps/sekogan/readme.md) | `kbdfans/kbd75/rev2` | `keyboards/kbdfans/kbd75/keymaps/sekogan/` |
 
-**Pinned versions**
+**Pinned versions** — the repo alone is enough to reproduce any build:
 
 - **Firmware version = `VERSION`** (one [SemVer](https://semver.org) version for all three
-  keyboards; see below).
+  keyboards; see below). History: [CHANGELOG.md](CHANGELOG.md).
 - **QMK version = the `qmk_firmware` git submodule** (currently 0.26.0). Bumping QMK
   is a commit that moves the submodule.
 - **Toolchain = `scripts/toolchain.env`**: the official `qmk_cli` container image,
-  pinned by image ID and run with rootless Podman. Nothing else (compiler, Python,
-  qmk CLI) needs to be installed on the host.
+  pinned by registry digest and image ID, run with rootless Podman. Nothing else
+  (compiler, Python, qmk CLI) needs to be installed on the host.
+
+All commands run from the repo root. Nothing outside the repo is used.
 
 ## Directory layout
 
-Everything lives in one project directory; nothing is kept in your home directory.
+```
+README.md CHANGELOG.md VERSION qmk.json Makefile requirements-dev.txt
+keyboards/             the keymaps
+docs/                  hardware docs (KBD75 v2)
+scripts/               build/flash/check scripts; toolchain.env = the toolchain pin
+qmk_firmware/          QMK, as a pinned git submodule
+build/                 git-ignored; everything in it is disposable (a cache)
+├── firmware/qmk-<QMK version>-<VERSION>/   kept builds: sofle.hex kbd75hs.hex kbd75v2.hex
+│                                           (read-only) + SHA256SUMS + README (origin)
+├── toolchain/         saved copy of the toolchain image (qmk-toolchain-*.oci.tar + .sha256)
+├── qmk/               QMK's build directory (.elf/.map/objects of the last builds)
+├── scratch/           check builds (scratch/check), bisect builds, readbacks, notes
+└── venv/              keymapviz venv
+```
 
-```
-<project>/
-├── my_qmk_keyboards/   this repo
-├── firmware/           every kept firmware build (not in git)
-│   └── qmk-<QMK version>-<firmware version>/   e.g. qmk-0.26.0-1.0.3/
-│       ├── sofle.hex  kbd75hs.hex  kbd75v2.hex  (read-only)
-│       ├── SHA256SUMS
-│       └── README     Status line (may be updated later) + origin: commit, tags, QMK
-│                      version, toolchain image ID, compiler, date
-├── toolchain/          qmk-toolchain-1.2.0-b7d7fa8f.oci.tar (+ .sha256): the saved Podman image
-├── backups/            repo bundles
-└── tmp/                disposable: check builds (tmp/build), bisect builds, flash readbacks,
-                        compile-flag snapshots
-```
+`make clean` removes `build/qmk` and `build/scratch`; the rest of `build/` can be deleted
+by hand at any time: archives are rebuilt from their tag, the image is loaded or pulled again.
 
 ## Firmware version
 
@@ -50,51 +53,28 @@ give byte-identical builds.
 | MINOR | something was added without changing existing behaviour |
 | PATCH | no intended behaviour change: refactor, QMK bump, toolchain change, bug fix |
 
-A commit that produces firmware to keep bumps `VERSION` in the same commit; a commit whose
-firmware is byte-identical to the current version keeps it. `scripts/build_all.sh --archive`
-saves the build as `../firmware/qmk-<QMK version>-<VERSION>/` (the version is everything after
-the last `-`). Running it again for the same version is a no-op if the build is identical, and
-is refused if it differs ("VERSION not bumped?"). Each directory's `README` has a `Status:`
-line (`untested`, `tested <date>: <what>`, `released`, ...) that you can edit later; the
-firmware files themselves are read-only and listed in `SHA256SUMS`.
+A commit that produces firmware to keep bumps `VERSION` and adds a [CHANGELOG.md](CHANGELOG.md)
+entry in the same commit; a commit whose firmware is byte-identical keeps the version.
+`scripts/build_all.sh --archive` saves the build as `build/firmware/qmk-<QMK version>-<VERSION>/`
+(the version is everything after the last `-`). Running it again for the same version is a
+no-op if the build is identical, and is refused if it differs ("VERSION not bumped?").
 
-Versions 1.0.0–1.0.3 were assigned retroactively (the repo got `VERSION` with 1.0.3):
-1.0.0 = the 2024-06-15 build that was on the Sofle, 1.0.1 = its gcc-15 rebuild,
-1.0.2 = end of the userspace refactor, 1.0.3 = QMK 0.26.0.
-
-Commands below run inside `my_qmk_keyboards/` unless noted.
+Versions 1.0.0–1.0.3 were assigned retroactively (`VERSION` was introduced at 1.0.3).
 
 ## Setup
 
 ```bash
-# in <project>/
 git clone --recurse-submodules https://github.com/sekogan/my_qmk_keyboards
+cd my_qmk_keyboards
 sudo dnf install podman avrdude dfu-programmer
+sudo cp qmk_firmware/util/udev/50-qmk.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules
 ```
 
-Load the pinned toolchain image from the saved archive (QMK's registries keep only a
-few tags, so the archive is the reliable copy; path, image ID and registry digest are
-in `scripts/toolchain.env`):
-
-```bash
-# in <project>/
-(cd toolchain && sha256sum -c qmk-toolchain-1.2.0-b7d7fa8f.oci.tar.sha256)
-podman load -i toolchain/qmk-toolchain-1.2.0-b7d7fa8f.oci.tar
-podman image inspect --format '{{.Id}}' localhost/qmk-toolchain:1.2.0-b7d7fa8f
-# -> 4f4c32f9c637dde3ab59c9f9068a1b3b2b098067e7677f8e7cab98d34cdde60b
-```
-
-If the archive is lost but the digest is still on the registry:
-`podman pull <QMK_IMAGE_SOURCE>` and `podman tag <QMK_IMAGE_SOURCE> <QMK_IMAGE>`
-(values from `scripts/toolchain.env`), then save a new archive with
-`podman save --format oci-archive`.
-
-udev rules, so avrdude / dfu-programmer can open the bootloaders without root:
-
-```bash
-sudo cp qmk_firmware/util/udev/50-qmk.rules /etc/udev/rules.d/
-sudo udevadm control --reload-rules
-```
+The toolchain image is fetched on first use by `scripts/qmk`: from podman's store if
+present, else from the saved archive `build/toolchain/*.oci.tar` (checksum verified), else
+pulled by the pinned digest (and then saved to `build/toolchain/`). The image ID is always
+verified. QMK's registries keep only a few tags, so keep a copy of `build/toolchain/` on
+your backup medium; to restore it, put it back into `build/toolchain/`.
 
 ## Build
 
@@ -102,29 +82,30 @@ sudo udevadm control --reload-rules
 scripts/qmk userspace-compile                     # all targets in qmk.json
 scripts/qmk compile -kb sofle/rev1 -km sekogan    # one target
 scripts/build_all.sh                              # all targets + size and sha256 (reproducible: SKIP_VERSION=yes)
+scripts/build_all.sh --archive                    # ... and keep it in build/firmware/
 ```
 
-`scripts/qmk` runs any `qmk` subcommand inside the pinned image, with this repo
-as the userspace and the submodule as QMK home. QMK's build directory is
-`../tmp/qmk-build/`; nothing is written into the repo. `scripts/build_all.sh` also
-copies the three `.hex` files (short names + `SHA256SUMS`) to `../tmp/build/`.
+`scripts/qmk` runs any `qmk` subcommand inside the pinned image (`scripts/qmk --exec <cmd>`
+runs other tools, e.g. `avr-nm`), with the repo as the userspace and the submodule as QMK
+home. QMK's build directory is `build/qmk/`; nothing else in the repo is written.
+`scripts/build_all.sh` also copies the three `.hex` files (short names + `SHA256SUMS`) to
+`build/scratch/check/`.
 
-`.elf`/`.map` files are not kept in `../firmware/` (only `qmk-0.25.8-1.0.0` has them,
-because that 2024 build cannot be reproduced with the pinned toolchain). Builds are
-reproducible, so to get them for a version, check out its commit and rebuild:
+`build/firmware/` keeps `.hex` files only. Builds are reproducible, so to get the
+`.elf`/`.map` of a version, check out its commit (in its `README`) and rebuild:
 
 ```bash
-# in my_qmk_keyboards/, with a clean tree; e.g. firmware 1.0.3 = tag qmk-0.26.0
-# (the exact commit of every version is in ../firmware/*/README)
+# clean tree; e.g. firmware 1.0.3 = tag qmk-0.26.0
 git switch --detach qmk-0.26.0 && git submodule update --init --recursive
-scripts/build_all.sh               # .elf/.map now in ../tmp/qmk-build/
-sha256sum ../tmp/build/sofle.hex ../firmware/qmk-0.26.0-1.0.3/sofle.hex   # must match
+scripts/build_all.sh               # .elf/.map now in build/qmk/
+sha256sum build/scratch/check/sofle.hex build/firmware/qmk-0.26.0-1.0.3/sofle.hex   # must match
 git switch qmk-modernization && git submodule update --init --recursive
 ```
 
-Commits older than the `VERSION` file (firmware 1.0.2 and 1.0.3) still have the old
-scripts: there the output is in `qmk_firmware/.build/` and `*.hex` copies in the
-repo root (delete them afterwards). 1.0.1 was built outside this repo layout (plan step 1.0b).
+Commits before the current layout (firmware 1.0.2, 1.0.3) still have older scripts, which
+put the output in `qmk_firmware/.build/` plus `*.hex` copies in the repo root (delete them
+afterwards). 1.0.0 and 1.0.1 were built outside this repo layout; 1.0.0 used the 2024 host
+toolchain (avr-gcc 14.1) and cannot be reproduced with the pinned image.
 
 Checks used when changing things:
 
@@ -137,21 +118,21 @@ Checks used when changing things:
 
 Flashing runs on the host, not in the container.
 
-- **Sofle** (Pro Micro, Caterina bootloader): flash **each half** from an archived build,
+- **Sofle** (Pro Micro, Caterina bootloader): flash **each half** from a kept build,
   never from QMK's build directory (any build may replace or delete files there):
   ```bash
-  scripts/build_all.sh --archive                  # -> ../firmware/qmk-<QMK version>-<VERSION>/
-  scripts/flash-sofle.sh                          # the archived build of this commit's VERSION
-  scripts/flash-sofle.sh ../firmware/qmk-0.26.0-1.0.3   # or any firmware dir, ../tmp/build, ../tmp/bisect/<commit>
+  scripts/build_all.sh --archive                         # -> build/firmware/qmk-<QMK version>-<VERSION>/
+  scripts/flash-sofle.sh                                 # the kept build of this commit's VERSION
+  scripts/flash-sofle.sh build/firmware/qmk-0.26.0-1.0.3 # or any firmware dir, build/scratch/check, build/scratch/bisect/<commit>
   ```
-  The script prints the hex's sha256 and the commit it was built from, refuses a file
-  whose hash does not match its `SHA256SUMS`, then waits for you to double-tap the
-  reset button of the half and runs avrdude.
+  The script prints the hex's sha256 and origin, refuses a file whose hash does not match
+  its `SHA256SUMS`, then waits for you to double-tap the reset button of the half and runs
+  avrdude.
 - **KBD75** (atmel-dfu): put the board into the bootloader (Caps Lock + Esc + F12),
   then
   ```bash
   sudo dfu-programmer atmega32u4 erase
-  sudo dfu-programmer atmega32u4 flash ../firmware/qmk-<QMK version>-<VERSION>/kbd75hs.hex   # or kbd75v2.hex
+  sudo dfu-programmer atmega32u4 flash build/firmware/qmk-<QMK version>-<VERSION>/kbd75hs.hex   # or kbd75v2.hex
   sudo dfu-programmer atmega32u4 launch
   ```
 
@@ -161,6 +142,5 @@ The ASCII layer diagrams in the Sofle `keymap.c` are generated by
 [keymapviz](https://github.com/yskoht/keymapviz), pinned in `requirements-dev.txt`:
 
 ```bash
-python3 -m venv .venv && PIP_NO_CACHE_DIR=1 .venv/bin/pip install -r requirements-dev.txt
-make keymapviz
+make keymapviz     # creates build/venv on first use (make venv)
 ```

@@ -1,29 +1,65 @@
 #!/usr/bin/env bash
-# Runs `qmk ...` inside the pinned toolchain image (rootless Podman), with this
-# repo mounted as the External Userspace and its qmk_firmware submodule as QMK_HOME.
+# Runs `qmk ...` inside the pinned toolchain image (rootless Podman), with this repo
+# mounted as the External Userspace and its qmk_firmware submodule as QMK_HOME.
+#   scripts/qmk <qmk subcommand> ...      e.g. scripts/qmk compile -kb sofle/rev1 -km sekogan
+#   scripts/qmk --exec <command> ...      any other tool in the image (avr-nm, avr-size, ...),
+#                                         working directory = repo root
+# Everything is relative to the repo root; nothing outside the repo is mounted or written.
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
-PROJECT_ROOT=$(cd "$root/.." && pwd)   # holds firmware/ toolchain/ backups/ tmp/; never a home directory
 . "$root/scripts/toolchain.env"
-id=$(podman image inspect --format '{{.Id}}' "$QMK_IMAGE" 2>/dev/null || true)
-if [ "sha256:${id#sha256:}" != "$QMK_IMAGE_ID" ]; then
-  echo "Pinned toolchain image missing or wrong (got '$id')." >&2
-  echo "Restore: podman load -i $QMK_IMAGE_ARCHIVE   (or: podman pull $QMK_IMAGE_SOURCE && podman tag $QMK_IMAGE_SOURCE $QMK_IMAGE)" >&2
-  exit 1
+
+image_id() { podman image inspect --format '{{.Id}}' "$QMK_IMAGE" 2>/dev/null | sed 's/^sha256://' || true; }
+want=${QMK_IMAGE_ID#sha256:}
+if [ "$(image_id)" != "$want" ]; then
+  # 1) the saved archive in build/toolchain/ (a cache), checksum first
+  if [ -f "$QMK_IMAGE_ARCHIVE" ] && [ -f "$QMK_IMAGE_ARCHIVE.sha256" ]; then
+    echo "Loading the pinned toolchain image from $QMK_IMAGE_ARCHIVE ..." >&2
+    if (cd "$(dirname "$QMK_IMAGE_ARCHIVE")" && sha256sum -c --quiet "$(basename "$QMK_IMAGE_ARCHIVE").sha256"); then
+      podman load -q -i "$QMK_IMAGE_ARCHIVE" >&2 || true
+    else
+      echo "  archive checksum mismatch; ignoring it" >&2
+    fi
+  fi
+  # 2) the registry, by the pinned digest
+  if [ "$(image_id)" != "$want" ]; then
+    echo "Pulling the pinned toolchain image $QMK_IMAGE_SOURCE ..." >&2
+    if podman pull -q "$QMK_IMAGE_SOURCE" >&2 && podman tag "$QMK_IMAGE_SOURCE" "$QMK_IMAGE"; then
+      if [ "$(image_id)" = "$want" ] && [ ! -f "$QMK_IMAGE_ARCHIVE" ]; then
+        echo "Caching it as $QMK_IMAGE_ARCHIVE ..." >&2
+        mkdir -p "$(dirname "$QMK_IMAGE_ARCHIVE")"
+        podman save -q --format oci-archive -o "$QMK_IMAGE_ARCHIVE.part" "$QMK_IMAGE" \
+          && mv "$QMK_IMAGE_ARCHIVE.part" "$QMK_IMAGE_ARCHIVE" \
+          && (cd "$(dirname "$QMK_IMAGE_ARCHIVE")" && sha256sum "$(basename "$QMK_IMAGE_ARCHIVE")" > "$(basename "$QMK_IMAGE_ARCHIVE").sha256") \
+          || { rm -f "$QMK_IMAGE_ARCHIVE.part"; echo "  (could not cache the image; continuing)" >&2; }
+      fi
+    fi
+  fi
+  if [ "$(image_id)" != "$want" ]; then
+    echo "The pinned toolchain image is not available (want image ID $QMK_IMAGE_ID, got '$(image_id)')." >&2
+    echo "Neither a valid $QMK_IMAGE_ARCHIVE nor the registry digest $QMK_IMAGE_SOURCE gave it." >&2
+    exit 1
+  fi
 fi
-# PYTHONPATH: empty appdirs stub. QMK <= 0.26 lists appdirs in requirements.txt and
-# the CLI refuses to start without it, although no QMK code imports it. Remove at
-# QMK >= 0.27 (plan step 3.2).
-# Build output goes to ../tmp/qmk-build (mounted as /qmk_build), never into the repo:
-# BUILD_DIR (env) is read by the qmk CLI, and as a make command-line variable (via
-# MAKEFLAGS) it overrides paths.mk's `BUILD_DIR := .build`. COPY=true disables QMK's
-# copies of the finished .hex into the userspace root and qmk_firmware/ (COPY is only
-# used for those copies).
-mkdir -p "$PROJECT_ROOT/tmp/qmk-build"
-exec podman run --rm --pull=never \
-  -v "$root":/qmk_userspace:Z -w /qmk_userspace \
-  -v "$PROJECT_ROOT/tmp/qmk-build":/qmk_build:Z \
+
+# Mounts: only the repo root, as /qmk_userspace. `--security-opt label=disable` instead of
+# :Z: with :Z every `--rm` container gets a new private SELinux label, so Podman relabels
+# the whole repo (qmk_firmware ~30k files, build/qmk, build/venv, the 0.9 GB archive in
+# build/toolchain) on every run. With label separation disabled nothing is relabelled;
+# the container is still rootless and user-namespaced, runs the pinned official image,
+# and sees only the repo.
+# QMK's build directory is build/qmk: BUILD_DIR (env) for the qmk CLI and, via
+# MAKEFLAGS, as a make command-line variable (paths.mk has `BUILD_DIR := .build`).
+# COPY=true stops QMK copying the finished .hex into the repo root and qmk_firmware/
+# (COPY is used only for those copies). PYTHONDONTWRITEBYTECODE keeps __pycache__ out
+# of the submodule. PYTHONPATH: empty appdirs stub; QMK <= 0.26 lists appdirs in
+# requirements.txt and the CLI refuses to start without it (remove at 0.27, step 3.2).
+mkdir -p "$root/build/qmk"
+args=(qmk "$@")
+if [ "${1:-}" = "--exec" ]; then shift; args=("$@"); fi
+exec podman run --rm --pull=never --security-opt label=disable \
+  -v "$root":/qmk_userspace -w /qmk_userspace \
   -e QMK_HOME=/qmk_userspace/qmk_firmware -e QMK_USERSPACE=/qmk_userspace \
-  -e BUILD_DIR=/qmk_build -e MAKEFLAGS="BUILD_DIR=/qmk_build COPY=true" \
+  -e BUILD_DIR=/qmk_userspace/build/qmk -e MAKEFLAGS="BUILD_DIR=/qmk_userspace/build/qmk COPY=true" \
   -e PYTHONPATH=/qmk_userspace/scripts/pyshim -e PYTHONDONTWRITEBYTECODE=1 \
-  "$QMK_IMAGE" qmk "$@"
+  "$QMK_IMAGE" "${args[@]}"
