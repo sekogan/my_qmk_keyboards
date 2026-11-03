@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Runs `qmk ...` inside the pinned toolchain image (rootless Podman), with this
+# repo mounted as the External Userspace and its qmk_firmware submodule as QMK_HOME.
+set -euo pipefail
+root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
+QMK_DATA=$(cd "$root/.." && pwd)/qmk-data      # never a home-directory path
+. "$root/scripts/toolchain.env"
+id=$(podman image inspect --format '{{.Id}}' "$QMK_IMAGE" 2>/dev/null || true)
+if [ "sha256:${id#sha256:}" != "$QMK_IMAGE_ID" ]; then
+  echo "Pinned toolchain image missing or wrong (got '$id')." >&2
+  echo "Restore: podman load -i $QMK_IMAGE_ARCHIVE   (or: podman pull $QMK_IMAGE_SOURCE && podman tag $QMK_IMAGE_SOURCE $QMK_IMAGE)" >&2
+  exit 1
+fi
+# PYTHONPATH: empty appdirs stub. QMK <= 0.26 lists appdirs in requirements.txt and
+# the CLI refuses to start without it, although no QMK code imports it. Remove at
+# QMK >= 0.27 (plan step 3.2).
+exec podman run --rm --pull=never \
+  -v "$root":/qmk_userspace:Z -w /qmk_userspace \
+  -e QMK_HOME=/qmk_userspace/qmk_firmware -e QMK_USERSPACE=/qmk_userspace \
+  -e PYTHONPATH=/qmk_userspace/scripts/pyshim \
+  "$QMK_IMAGE" qmk "$@"
