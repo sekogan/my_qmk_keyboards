@@ -1,3 +1,6 @@
+// Copyright 2022-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 // Temporarily activates the first default layer (assuming it's Qwerty) saving currently selected
 // default layer to the stash.
 

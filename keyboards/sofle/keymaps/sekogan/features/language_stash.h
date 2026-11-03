@@ -1,3 +1,6 @@
+// Copyright 2021-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 // Temporarily activates the primary language saving currently selected language to
 // the stash.
 // Depends on "language" feature.

@@ -1,3 +1,6 @@
+// Copyright 2022-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 // Repeats a keycode given number of times on each key press, creating
 // "fast" version of that keycode.
 

@@ -1,3 +1,6 @@
+// Copyright 2022-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 // Temporarily cancels "instant qwerty" feature if shortcut mods are pressed.
 // Depends on "instant qwerty" feature.
 

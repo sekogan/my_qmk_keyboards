@@ -1,3 +1,6 @@
+// Copyright 2022-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #include "fast_keycode.h"
 
 bool process_fast_keycodes(uint16_t keycode, keyrecord_t* record, const struct fast_keycode* begin, const struct fast_keycode* end) {

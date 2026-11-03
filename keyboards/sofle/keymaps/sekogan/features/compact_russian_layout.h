@@ -1,3 +1,6 @@
+// Copyright 2022-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 // Makes Russian layout more compact by placing rarely used letters ("yo" and "hard sign")
 // in a separate layer activated by Grave Alt. Letters are located under more frequently
 // used similar letters: "e" and "soft sign" respectively.

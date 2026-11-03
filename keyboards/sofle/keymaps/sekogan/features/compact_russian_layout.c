@@ -1,3 +1,6 @@
+// Copyright 2022-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #include "compact_russian_layout.h"
 
 static bool    _feature_enabled     = false;

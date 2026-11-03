@@ -1,3 +1,6 @@
+// Copyright 2021-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 // OS independent (for user) non-modal input language switcher.
 // Depends on "OS" feature.
 

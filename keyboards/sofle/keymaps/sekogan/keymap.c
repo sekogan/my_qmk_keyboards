@@ -1,3 +1,6 @@
+// Copyright 2021-2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #include QMK_KEYBOARD_H
 #include "instant_qwerty_reasons.h"
 #include "layers.h"
