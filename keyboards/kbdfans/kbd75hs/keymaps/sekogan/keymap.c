@@ -1,4 +1,5 @@
 /* Copyright 2021 DZTECH <moyi4681@Live.cn>
+ * Copyright 2021-2026 Sergey Kogan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,42 +78,42 @@ bool led_update_user(led_t led_state) {
     return true; // keep the keyboard's Caps Lock indicator working
 }
 
-bool dance_lsft_unregister_pending = false;
-bool dance_rsft_unregister_pending = false;
+static bool dance_lsft_unregister_pending = false;
+static bool dance_rsft_unregister_pending = false;
 
-void dance_lsft_finished(tap_dance_state_t *state, void *user_data) {
+static void dance_lsft_finished(tap_dance_state_t *state, void *user_data) {
     if (state->pressed) {
-        register_mods(MOD_LSFT);
+        register_mods(MOD_BIT_LSHIFT);
         dance_lsft_unregister_pending = true;
     } else if (state->count == 1) {
-        register_mods(MOD_LALT | MOD_LSFT);
+        register_mods(MOD_BIT_LALT | MOD_BIT_LSHIFT);
         tap_code(KC_0);
-        unregister_mods(MOD_LALT | MOD_LSFT);
+        unregister_mods(MOD_BIT_LALT | MOD_BIT_LSHIFT);
     }
 }
 
-void dance_lsft_reset(tap_dance_state_t *state, void *user_data) {
+static void dance_lsft_reset(tap_dance_state_t *state, void *user_data) {
     if (dance_lsft_unregister_pending) {
         dance_lsft_unregister_pending = false;
-        unregister_mods(MOD_LSFT);
+        unregister_mods(MOD_BIT_LSHIFT);
     }
 }
 
-void dance_rsft_finished(tap_dance_state_t *state, void *user_data) {
+static void dance_rsft_finished(tap_dance_state_t *state, void *user_data) {
     if (state->pressed) {
-        register_mods(MOD_BIT(KC_RSFT));
+        register_mods(MOD_BIT_RSHIFT);
         dance_rsft_unregister_pending = true;
     } else if (state->count == 1) {
-        register_mods(MOD_LALT | MOD_LSFT);
+        register_mods(MOD_BIT_LALT | MOD_BIT_LSHIFT);
         tap_code(KC_7);
-        unregister_mods(MOD_LALT | MOD_LSFT);
+        unregister_mods(MOD_BIT_LALT | MOD_BIT_LSHIFT);
     }
 }
 
-void dance_rsft_reset(tap_dance_state_t *state, void *user_data) {
+static void dance_rsft_reset(tap_dance_state_t *state, void *user_data) {
     if (dance_rsft_unregister_pending) {
         dance_rsft_unregister_pending = false;
-        unregister_mods(MOD_BIT(KC_RSFT));
+        unregister_mods(MOD_BIT_RSHIFT);
     }
 }
 
@@ -121,8 +122,7 @@ tap_dance_action_t tap_dance_actions[] = {
     [TAP_DANCE_RSFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_rsft_finished, dance_rsft_reset),
 };
 
-#define MOD_MASK_RALT MOD_BIT(KC_RALT)
-const key_override_t russian_e_override         = ko_make_basic(MOD_MASK_RALT, KC_T, KC_GRV);
-const key_override_t russian_hard_sign_override = ko_make_basic(MOD_MASK_RALT, KC_M, KC_RBRC);
+const key_override_t russian_e_override         = ko_make_basic(MOD_BIT_RALT, KC_T, KC_GRV);
+const key_override_t russian_hard_sign_override = ko_make_basic(MOD_BIT_RALT, KC_M, KC_RBRC);
 
 const key_override_t **key_overrides = (const key_override_t *[]){&russian_e_override, &russian_hard_sign_override, NULL};
