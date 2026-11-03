@@ -192,7 +192,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_editing_history_shortcuts(keycode, record)) return false;
     if (!process_text_deleting_macros(keycode, record, SEK_WDEL, SEK_WBSPC)) return false;
     if (keycode != SEK_LOWER && keycode != SEK_RAISE)
-        if (!process_caps_word(keycode, record)) return false;
+        if (!process_caps_word_both_shifts(keycode, record)) return false;
     if (!process_select_word(keycode, record, SEK_WSEL)) return false;
     if (!process_compact_russian_layout(keycode, record)) return false;
     if (!process_language(keycode, record)) return false;

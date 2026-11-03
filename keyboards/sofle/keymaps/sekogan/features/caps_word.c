@@ -18,7 +18,7 @@
 
 #include "caps_word.h"
 
-bool process_caps_word(uint16_t keycode, keyrecord_t* record) {
+bool process_caps_word_both_shifts(uint16_t keycode, keyrecord_t* record) {
     static bool caps_word_enabled = false;
     static bool shifted = false;
 #ifndef NO_ACTION_ONESHOT
