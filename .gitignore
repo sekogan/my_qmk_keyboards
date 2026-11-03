@@ -1,1 +1,24 @@
-/.*/
+# Junk files
+*.bak
+*.swp
+*~
+.DS_Store
+._*
+
+# Firmware files
+*.hex
+*.bin
+*.uf2
+
+# clangd
+compile_commands.json
+.clangd/
+.cache/
+
+# Local build/verification outputs
+build-results.txt
+flags-*/
+*-dump.hex
+
+# Host venv for keymapviz (requirements-dev.txt)
+.venv/
