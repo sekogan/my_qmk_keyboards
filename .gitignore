@@ -15,9 +15,6 @@ compile_commands.json
 .clangd/
 .cache/
 
-# Local verification outputs (builds go to ../tmp/; *.hex above stays as a safety net)
-flags-*/
-*-dump.hex
-
-# Host venv for keymapviz (requirements-dev.txt)
-.venv/
+# Everything generated (QMK build dir, firmware archives, toolchain cache, scratch,
+# keymapviz venv) lives in build/ and is disposable
+/build/

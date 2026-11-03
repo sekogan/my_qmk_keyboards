@@ -2,19 +2,19 @@
 # Flash one Sofle half (Pro Micro, Caterina bootloader) from the host with avrdude.
 #
 #   scripts/flash-sofle.sh             the archived build of this commit's VERSION:
-#                                      ../firmware/qmk-<QMK version>-<VERSION>/sofle.hex
+#                                      build/firmware/qmk-<QMK version>-<VERSION>/sofle.hex
 #                                      (create it with: scripts/build_all.sh --archive)
-#   scripts/flash-sofle.sh <dir|hex>   a firmware directory such as ../firmware/qmk-0.26.0-1.0.3,
-#                                      a bisect build in ../tmp/bisect/<commit>, or a sofle.hex in one
+#   scripts/flash-sofle.sh <dir|hex>   a firmware directory such as build/firmware/qmk-0.26.0-1.0.3,
+#                                      the last check build build/scratch/check, a bisect build
+#                                      build/scratch/bisect/<commit>, or a sofle.hex in one of them
 #
-# Never flashes from QMK's build directory (../tmp/qmk-build), which any concurrent
-# build may delete or replace. The .hex must sit in a directory with a
-# SHA256SUMS file listing it; the hash is checked before and right before writing.
-# Start the script, then double-tap the reset button of the half to flash; it waits
-# for the bootloader's new /dev/ttyACM* (present for ~8 s). EEPROM is not touched.
+# Never flashes from QMK's build directory (build/qmk), which any concurrent build may
+# delete or replace. The .hex must sit in a directory with a SHA256SUMS file listing it;
+# the hash is checked before and right before writing. Start the script, then double-tap
+# the reset button of the half to flash; it waits for the bootloader's new /dev/ttyACM*
+# (present for ~8 s). EEPROM is not touched.
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
-PROJECT_ROOT=$(cd "$root/.." && pwd)
 name=sofle.hex
 
 if [ $# -eq 0 ]; then
@@ -25,7 +25,7 @@ if [ $# -eq 0 ]; then
   if [ -n "$(git -C "$root" status --porcelain --untracked-files=no)" ]; then
     echo "note: uncommitted changes are NOT in this firmware (it is the archived build of VERSION $version)" >&2
   fi
-  d="$PROJECT_ROOT/firmware/qmk-$qmkver-$version"
+  d="$root/build/firmware/qmk-$qmkver-$version"
   [ -d "$d" ] || { echo "no archived build $d" >&2; echo "run: scripts/build_all.sh --archive" >&2; exit 1; }
   hex="$d/$name"
 elif [ -d "$1" ]; then
@@ -35,12 +35,13 @@ else
 fi
 [ -f "$hex" ] || { echo "no such file: $hex" >&2; exit 1; }
 hex=$(realpath "$hex"); dir=$(dirname "$hex"); base=$(basename "$hex")
+r=$(realpath "$root")
 case "$hex" in
-  "$(realpath -m "$PROJECT_ROOT/tmp/qmk-build")"/*) echo "refusing to flash from QMK's build directory (mutable): $hex" >&2
-                           echo "use ../tmp/build (scripts/build_all.sh) or an archive (scripts/build_all.sh --archive)" >&2; exit 1;;
-  "$(realpath "$root")"/*) echo "refusing to flash from inside the repo (mutable build output): $hex" >&2
-                           echo "use an archive: scripts/build_all.sh --archive, then scripts/flash-sofle.sh" >&2; exit 1;;
   *_canary*) echo "refusing to flash a canary (non-LTO) build: $hex" >&2; exit 1;;
+  "$r"/build/firmware/*|"$r"/build/scratch/*) ;;            # archives and copies with SHA256SUMS
+  "$r"/build/qmk/*) echo "refusing to flash from QMK's build directory (mutable): $hex" >&2
+                    echo "use build/scratch/check (scripts/build_all.sh) or an archive (scripts/build_all.sh --archive)" >&2; exit 1;;
+  "$r"/*) echo "refusing to flash from inside the repo outside build/firmware and build/scratch: $hex" >&2; exit 1;;
 esac
 [ -f "$dir/SHA256SUMS" ] || { echo "no SHA256SUMS next to $hex" >&2; exit 1; }
 want=$(awk -v f="$base" '$2 == f || $2 == "*" f {print $1}' "$dir/SHA256SUMS")
