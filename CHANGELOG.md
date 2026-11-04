@@ -5,6 +5,14 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.9 — QMK 0.32.0
+
+- Source: tag `qmk-0.32.0`.
+- Sofle: `09eeba1a03aa7b442149a6415a1b2edd25b09392af44a2ae48d51eed8ec40c47`
+- Bump QMK 0.31.0 → 0.32.0 (upstream: deprecated GPIO defines removed, core split
+  code uses `is_keyboard_left()`, stricter lint). No keymap changes; no intended behaviour
+  change.
+
 ## 1.0.8 — QMK 0.31.0
 
 - Source: tag `qmk-0.31.0`.
