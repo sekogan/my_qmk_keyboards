@@ -52,8 +52,7 @@ fi
 # MAKEFLAGS, as a make command-line variable (paths.mk has `BUILD_DIR := .build`).
 # COPY=true stops QMK copying the finished .hex into the repo root and qmk_firmware/
 # (COPY is used only for those copies). PYTHONDONTWRITEBYTECODE keeps __pycache__ out
-# of the submodule. PYTHONPATH: empty appdirs stub; QMK <= 0.26 lists appdirs in
-# requirements.txt and the CLI refuses to start without it (remove at 0.27, step 3.2).
+# of the submodule.
 mkdir -p "$root/build/qmk"
 args=(qmk "$@")
 if [ "${1:-}" = "--exec" ]; then shift; args=("$@"); fi
@@ -61,5 +60,5 @@ exec podman run --rm --pull=never --security-opt label=disable \
   -v "$root":/qmk_userspace -w /qmk_userspace \
   -e QMK_HOME=/qmk_userspace/qmk_firmware -e QMK_USERSPACE=/qmk_userspace \
   -e BUILD_DIR=/qmk_userspace/build/qmk -e MAKEFLAGS="BUILD_DIR=/qmk_userspace/build/qmk COPY=true" \
-  -e PYTHONPATH=/qmk_userspace/scripts/pyshim -e PYTHONDONTWRITEBYTECODE=1 \
+  -e PYTHONDONTWRITEBYTECODE=1 \
   "$QMK_IMAGE" "${args[@]}"
