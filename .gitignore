@@ -16,7 +16,8 @@ compile_commands.json
 .cache/
 
 # Everything generated (QMK build dir, firmware releases, toolchain cache, scratch,
-# keymapviz venv) lives in build/ and is disposable
+# keymapviz venv) lives in build/ and is disposable; build/readback/ (flash dumps read
+# from the keyboard, not recreatable) also lives there but must be kept
 /build/
 
 # The upgrade plan is a working document, not versioned

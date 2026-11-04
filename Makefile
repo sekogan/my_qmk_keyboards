@@ -19,7 +19,7 @@ QMK_TARGETS = $(shell python3 -I -c 'import json, sys; print(" ".join(kb + ":" +
 FW ?=
 
 # keymapviz only rewrites the ASCII-art comments in keymap.c, so it runs on the
-# host from a venv in build/venv (`make venv` creates it; build/ is disposable).
+# host from a venv in build/venv (`make venv` creates it; disposable).
 VENV := $(QMK_USERSPACE)/build/venv
 KEYMAPVIZ ?= $(VENV)/bin/keymapviz
 KM_SOFLE := $(QMK_USERSPACE)/keyboards/sofle/keymaps/sekogan
@@ -52,7 +52,7 @@ help:
 	echo 'make check          hook canary (scripts/canary.sh) + qmk lint for every target in qmk.json'
 	echo 'make keymapviz      regenerate the layer diagrams in the Sofle keymap.c'
 	echo 'make venv           create the keymapviz venv in build/venv'
-	echo 'make clean          remove build/qmk and build/scratch'
+	echo 'make clean          remove build/qmk and build/scratch (never build/readback)'
 	echo 'Other qmk commands: scripts/qmk <subcommand> ... (e.g. scripts/qmk compile -kb sofle/rev1 -km sekogan)'
 
 # qmk_firmware is the pinned submodule; the build/flash/check scripts need it.
@@ -67,7 +67,9 @@ keymapviz:
 venv:
 	python3 -m venv $(VENV) && PIP_NO_CACHE_DIR=1 $(VENV)/bin/pip install -q -r $(QMK_USERSPACE)/requirements-dev.txt
 
-# Convenience only: removes QMK's build directory and scratch files. Everything under
-# build/ (firmware releases, toolchain cache, venv too) is disposable and can be deleted.
+# Convenience only: removes QMK's build directory and scratch files. Everything else under
+# build/ (firmware releases, toolchain cache, venv) is disposable and can be deleted by hand,
+# except build/readback/ (flash dumps read from the keyboard; cannot be recreated), which
+# make clean never touches.
 clean:
 	rm -rf $(QMK_USERSPACE)/build/qmk $(QMK_USERSPACE)/build/scratch

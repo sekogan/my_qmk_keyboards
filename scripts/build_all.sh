@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # SV-build (plan §6): build every target in the pinned image and print size + sha256.
-# QMK's build directory is build/qmk (see scripts/qmk). Everything under build/ is disposable.
+# QMK's build directory is build/qmk (see scripts/qmk). Everything under build/ is disposable
+# except build/readback/ (flash dumps read from the keyboard).
 #   scripts/build_all.sh            build all three targets; an unversioned copy (short names +
 #                                   SHA256SUMS + README) replaces build/scratch/check/
 #   scripts/build_all.sh --release  also make a release: build/firmware/qmk-<QMK version>-<VERSION>/
