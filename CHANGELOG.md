@@ -5,6 +5,14 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.11 — QMK 0.34.0
+
+- Source: tag `qmk-0.34.0`.
+- Sofle: `3c281b4097f833f2f79aa2256cad35e468120951fcaaf50e925df33ef2502d81`
+- Bump QMK 0.33.0 → 0.34.0 (upstream: the EXTRAKEY System Control HID range is
+  restricted to 0x81–0x8F, so the USB descriptor changes: re-plug the keyboard once on
+  each host). No keymap changes; no intended behaviour change.
+
 ## 1.0.10 — QMK 0.33.0
 
 - Source: tag `qmk-0.33.0`.
