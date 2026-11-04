@@ -139,7 +139,7 @@ Flashing runs on the host, not in the container.
   ```bash
   make release                                 # -> build/firmware/qmk-<QMK version>-<VERSION>/
   make flash                                   # the release of this commit's VERSION (scripts/flash-sofle.sh)
-  make flash FW=build/firmware/qmk-0.26.0-1.0.3  # or any firmware dir, build/scratch/check, build/scratch/bisect/<commit>
+  make flash FW=build/firmware/qmk-0.34.7-1.0.12  # or any firmware dir, build/scratch/check, build/scratch/bisect/<commit>
   ```
   The script prints the hex's sha256 and origin, refuses a file whose hash does not match
   its `SHA256SUMS`, then waits for you to double-tap the reset button of the half and runs
