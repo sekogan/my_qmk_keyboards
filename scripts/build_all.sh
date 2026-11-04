@@ -3,16 +3,17 @@
 # QMK's build directory is build/qmk (see scripts/qmk). Everything under build/ is disposable.
 #   scripts/build_all.sh            build all three targets; an unversioned copy (short names +
 #                                   SHA256SUMS + README) replaces build/scratch/check/
-#   scripts/build_all.sh --archive  also keep the build as build/firmware/qmk-<QMK version>-<VERSION>/
+#   scripts/build_all.sh --release  also make a release: build/firmware/qmk-<QMK version>-<VERSION>/
 #                                   (sofle.hex kbd75hs.hex kbd75v2.hex read-only + SHA256SUMS + README
 #                                   with the origin). VERSION is the repo's SemVer firmware version (file
 #                                   VERSION at HEAD). Clean tree and a submodule on a QMK release tag only.
 #                                   If the directory exists, the new build must be identical (then: no-op);
 #                                   a different build under the same name is refused (VERSION not bumped?).
+#                                   A release is reproducible (rebuild its commit), so it may live in build/.
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 . "$root/scripts/toolchain.env"
-archive=no; [ "${1:-}" = "--archive" ] && archive=yes
+release=no; [ "${1:-}" = "--release" ] && release=yes
 
 targets=(sofle/rev1 kbdfans/kbd75hs kbdfans/kbd75/rev2)   # keep in sync with qmk.json
 declare -A short=([sofle_rev1_sekogan]=sofle [kbdfans_kbd75hs_sekogan]=kbd75hs [kbdfans_kbd75_rev2_sekogan]=kbd75v2)
@@ -22,14 +23,14 @@ mkdir -p "$scratch"
 log=$(mktemp -p "$scratch" .build.XXXXXX); stage=; trap 'rm -f "$log"; [ -z "$stage" ] || rm -rf "$stage"' EXIT
 describe=$(git -C "$root" describe --always --dirty --tags)
 
-if [ $archive = yes ]; then
-  case "$describe" in *-dirty) echo "--archive refused: uncommitted changes ($describe)" >&2; exit 1;; esac
+if [ $release = yes ]; then
+  case "$describe" in *-dirty) echo "--release refused: uncommitted changes ($describe)" >&2; exit 1;; esac
   qmkver=$(git -C "$root/qmk_firmware" describe --tags --exact-match 2>/dev/null) \
-    || { echo "--archive refused: qmk_firmware is not on a release tag" >&2; exit 1; }
+    || { echo "--release refused: qmk_firmware is not on a release tag" >&2; exit 1; }
   version=$(git -C "$root" show HEAD:VERSION 2>/dev/null | tr -d '[:space:]') || true
-  [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "--archive refused: no valid VERSION (MAJOR.MINOR.PATCH) at HEAD" >&2; exit 1; }
+  [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "--release refused: no valid VERSION (MAJOR.MINOR.PATCH) at HEAD" >&2; exit 1; }
   dest="$fw/qmk-$qmkver-$version"
-  echo "archive target: build/firmware/qmk-$qmkver-$version"
+  echo "release target: build/firmware/qmk-$qmkver-$version"
 fi
 
 names=()
@@ -51,7 +52,7 @@ while read -r t size; do
   printf '%-32s %6s B  %s\n' "$t" "$size" "$(sha256sum "$build/$t.hex" | cut -d' ' -f1)"
 done <<<"$sizes"
 
-if [ $archive = no ]; then
+if [ $release = no ]; then
   rm -rf "$scratch/check"; mkdir "$scratch/check"
   for t in "${names[@]}"; do cp "$build/$t.hex" "$scratch/check/${short[$t]}.hex"; done
   (cd "$scratch/check" && sha256sum *.hex > SHA256SUMS)
@@ -60,17 +61,17 @@ if [ $archive = no ]; then
   exit 0
 fi
 
-stage=$(mktemp -d -p "$scratch" .archive.XXXXXX)
+stage=$(mktemp -d -p "$scratch" .release.XXXXXX)
 files=()
 for t in "${names[@]}"; do cp "$build/$t.hex" "$stage/${short[$t]}.hex"; files+=("${short[$t]}.hex"); done
 if [ -e "$dest" ]; then
   # Same name = same firmware: every .hex must exist there and be identical.
   for f in "${files[@]}"; do
-    [ -f "$dest/$f" ] || { echo "--archive refused: $dest has no $f (VERSION not bumped?)" >&2; exit 1; }
-    cmp -s "$stage/$f" "$dest/$f" || { echo "--archive refused: $dest/$f differs from this build (VERSION not bumped?)" >&2; exit 1; }
+    [ -f "$dest/$f" ] || { echo "--release refused: $dest has no $f (VERSION not bumped?)" >&2; exit 1; }
+    cmp -s "$stage/$f" "$dest/$f" || { echo "--release refused: $dest/$f differs from this build (VERSION not bumped?)" >&2; exit 1; }
   done
   (cd "$dest" && sha256sum -c --quiet SHA256SUMS) || { echo "$dest: SHA256SUMS check failed" >&2; exit 1; }
-  echo "already archived, identical: build/firmware/qmk-$qmkver-$version"
+  echo "already released, identical: build/firmware/qmk-$qmkver-$version"
   exit 0
 fi
 tags=$(git -C "$root" tag --points-at HEAD | tr '\n' ' ' | sed 's/ $//')
@@ -86,4 +87,4 @@ tags=$(git -C "$root" tag --points-at HEAD | tr '\n' ' ' | sed 's/ $//')
 } > "$stage/README"
 (cd "$stage" && sha256sum $(printf '%s\n' "${files[@]}" | sort) > SHA256SUMS && chmod a-w ./* && chmod 755 .)
 mkdir -p "$fw"; mv "$stage" "$dest"; stage=
-echo "archived to build/firmware/qmk-$qmkver-$version"
+echo "released to build/firmware/qmk-$qmkver-$version"

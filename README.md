@@ -20,6 +20,8 @@ Custom [QMK](https://qmk.fm) keymaps, organised as a QMK
   (compiler, Python, qmk CLI) needs to be installed on the host.
 
 All commands run from the repo root. Nothing outside the repo is used.
+`make` is the front door (`make help` lists the targets); it calls the scripts in `scripts/`,
+which can also be run directly when you need extra arguments.
 
 ## Directory layout
 
@@ -30,7 +32,7 @@ docs/                  hardware docs (KBD75 v2)
 scripts/               build/flash/check scripts; toolchain.env = the toolchain pin
 qmk_firmware/          QMK, as a pinned git submodule
 build/                 git-ignored; everything in it is disposable (a cache)
-├── firmware/qmk-<QMK version>-<VERSION>/   kept builds: sofle.hex kbd75hs.hex kbd75v2.hex
+├── firmware/qmk-<QMK version>-<VERSION>/   releases: sofle.hex kbd75hs.hex kbd75v2.hex
 │                                           (read-only) + SHA256SUMS + README (origin)
 ├── toolchain/         saved copy of the toolchain image (qmk-toolchain-*.oci.tar + .sha256)
 ├── qmk/               QMK's build directory (.elf/.map/objects of the last builds)
@@ -39,7 +41,7 @@ build/                 git-ignored; everything in it is disposable (a cache)
 ```
 
 `make clean` removes `build/qmk` and `build/scratch`; the rest of `build/` can be deleted
-by hand at any time: archives are rebuilt from their tag, the image is loaded or pulled again.
+by hand at any time: releases are rebuilt from their commit, the image is loaded or pulled again.
 
 ## Firmware version
 
@@ -55,9 +57,12 @@ give byte-identical builds.
 
 A commit that produces firmware to keep bumps `VERSION` and adds a [CHANGELOG.md](CHANGELOG.md)
 entry in the same commit; a commit whose firmware is byte-identical keeps the version.
-`scripts/build_all.sh --archive` saves the build as `build/firmware/qmk-<QMK version>-<VERSION>/`
-(the version is everything after the last `-`). Running it again for the same version is a
-no-op if the build is identical, and is refused if it differs ("VERSION not bumped?").
+`make release` (`scripts/build_all.sh --release`) builds a **release** of a clean commit:
+`build/firmware/qmk-<QMK version>-<VERSION>/` (the version is everything after the last `-`),
+read-only, with `SHA256SUMS` and a `README` naming its origin. Running it again for the same
+version is a no-op if the build is identical, and is refused if it differs ("VERSION not
+bumped?"). A release is reproducible (rebuild its commit with the pinned image and you get
+the same bytes), so it is fine to keep it in the disposable `build/`.
 
 Versions 1.0.0–1.0.3 were assigned retroactively (`VERSION` was introduced at 1.0.3).
 
@@ -79,17 +84,24 @@ your backup medium; to restore it, put it back into `build/toolchain/`.
 ## Build
 
 ```bash
+make              # all targets + size and sha256 (scripts/build_all.sh; reproducible: SKIP_VERSION=yes)
+make release      # ... and make a release in build/firmware/ (scripts/build_all.sh --release)
+make check        # hook canary + qmk lint for every target (see below)
+make help         # all targets
+```
+
+For anything else, use the scripts directly, e.g.:
+
+```bash
 scripts/qmk userspace-compile                     # all targets in qmk.json
 scripts/qmk compile -kb sofle/rev1 -km sekogan    # one target
-scripts/build_all.sh                              # all targets + size and sha256 (reproducible: SKIP_VERSION=yes)
-scripts/build_all.sh --archive                    # ... and keep it in build/firmware/
 ```
 
 `scripts/qmk` runs any `qmk` subcommand inside the pinned image (`scripts/qmk --exec <cmd>`
 runs other tools, e.g. `avr-nm`), with the repo as the userspace and the submodule as QMK
 home. QMK's build directory is `build/qmk/`; nothing else in the repo is written.
-`scripts/build_all.sh` also copies the three `.hex` files (short names + `SHA256SUMS`) to
-`build/scratch/check/`.
+`make` (`scripts/build_all.sh`) also copies the three `.hex` files (short names + `SHA256SUMS`)
+to `build/scratch/check/`.
 
 `build/firmware/` keeps `.hex` files only. Builds are reproducible, so to get the
 `.elf`/`.map` of a version, check out its commit (in its `README`) and rebuild:
@@ -97,7 +109,7 @@ home. QMK's build directory is `build/qmk/`; nothing else in the repo is written
 ```bash
 # clean tree; e.g. firmware 1.0.3 = tag qmk-0.26.0
 git switch --detach qmk-0.26.0 && git submodule update --init --recursive
-scripts/build_all.sh               # .elf/.map now in build/qmk/
+scripts/build_all.sh               # .elf/.map now in build/qmk/ (older commits have no make targets)
 sha256sum build/scratch/check/sofle.hex build/firmware/qmk-0.26.0-1.0.3/sofle.hex   # must match
 git switch qmk-modernization && git submodule update --init --recursive
 ```
@@ -107,23 +119,24 @@ put the output in `qmk_firmware/.build/` plus `*.hex` copies in the repo root (d
 afterwards). 1.0.0 and 1.0.1 were built outside this repo layout; 1.0.0 used the 2024 host
 toolchain (avr-gcc 14.1) and cannot be reproduced with the pinned image.
 
-Checks used when changing things:
+Checks used when changing things (`make check` runs both):
 
 - `scripts/canary.sh`: verifies that every QMK hook the keymaps implement is
   really linked (QMK hooks are weak symbols; a renamed hook would compile and
   silently do nothing). The expected Sofle list is `scripts/canary-sofle.expected`.
-- `scripts/qmk lint -kb <kb> -km sekogan`.
+- `scripts/qmk lint -kb <kb> -km sekogan` for each target in `qmk.json`.
 
 ## Flash
 
 Flashing runs on the host, not in the container.
 
-- **Sofle** (Pro Micro, Caterina bootloader): flash **each half** from a kept build,
-  never from QMK's build directory (any build may replace or delete files there):
+- **Sofle** (Pro Micro, Caterina bootloader): flash **each half** from a release or another
+  build with `SHA256SUMS`, never from QMK's build directory (any build may replace or delete
+  files there):
   ```bash
-  scripts/build_all.sh --archive                         # -> build/firmware/qmk-<QMK version>-<VERSION>/
-  scripts/flash-sofle.sh                                 # the kept build of this commit's VERSION
-  scripts/flash-sofle.sh build/firmware/qmk-0.26.0-1.0.3 # or any firmware dir, build/scratch/check, build/scratch/bisect/<commit>
+  make release                                 # -> build/firmware/qmk-<QMK version>-<VERSION>/
+  make flash                                   # the release of this commit's VERSION (scripts/flash-sofle.sh)
+  make flash FW=build/firmware/qmk-0.26.0-1.0.3  # or any firmware dir, build/scratch/check, build/scratch/bisect/<commit>
   ```
   The script prints the hex's sha256 and origin, refuses a file whose hash does not match
   its `SHA256SUMS`, then waits for you to double-tap the reset button of the half and runs
