@@ -5,6 +5,16 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.6 — QMK 0.29.0
+
+- Source: tag `qmk-0.29.0`.
+- Sofle: `0e1dbd3d7dc057a3d3fbeb8fdfb9761838874c121a7e3b71e37de4a7891b26f6`
+- Bump QMK 0.28.0 → 0.29.0 (upstream: non-volatile memory rework with a new EEPROM magic
+  number, new compiler flags `-mlra`/`-mrelax` (about 1 KB smaller), Flow Tap opt-in,
+  `encoder_update_user` deprecated). No keymap changes; no intended behaviour change.
+  **One-time effect:** EEPROM is re-initialised on the first boot after flashing, so the
+  saved base layer (Colemak) and similar settings return to their defaults; re-select them.
+
 ## 1.0.5 — QMK 0.28.0
 
 - Source: tag `qmk-0.28.0`.
