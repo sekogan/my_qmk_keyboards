@@ -5,6 +5,14 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.12 — QMK 0.34.7
+
+- Source: tag `qmk-0.34.7`.
+- Sofle: `265efdcc08cfccb573339ef87dd192bd7886de843b29c769e1cf8cf5d9e5db5f`
+- Bump QMK 0.34.0 → 0.34.7 (latest release; upstream fixes only: the System
+  Control HID range is widened again so `KC_SLEP` works on Windows, which matters for the
+  KBD75 Sleep key). No keymap changes; no intended behaviour change.
+
 ## 1.0.11 — QMK 0.34.0
 
 - Source: tag `qmk-0.34.0`.
