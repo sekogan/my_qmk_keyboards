@@ -13,7 +13,7 @@ Custom [QMK](https://qmk.fm) keymaps, organised as a QMK
 
 - **Firmware version = `VERSION`** (one [SemVer](https://semver.org) version for all three
   keyboards; see below). History: [CHANGELOG.md](CHANGELOG.md).
-- **QMK version = the `qmk_firmware` git submodule** (currently 0.30.0). Bumping QMK
+- **QMK version = the `qmk_firmware` git submodule** (currently 0.31.0). Bumping QMK
   is a commit that moves the submodule.
 - **Toolchain = `scripts/toolchain.env`**: the official `qmk_cli` container image,
   pinned by registry digest and image ID, run with rootless Podman. Nothing else

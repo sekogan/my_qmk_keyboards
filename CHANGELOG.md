@@ -5,6 +5,14 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.8 — QMK 0.31.0
+
+- Source: tag `qmk-0.31.0`.
+- Sofle: `45f73c905f3dd0facb8d632de96142adfaed21cbcedb26d06d737414b881ee27`
+- Bump QMK 0.30.0 → 0.31.0 (upstream: new default OLED font, tap-dance state
+  refactor, Speculative Hold opt-in). No keymap changes. Behaviour change from upstream:
+  the key that wakes a suspended PC is no longer typed (QMK #23389).
+
 ## 1.0.7 — QMK 0.30.0
 
 - Source: tag `qmk-0.30.0`.
