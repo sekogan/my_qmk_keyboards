@@ -6,9 +6,8 @@ Derived from the [default keymap](https://github.com/qmk/qmk_firmware/tree/maste
 
 ## Build and flash
 
-See the [root README](../../../../README.md): `scripts/qmk compile -kb sofle/rev1 -km sekogan`,
-then `scripts/build_all.sh --archive` and `scripts/flash-sofle.sh` once for **each half**
-(double-tap that half's reset button).
+See the [root README](../../../../README.md): `make release`, then `make flash` once for
+**each half** (double-tap that half's reset button).
 
 The keyboard has no handedness configuration: the half with the USB cable acts as the
 left half, so always connect USB to the **left** half.

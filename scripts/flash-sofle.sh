@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Flash one Sofle half (Pro Micro, Caterina bootloader) from the host with avrdude.
 #
-#   scripts/flash-sofle.sh             the archived build of this commit's VERSION:
+#   scripts/flash-sofle.sh             the release of this commit's VERSION:
 #                                      build/firmware/qmk-<QMK version>-<VERSION>/sofle.hex
-#                                      (create it with: scripts/build_all.sh --archive)
+#                                      (create it with: make release = scripts/build_all.sh --release)
 #   scripts/flash-sofle.sh <dir|hex>   a firmware directory such as build/firmware/qmk-0.26.0-1.0.3,
 #                                      the last check build build/scratch/check, a bisect build
 #                                      build/scratch/bisect/<commit>, or a sofle.hex in one of them
@@ -23,10 +23,10 @@ if [ $# -eq 0 ]; then
   qmkver=$(git -C "$root/qmk_firmware" describe --tags --exact-match 2>/dev/null) \
     || { echo "qmk_firmware is not on a release tag; pass an explicit firmware directory" >&2; exit 1; }
   if [ -n "$(git -C "$root" status --porcelain --untracked-files=no)" ]; then
-    echo "note: uncommitted changes are NOT in this firmware (it is the archived build of VERSION $version)" >&2
+    echo "note: uncommitted changes are NOT in this firmware (it is the release of VERSION $version)" >&2
   fi
   d="$root/build/firmware/qmk-$qmkver-$version"
-  [ -d "$d" ] || { echo "no archived build $d" >&2; echo "run: scripts/build_all.sh --archive" >&2; exit 1; }
+  [ -d "$d" ] || { echo "no release $d" >&2; echo "run: make release" >&2; exit 1; }
   hex="$d/$name"
 elif [ -d "$1" ]; then
   hex="${1%/}/$name"
@@ -38,9 +38,9 @@ hex=$(realpath "$hex"); dir=$(dirname "$hex"); base=$(basename "$hex")
 r=$(realpath "$root")
 case "$hex" in
   *_canary*) echo "refusing to flash a canary (non-LTO) build: $hex" >&2; exit 1;;
-  "$r"/build/firmware/*|"$r"/build/scratch/*) ;;            # archives and copies with SHA256SUMS
+  "$r"/build/firmware/*|"$r"/build/scratch/*) ;;            # releases and copies with SHA256SUMS
   "$r"/build/qmk/*) echo "refusing to flash from QMK's build directory (mutable): $hex" >&2
-                    echo "use build/scratch/check (scripts/build_all.sh) or an archive (scripts/build_all.sh --archive)" >&2; exit 1;;
+                    echo "use build/scratch/check (make) or a release (make release)" >&2; exit 1;;
   "$r"/*) echo "refusing to flash from inside the repo outside build/firmware and build/scratch: $hex" >&2; exit 1;;
 esac
 [ -f "$dir/SHA256SUMS" ] || { echo "no SHA256SUMS next to $hex" >&2; exit 1; }

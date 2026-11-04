@@ -15,7 +15,7 @@ compile_commands.json
 .clangd/
 .cache/
 
-# Everything generated (QMK build dir, firmware archives, toolchain cache, scratch,
+# Everything generated (QMK build dir, firmware releases, toolchain cache, scratch,
 # keymapviz venv) lives in build/ and is disposable
 /build/
 
