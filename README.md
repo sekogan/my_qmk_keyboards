@@ -31,17 +31,20 @@ keyboards/             the keymaps
 docs/                  hardware docs (KBD75 v2)
 scripts/               build/flash/check scripts; toolchain.env = the toolchain pin
 qmk_firmware/          QMK, as a pinned git submodule
-build/                 git-ignored; everything in it is disposable (a cache)
+build/                 git-ignored; everything in it is disposable (a cache), except build/readback/
 ├── firmware/qmk-<QMK version>-<VERSION>/   releases: sofle.hex kbd75hs.hex kbd75v2.hex
 │                                           (read-only) + SHA256SUMS + README (origin)
 ├── toolchain/         saved copy of the toolchain image (qmk-toolchain-*.oci.tar + .sha256)
 ├── qmk/               QMK's build directory (.elf/.map/objects of the last builds)
-├── scratch/           check builds (scratch/check), bisect builds, readbacks, notes
+├── readback/          flash dumps read from the Sofle halves (NOT disposable: cannot be
+│                      recreated without the hardware; SHA256SUMS; back it up)
+├── scratch/           check builds (scratch/check), bisect builds, notes
 └── venv/              keymapviz venv
 ```
 
-`make clean` removes `build/qmk` and `build/scratch`; the rest of `build/` can be deleted
-by hand at any time: releases are rebuilt from their commit, the image is loaded or pulled again.
+`make clean` removes `build/qmk` and `build/scratch`; the rest of `build/` except `build/readback/`
+can be deleted by hand at any time: releases are rebuilt from their commit, the image is loaded
+or pulled again. `build/readback/` holds data read from the hardware; keep it (and back it up).
 
 ## Firmware version
 
