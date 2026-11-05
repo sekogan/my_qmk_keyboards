@@ -5,6 +5,17 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.14 — QMK 0.34.7
+
+- Source: the commit that adds this entry (`12.2`, no tag); the release `README` names it.
+- Sofle: `c313a66683a93002823158faeab17c25402f27819984383d69d3ec3b5fa72267`
+- Sofle: Bootmagic and NKRO turned off (both were defaults of the upstream Sofle keyboard
+  definition since QMK 0.24.0, not a choice of this keymap). Holding the top-left key while
+  plugging in no longer jumps to the bootloader or clears EEPROM; use the reset button
+  (double-tap) to flash. Bootmagic was not used, so this is a PATCH, not a removed feature.
+  The keyboard reports 6KRO instead of NKRO; the USB descriptor of interface 1 shrinks
+  (111 → 52 bytes), so re-plug once on each host. About 400 bytes smaller.
+
 ## 1.0.13 — QMK 0.34.7
 
 - Source: the commit that adds this entry (`12.1`, no tag); the release `README` names it.
