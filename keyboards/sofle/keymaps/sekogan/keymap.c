@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include QMK_KEYBOARD_H
+#include "encoder.h"
 #include "instant_qwerty_reasons.h"
 #include "layers.h"
 #include "oled.h"
@@ -37,6 +38,11 @@ enum custom_keycodes {
     SEK_FUP,   // Fast up
     SEK_FDOWN, // Fast down
     SEK_FSPC,  // Fast space
+
+    SEK_ENC_L_CCW, // Left encoder, counter-clockwise (encoder map)
+    SEK_ENC_L_CW,  // Left encoder, clockwise
+    SEK_ENC_R_CCW, // Right encoder, counter-clockwise
+    SEK_ENC_R_CW,  // Right encoder, clockwise
 };
 
 #define MT_LGUI LGUI_T(KC_LNG1)
@@ -178,6 +184,17 @@ _______,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  
 )
 
 };
+
+#ifdef ENCODER_MAP_ENABLE
+const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
+    [QWERTY]  = {ENCODER_CCW_CW(SEK_ENC_L_CCW, SEK_ENC_L_CW), ENCODER_CCW_CW(SEK_ENC_R_CCW, SEK_ENC_R_CW)},
+    [COLEMAK] = {ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS)},
+    [LOWER]   = {ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS)},
+    [NUMPAD]  = {ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS)},
+    [RAISE]   = {ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS)},
+    [EXTRA]   = {ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS)},
+};
+#endif // ENCODER_MAP_ENABLE
 // clang-format on
 
 const struct fast_keycode fast_keycodes[] = {
@@ -187,6 +204,7 @@ const struct fast_keycode fast_keycodes[] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_encoder_keycodes(keycode, record, SEK_ENC_L_CCW, SEK_ENC_L_CW, SEK_ENC_R_CCW, SEK_ENC_R_CW)) return false;
     if (!process_text_navigation_shortcuts(keycode, record, SEK_WPREV, SEK_WNEXT, SEK_LSTRT, SEK_LEND)) return false;
     if (!process_fast_keycodes(keycode, record, fast_keycodes, fast_keycodes + ARRAY_SIZE(fast_keycodes))) return false;
     if (!process_clipboard_shortcuts(keycode, record)) return false;
