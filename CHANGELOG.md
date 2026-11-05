@@ -5,6 +5,15 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.17 — QMK 0.34.7
+
+- Source: the commit that adds this entry (`12.5`, no tag); the release `README` names it.
+- Sofle: `a1603f1e64b5dfb243f7e771bdc4fe685491818b98e45b315735ca0b5e628b07`
+- Sofle: the LOWER and RAISE keys use QMK's core Tri Layer (`TL_LOWR`/`TL_UPPR`) instead
+  of custom keycodes with `update_tri_layer()`. Same layers (LOWER + RAISE = EXTRA), same
+  keys; the language stash on LOWER and Caps Word are unchanged. No intended behaviour
+  change.
+
 ## 1.0.16 — QMK 0.34.7
 
 - Source: the commit that adds this entry (`12.4`, no tag); the release `README` names it.
