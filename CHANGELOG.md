@@ -5,6 +5,17 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.16 — QMK 0.34.7
+
+- Source: the commit that adds this entry (`12.4`, no tag); the release `README` names it.
+- Sofle: `ba283c3af88d2a564dd8c6c684557bce46b4ea6e0f3c12843e1423e090b82a45`
+- Sofle: the encoders use QMK's Encoder Map instead of the deprecated
+  `encoder_update_user()`. Same functions (left: volume, Ctrl = next/previous track;
+  right: Page Down/Up, Ctrl/Alt/GUI without Shift = Tab/Shift+Tab) on every layer; encoder
+  turns are handled before every other feature, so Caps Word and word selection are not
+  affected by them. One timing detail: a turn made while a Super (tap/hold) key is still
+  undecided now waits for that decision and then takes the held modifier into account.
+
 ## 1.0.15 — QMK 0.34.7
 
 - Source: the commit that adds this entry (`12.3`, no tag); the release `README` names it.
