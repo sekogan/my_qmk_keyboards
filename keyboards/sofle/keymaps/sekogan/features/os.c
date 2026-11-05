@@ -8,9 +8,9 @@ static os_t _current_os    = UNKNOWN_OS;
 static bool _autodetect_os = true;
 static bool _detected      = false;
 
-static void _try_detect_os(void) {
+static void _apply_detected_os(os_variant_t detected) {
     os_t os;
-    switch (detected_host_os()) {
+    switch (detected) {
         case OS_LINUX:
             os = LINUX_OS;
             break;
@@ -30,8 +30,13 @@ static void _try_detect_os(void) {
     os_set_user();
 }
 
+bool process_detected_host_os_user(os_variant_t detected) {
+    if (!_detected) // the same condition the former polling get_os() used
+        _apply_detected_os(detected);
+    return true;
+}
+
 os_t get_os(void) {
-    if (!_detected) _try_detect_os();
     return _current_os;
 }
 
@@ -40,7 +45,7 @@ void enable_os_autodetect(void) {
     _autodetect_os = true;
     _detected      = false;
     os_set_user();
-    _try_detect_os();
+    _apply_detected_os(detected_host_os());
 }
 
 bool is_os_autodetection_enabled(void) {

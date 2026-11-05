@@ -8,5 +8,6 @@ notify_usb_device_state_change_user
 oled_init_user
 oled_task_user
 post_process_record_user
+process_detected_host_os_user
 process_record_user
 suspend_power_down_user
