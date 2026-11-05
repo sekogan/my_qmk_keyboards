@@ -5,6 +5,16 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.15 — QMK 0.34.7
+
+- Source: the commit that adds this entry (`12.3`, no tag); the release `README` names it.
+- Sofle: `6221bbfdc6977a3c256e49b8614f0a53c8af3d547edb6a15fa030799fbc4af1a`
+- Sofle: OS auto-detection uses QMK's `process_detected_host_os_user()` callback instead
+  of polling from the OLED code. Same rules as before: the first detected OS is applied
+  once per entry into auto mode (power-up, or `OS` cycling back to auto); later
+  re-detections (wake, re-plug through a KVM) are ignored; manual mode is untouched. No
+  intended behaviour change.
+
 ## 1.0.14 — QMK 0.34.7
 
 - Source: the commit that adds this entry (`12.2`, no tag); the release `README` names it.
