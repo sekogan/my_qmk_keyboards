@@ -262,7 +262,33 @@ void suspend_power_down_user(void) {
     suspend_power_down_oled();
 }
 
-void matrix_init_user(void) {
+// NumLock forcing. Never taps from led_update_user() itself (see 12.1 in the plan).
+static bool     numlock_check_pending = true;
+static uint32_t numlock_armed_at      = 0;
+
+static void arm_numlock_check(void) {
+    numlock_check_pending = true;
+    numlock_armed_at      = timer_read32();
+}
+
+void notify_usb_device_state_change_user(struct usb_device_state usb_device_state) {
+    if (usb_device_state.configure_state == USB_DEVICE_STATE_CONFIGURED) {
+        arm_numlock_check(); // enumeration or resume
+    }
+}
+
+bool led_update_user(led_t led_state) {
+    if (!led_state.num_lock) {
+        arm_numlock_check();
+    }
+    return true;
+}
+
+void housekeeping_task_user(void) {
+    if (!numlock_check_pending || !is_keyboard_master()) return; // the slave gets LED state via SPLIT_LED_STATE_ENABLE but cannot send keys
+    if (usb_device_state_get_configure_state() != USB_DEVICE_STATE_CONFIGURED) return;
+    if (timer_elapsed32(numlock_armed_at) < 500) return; // give the host time to send its LED report
+    numlock_check_pending = false;
     if (!host_keyboard_led_state().num_lock) {
         tap_code(KC_NUM_LOCK);
     }
