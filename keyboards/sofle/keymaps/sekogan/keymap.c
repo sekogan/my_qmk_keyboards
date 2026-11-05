@@ -22,9 +22,6 @@ enum custom_keycodes {
     SEK_BASE = SAFE_RANGE, // Cycle through base layouts (Qwerty, Colemak)
     SEK_OS,                // Cycle through operating systems
 
-    SEK_LOWER,
-    SEK_RAISE,
-
     SEK_WSEL, // Select word
 
     SEK_WPREV, // Previous word
@@ -44,6 +41,8 @@ enum custom_keycodes {
     SEK_ENC_R_CCW, // Right encoder, counter-clockwise
     SEK_ENC_R_CW,  // Right encoder, clockwise
 };
+
+_Static_assert(LOWER == TRI_LAYER_LOWER_LAYER && RAISE == TRI_LAYER_UPPER_LAYER && EXTRA == TRI_LAYER_ADJUST_LAYER, "config.h TRI_LAYER_* values must match enum layers");
 
 #define MT_LGUI LGUI_T(KC_LNG1)
 #define MT_RGUI RGUI_T(KC_LNG2)
@@ -75,7 +74,7 @@ XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      
 KC_ESC,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSPC,
 KC_TAB,   KC_A,     KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,
 OSM_LSFT, KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_MPLY,  XXXXXXX,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  OSM_RSFT,
-                    MT_LGUI,  KC_LALT,  KC_LCTL,  SEK_LOWER, KC_SPC,   L_NUM,    SEK_RAISE, KC_RCTL,  KC_RALT,  MT_RGUI
+                    MT_LGUI,  KC_LALT,  KC_LCTL,  TL_LOWR,  KC_SPC,   L_NUM,    TL_UPPR,  KC_RCTL,  KC_RALT,  MT_RGUI
 ),
 
 /* ,-----------------------------------------.                    ,-----------------------------------------.
@@ -96,7 +95,7 @@ KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,                        
 KC_ESC,   KC_Q,     KC_W,     KC_F,     KC_P,     KC_B,                         KC_J,     KC_L,     KC_U,     KC_Y,     XXXXXXX,  KC_BSPC,
 KC_TAB,   KC_A,     KC_R,     KC_S,     KC_T,     KC_G,                         KC_M,     KC_N,     KC_E,     KC_I,     KC_O,     XXXXXXX,
 OSM_LSFT, KC_Z,     KC_X,     KC_C,     KC_D,     KC_V,     KC_MPLY,  XXXXXXX,  KC_K,     KC_H,     KC_COMM,  KC_DOT,   XXXXXXX,  OSM_RSFT,
-                    MT_LGUI,  KC_LALT,  KC_LCTL,  SEK_LOWER, KC_SPC,   L_NUM,    SEK_RAISE, KC_RCTL,  KC_RALT,  MT_RGUI
+                    MT_LGUI,  KC_LALT,  KC_LCTL,  TL_LOWR,  KC_SPC,   L_NUM,    TL_UPPR,  KC_RCTL,  KC_RALT,  MT_RGUI
 ),
 
 /* ,-----------------------------------------.                    ,-----------------------------------------.
@@ -210,7 +209,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_clipboard_shortcuts(keycode, record)) return false;
     if (!process_editing_history_shortcuts(keycode, record)) return false;
     if (!process_text_deleting_macros(keycode, record, SEK_WDEL, SEK_WBSPC)) return false;
-    if (keycode != SEK_LOWER && keycode != SEK_RAISE)
+    if (keycode != TL_LOWR && keycode != TL_UPPR)
         if (!process_caps_word_both_shifts(keycode, record)) return false;
     if (!process_select_word(keycode, record, SEK_WSEL)) return false;
     if (!process_compact_russian_layout(keycode, record)) return false;
@@ -220,20 +219,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case SEK_BASE:
             if (record->event.pressed) set_single_persistent_default_layer(IS_LAYER_ON_STATE(default_layer_state, QWERTY) ? COLEMAK : QWERTY);
-            return false;
-        case SEK_LOWER:
-            if (record->event.pressed)
-                layer_on(LOWER);
-            else
-                layer_off(LOWER);
-            update_tri_layer(LOWER, RAISE, EXTRA);
-            return false;
-        case SEK_RAISE:
-            if (record->event.pressed)
-                layer_on(RAISE);
-            else
-                layer_off(RAISE);
-            update_tri_layer(LOWER, RAISE, EXTRA);
             return false;
         case MT_LGUI:
             if (record->tap.count == 1 && record->event.pressed) return process_record_user(KC_LNG1, record);
