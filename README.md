@@ -28,6 +28,7 @@ which can also be run directly when you need extra arguments.
 ```
 README.md CHANGELOG.md VERSION qmk.json Makefile requirements-dev.txt
 keyboards/             the keymaps
+users/sekogan/         reusable features (features/), built only for keymaps with SEK_FEATURES = yes (the Sofle)
 docs/                  hardware docs (KBD75 v2)
 scripts/               build/flash/check scripts; toolchain.env = the toolchain pin
 qmk_firmware/          QMK, as a pinned git submodule
