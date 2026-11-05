@@ -19,16 +19,8 @@ SWAP_HANDS_ENABLE = no
 TAP_DANCE_ENABLE = no
 TRI_LAYER_ENABLE = yes
 
-SRC += features/caps_word.c
-SRC += features/clipboard_shortcuts.c
-SRC += features/compact_russian_layout.c
-SRC += features/fast_keycode.c
-SRC += features/instant_qwerty.c
-SRC += features/language_stash.c
-SRC += features/language.c
-SRC += features/non_qwerty_shortcuts.c
-SRC += features/os.c
-SRC += features/select_word.c
-SRC += features/text_editing.c
+# The features in users/sekogan/features/ (users/sekogan/rules.mk)
+SEK_FEATURES = yes
+
 SRC += encoder.c
 SRC += oled.c
