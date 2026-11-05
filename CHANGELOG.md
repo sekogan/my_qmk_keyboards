@@ -5,6 +5,15 @@ the [README](README.md#firmware-version)), newest first. The version covers all 
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.0.13 — QMK 0.34.7
+
+- Source: the commit that adds this entry (`12.1`, no tag); the release `README` names it.
+- Sofle: `ea97facded396c80fadf3bd917759345a151a822446dc7f9e8d3e6342cc8ae05`
+- Sofle bug fix: NumLock forcing works again. The old check ran once at power-up, before
+  the host had sent its LED state, so it had no effect. Now a check is armed when USB
+  is configured (plug-in, resume) and whenever the host turns NumLock off, and about
+  0.5 s later the left (USB) half taps NumLock once if it is still off.
+
 ## 1.0.12 — QMK 0.34.7
 
 - Source: tag `qmk-0.34.7`.
