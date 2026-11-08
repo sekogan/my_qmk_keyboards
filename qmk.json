@@ -3,6 +3,7 @@
     "build_targets": [
         ["sofle/rev1", "sekogan"],
         ["kbdfans/kbd75hs", "sekogan"],
-        ["kbdfans/kbd75/rev2", "sekogan"]
+        ["kbdfans/kbd75/rev2", "sekogan"],
+        ["splitkb/halcyon/elora/rev2", "sekogan"]
     ]
 }

@@ -23,6 +23,7 @@ FW ?=
 VENV := $(QMK_USERSPACE)/build/venv
 KEYMAPVIZ ?= $(VENV)/bin/keymapviz
 KM_SOFLE := $(QMK_USERSPACE)/keyboards/sofle/keymaps/sekogan
+KM_ELORA := $(QMK_USERSPACE)/keyboards/splitkb/halcyon/elora/keymaps/sekogan
 
 .PHONY: all release flash check help keymapviz venv clean submodule
 
@@ -50,7 +51,7 @@ help:
 	echo 'make flash          flash one Sofle half from the release of HEAD'"'"'s VERSION'
 	echo '                    (scripts/flash-sofle.sh); FW=<dir|hex> flashes another build'
 	echo 'make check          hook canary (scripts/canary.sh) + qmk lint for every target in qmk.json'
-	echo 'make keymapviz      regenerate the layer diagrams in the Sofle keymap.c'
+	echo 'make keymapviz      regenerate the layer diagrams in the Sofle and Elora keymap.c'
 	echo 'make venv           create the keymapviz venv in build/venv'
 	echo 'make clean          remove build/qmk and build/scratch (never build/readback)'
 	echo 'Other qmk commands: scripts/qmk <subcommand> ... (e.g. scripts/qmk compile -kb sofle/rev1 -km sekogan)'
@@ -63,6 +64,7 @@ submodule:
 keymapviz:
 	test -x $(KEYMAPVIZ) || $(MAKE) venv
 	$(KEYMAPVIZ) -k sofle -r $(KM_SOFLE)/keymap.c -c $(KM_SOFLE)/keymapviz.toml >/dev/null && rm -f $(KM_SOFLE)/keymap.c.bac
+	$(VENV)/bin/python -I $(SCRIPTS)/keymapviz-elora.py $(KM_ELORA)/keymap.c $(KM_ELORA)/keymapviz.toml
 
 venv:
 	python3 -m venv $(VENV) && PIP_NO_CACHE_DIR=1 $(VENV)/bin/pip install -q -r $(QMK_USERSPACE)/requirements-dev.txt
