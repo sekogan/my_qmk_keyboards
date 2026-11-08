@@ -4,7 +4,7 @@
 # functions are dropped by --gc-sections) and require each hook as a STRONG text
 # symbol (type T). QMK's own weak defaults show up as W and do not count.
 # Builds use a separate TARGET/INTERMEDIATE_OUTPUT in build/qmk, so the normal
-# (LTO) build outputs are left alone; the non-LTO .hex is deleted afterwards.
+# (LTO) build outputs are left alone; the non-LTO .hex/.uf2 is deleted afterwards.
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 . "$root/scripts/toolchain.env"
@@ -19,13 +19,13 @@ canary_build() {
   # "too large" is fine: the .elf is kept
   "$root/scripts/qmk" compile -kb "$kb" -km "$km" -e SKIP_VERSION=yes -e LTO_ENABLE=no -e EXTRAFLAGS= \
       -e TARGET="$name" -e INTERMEDIATE_OUTPUT="/qmk_userspace/build/qmk/obj_$name" >"$tmp/$name.log" 2>&1 || true
-  rm -f "$build/$name.hex"   # never flashable by accident
+  rm -f "$build/$name.hex" "$build/$name.uf2"   # never flashable by accident
   [ -f "$build/$name.elf" ] || { cat "$tmp/$name.log" >&2; echo "canary build failed: $kb" >&2; exit 1; }
   echo "$name"
 }
-# symbols <name> -> "<type> <symbol>" lines
+# symbols <name> [nm tool] -> "<type> <symbol>" lines
 symbols() {
-  "$root/scripts/qmk" --exec avr-nm "build/qmk/$1.elf" | awk 'NF==3{print $2, $3}'
+  "$root/scripts/qmk" --exec "${2:-avr-nm}" "build/qmk/$1.elf" | awk 'NF==3{print $2, $3}'
 }
 # require <name> <types-regex> <symbol>...
 require() {
