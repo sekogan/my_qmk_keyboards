@@ -34,7 +34,7 @@ docs/                  hardware docs (KBD75 v2)
 scripts/               build/flash/check scripts; toolchain.env = the toolchain pin
 qmk_firmware/          QMK, as a pinned git submodule
 build/                 git-ignored; everything in it is disposable (a cache), except build/readback/
-├── firmware/qmk-<QMK version>-<VERSION>/   releases: sofle.hex kbd75hs.hex kbd75v2.hex
+├── firmware/qmk-<QMK version>-<VERSION>/   releases: sofle.hex kbd75hs.hex kbd75v2.hex elora.uf2
 │                                           (read-only) + SHA256SUMS + README (origin)
 ├── toolchain/         saved copy of the toolchain image (qmk-toolchain-*.oci.tar + .sha256)
 ├── qmk/               QMK's build directory (.elf/.map/objects of the last builds)
@@ -149,6 +149,18 @@ Flashing runs on the host, not in the container.
   The script prints the hex's sha256 and origin, refuses a file whose hash does not match
   its `SHA256SUMS`, then waits for you to double-tap the reset button of the half and runs
   avrdude.
+- **Elora** (RP2040, UF2 bootloader): flash **each half** with the **same** `elora.uf2`, again
+  only from a release or another build with `SHA256SUMS`, one half per run:
+  ```bash
+  make release                                 # -> build/firmware/qmk-<QMK version>-<VERSION>/
+  make flash-elora                             # the release of this commit's VERSION (scripts/flash-elora.sh)
+  make flash-elora FW=build/scratch/check      # or any firmware dir
+  ```
+  The script prints the file's sha256 and origin, refuses a file whose hash does not match its
+  `SHA256SUMS`, then waits for you to double-tap the reset button of the half. The bootloader
+  appears as a USB drive labelled `RPI-RP2`; the script copies the file there and the half
+  reboots by itself. If the drive is not mounted automatically, double-tap reset and copy by
+  hand: `cp build/firmware/qmk-<QMK version>-<VERSION>/elora.uf2 /run/media/$USER/RPI-RP2/ && sync`.
 - **KBD75** (atmel-dfu): put the board into the bootloader (Caps Lock + Esc + F12),
   then
   ```bash
