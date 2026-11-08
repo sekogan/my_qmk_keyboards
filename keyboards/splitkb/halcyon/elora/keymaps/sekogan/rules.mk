@@ -15,4 +15,12 @@ SWAP_HANDS_ENABLE = no
 TAP_DANCE_ENABLE = no
 TRI_LAYER_ENABLE = yes
 
+BACKLIGHT_ENABLE = yes
+BACKLIGHT_DRIVER = pwm
+QUANTUM_PAINTER_ENABLE = yes
+QUANTUM_PAINTER_DRIVERS += st7789_spi surface
+
 SEK_FEATURES = yes
+
+SRC += display.c
+SRC += graphics/spleen12x24.qff.c
