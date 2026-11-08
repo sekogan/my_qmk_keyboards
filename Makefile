@@ -42,6 +42,7 @@ check: submodule
 	  echo "lint $${t%%:*} -km $${t##*:}"; \
 	  $(SCRIPTS)/qmk lint -kb "$${t%%:*}" -km "$${t##*:}"; \
 	done
+	$(SCRIPTS)/check-elora-layout.sh
 
 help:
 	echo 'make                build all targets, print size + sha256 (scripts/build_all.sh);'
@@ -51,6 +52,7 @@ help:
 	echo 'make flash          flash one Sofle half from the release of HEAD'"'"'s VERSION'
 	echo '                    (scripts/flash-sofle.sh); FW=<dir|hex> flashes another build'
 	echo 'make check          hook canary (scripts/canary.sh) + qmk lint for every target in qmk.json'
+	echo '                    + Elora/Sofle layer sync (scripts/check-elora-layout.sh)'
 	echo 'make keymapviz      regenerate the layer diagrams in the Sofle and Elora keymap.c'
 	echo 'make venv           create the keymapviz venv in build/venv'
 	echo 'make clean          remove build/qmk and build/scratch (never build/readback)'
