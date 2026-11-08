@@ -1,7 +1,7 @@
 # Changelog
 
 One entry per firmware version (`VERSION`, [Semantic Versioning](https://semver.org); rules in
-the [README](README.md#firmware-version)), newest first. The version covers all three
+the [README](README.md#firmware-version)), newest first. The version covers all four
 keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 

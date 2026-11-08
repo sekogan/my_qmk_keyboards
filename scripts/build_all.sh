@@ -2,10 +2,10 @@
 # SV-build (plan §6): build every target in the pinned image and print size + sha256.
 # QMK's build directory is build/qmk (see scripts/qmk). Everything under build/ is disposable
 # except build/readback/ (flash dumps read from the keyboard).
-#   scripts/build_all.sh            build all three targets; an unversioned copy (short names +
+#   scripts/build_all.sh            build all four targets; an unversioned copy (short names +
 #                                   SHA256SUMS + README) replaces build/scratch/check/
 #   scripts/build_all.sh --release  also make a release: build/firmware/qmk-<QMK version>-<VERSION>/
-#                                   (sofle.hex kbd75hs.hex kbd75v2.hex read-only + SHA256SUMS + README
+#                                   (sofle.hex kbd75hs.hex kbd75v2.hex elora.uf2 read-only + SHA256SUMS + README
 #                                   with the origin). VERSION is the repo's SemVer firmware version (file
 #                                   VERSION at HEAD). Clean tree and a submodule on a QMK release tag only.
 #                                   If the directory exists, the new build must be identical (then: no-op);
@@ -16,9 +16,9 @@ root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 . "$root/scripts/toolchain.env"
 release=no; [ "${1:-}" = "--release" ] && release=yes
 
-targets=(sofle/rev1 kbdfans/kbd75hs kbdfans/kbd75/rev2)   # keep in sync with qmk.json
-declare -A short=([sofle_rev1_sekogan]=sofle [kbdfans_kbd75hs_sekogan]=kbd75hs [kbdfans_kbd75_rev2_sekogan]=kbd75v2)
-declare -A format=()   # default: hex
+targets=(sofle/rev1 kbdfans/kbd75hs kbdfans/kbd75/rev2 splitkb/halcyon/elora/rev2)   # keep in sync with qmk.json
+declare -A short=([sofle_rev1_sekogan]=sofle [kbdfans_kbd75hs_sekogan]=kbd75hs [kbdfans_kbd75_rev2_sekogan]=kbd75v2 [splitkb_halcyon_elora_rev2_sekogan]=elora)
+declare -A format=([splitkb_halcyon_elora_rev2_sekogan]=uf2)   # default: hex
 ext() { echo "${format[$1]:-hex}"; }   # file extension of target $1
 km=sekogan
 build="$root/build/qmk"; fw="$root/build/firmware"; scratch="$root/build/scratch"
@@ -90,7 +90,7 @@ tags=$(git -C "$root" tag --points-at HEAD | tr '\n' ' ' | sed 's/ $//')
   echo "  version:   $version"
   echo "  source:    commit $(git -C "$root" rev-parse HEAD)${tags:+ (tag $tags)}"
   echo "  qmk:       $qmkver $(git -C "$root/qmk_firmware" rev-parse HEAD)"
-  echo "  toolchain: $QMK_IMAGE_ID (qmk_cli image; $(head -n1 "$build/obj_sofle_rev1_sekogan/compiler.txt" | sed 's/.*) //;s/^/avr-gcc /'))"
+  echo "  toolchain: $QMK_IMAGE_ID (qmk_cli image; $(head -n1 "$build/obj_sofle_rev1_sekogan/compiler.txt" | sed 's/.*) //;s/^/avr-gcc /'), $(head -n1 "$build/obj_splitkb_halcyon_elora_rev2_sekogan/compiler.txt" | sed 's/.*) //;s/^/arm-none-eabi-gcc /'))"
   echo "  built:     $(date -u +%F)"
   echo "  files:     $(printf '%s\n' "${files[@]}" | sort | tr '\n' ' ' | sed 's/ $//')"
 } > "$stage/README"

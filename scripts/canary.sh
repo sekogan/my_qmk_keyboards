@@ -43,6 +43,12 @@ awk '$1=="T"{print $2}' "$tmp/$n.nm" | sort > "$tmp/sofle-T.txt"
 missing=$(grep -v '^#' "$root/scripts/canary-sofle.expected" | sort | comm -13 "$tmp/sofle-T.txt" -)
 if [ -n "$missing" ]; then echo "MISSING strong (T) hooks in sofle/rev1:"; echo "$missing"; fail=1; fi
 
+# Elora (RP2040): same check as the Sofle, with the ARM nm.
+n=$(canary_build splitkb/halcyon/elora/rev2); symbols "$n" arm-none-eabi-nm > "$tmp/$n.nm"
+awk '$1=="T"{print $2}' "$tmp/$n.nm" | sort > "$tmp/elora-T.txt"
+missing=$(grep -v '^#' "$root/scripts/canary-elora.expected" | sort | comm -13 "$tmp/elora-T.txt" -)
+if [ -n "$missing" ]; then echo "MISSING strong (T) hooks in splitkb/halcyon/elora/rev2:"; echo "$missing"; fail=1; fi
+
 # KBD75 (plan §6, from 1.17)
 n=$(canary_build kbdfans/kbd75hs); symbols "$n" > "$tmp/$n.nm"
 require "$n" T led_update_user
@@ -50,5 +56,5 @@ require "$n" '[DdBbRr]' key_overrides tap_dance_actions
 n=$(canary_build kbdfans/kbd75/rev2); symbols "$n" > "$tmp/$n.nm"
 require "$n" T led_update_user
 
-if [ $fail = 0 ]; then echo "canary OK: $(grep -vc '^#' "$root/scripts/canary-sofle.expected") Sofle hooks + KBD75 checks"; fi
+if [ $fail = 0 ]; then echo "canary OK: $(grep -vc '^#' "$root/scripts/canary-sofle.expected") Sofle hooks + $(grep -vc '^#' "$root/scripts/canary-elora.expected") Elora hooks + KBD75 checks"; fi
 exit $fail
