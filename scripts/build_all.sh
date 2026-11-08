@@ -18,6 +18,8 @@ release=no; [ "${1:-}" = "--release" ] && release=yes
 
 targets=(sofle/rev1 kbdfans/kbd75hs kbdfans/kbd75/rev2)   # keep in sync with qmk.json
 declare -A short=([sofle_rev1_sekogan]=sofle [kbdfans_kbd75hs_sekogan]=kbd75hs [kbdfans_kbd75_rev2_sekogan]=kbd75v2)
+declare -A format=()   # default: hex
+ext() { echo "${format[$1]:-hex}"; }   # file extension of target $1
 km=sekogan
 build="$root/build/qmk"; fw="$root/build/firmware"; scratch="$root/build/scratch"
 mkdir -p "$scratch"
@@ -37,7 +39,7 @@ fi
 names=()
 for kb in "${targets[@]}"; do
   t="${kb//\//_}_$km"
-  rm -f "$build/$t.hex"
+  rm -f "$build/$t.$(ext "$t")"
   if ! "$root/scripts/qmk" compile -kb "$kb" -km "$km" -e SKIP_VERSION=yes >"$log" 2>&1; then
     cat "$log" >&2; echo "BUILD FAILED: $kb" >&2; exit 1
   fi
@@ -47,16 +49,22 @@ done
 
 qmkdesc=$(git -C "$root/qmk_firmware" describe --tags --always)
 sizes=$("$root/scripts/qmk" --exec sh -c \
-          'for t in "$@"; do avr-size --target=ihex "build/qmk/$t.hex" | awk -v t="$t" "NR==2{print t, \$4}"; done' sh "${names[@]}")
+          'for t in "$@"; do
+             case "$t" in
+               splitkb_*) arm-none-eabi-size "build/qmk/$t.elf" | awk -v t="$t" "NR==2{print t, \$1+\$2}" ;;
+               *)         avr-size --target=ihex "build/qmk/$t.hex" | awk -v t="$t" "NR==2{print t, \$4}" ;;
+             esac
+           done' sh "${names[@]}")
 echo "# $(date -u +%FT%TZ)  repo $describe  qmk $qmkdesc  image ${QMK_IMAGE_ID#sha256:}"
 while read -r t size; do
-  printf '%-32s %6s B  %s\n' "$t" "$size" "$(sha256sum "$build/$t.hex" | cut -d' ' -f1)"
+  printf '%-32s %6s B  %s\n' "$t" "$size" "$(sha256sum "$build/$t.$(ext "$t")" | cut -d' ' -f1)"
 done <<<"$sizes"
 
 if [ $release = no ]; then
   rm -rf "$scratch/check"; mkdir "$scratch/check"
-  for t in "${names[@]}"; do cp "$build/$t.hex" "$scratch/check/${short[$t]}.hex"; done
-  (cd "$scratch/check" && sha256sum *.hex > SHA256SUMS)
+  files=()
+  for t in "${names[@]}"; do f="${short[$t]}.$(ext "$t")"; cp "$build/$t.$(ext "$t")" "$scratch/check/$f"; files+=("$f"); done
+  (cd "$scratch/check" && sha256sum "${files[@]}" > SHA256SUMS)
   printf 'Check build (unversioned, disposable; replaced by the next scripts/build_all.sh)\n\n  describe:  %s\n  commit:    %s\n  qmk:       %s\n  toolchain: %s\n  built:     %s\n' \
     "$describe" "$(git -C "$root" rev-parse HEAD)" "$qmkdesc" "$QMK_IMAGE_ID" "$(date -u +%F)" > "$scratch/check/README"
   exit 0
@@ -64,9 +72,9 @@ fi
 
 stage=$(mktemp -d -p "$scratch" .release.XXXXXX)
 files=()
-for t in "${names[@]}"; do cp "$build/$t.hex" "$stage/${short[$t]}.hex"; files+=("${short[$t]}.hex"); done
+for t in "${names[@]}"; do f="${short[$t]}.$(ext "$t")"; cp "$build/$t.$(ext "$t")" "$stage/$f"; files+=("$f"); done
 if [ -e "$dest" ]; then
-  # Same name = same firmware: every .hex must exist there and be identical.
+  # Same name = same firmware: every file must exist there and be identical.
   for f in "${files[@]}"; do
     [ -f "$dest/$f" ] || { echo "--release refused: $dest has no $f (VERSION not bumped?)" >&2; exit 1; }
     cmp -s "$stage/$f" "$dest/$f" || { echo "--release refused: $dest/$f differs from this build (VERSION not bumped?)" >&2; exit 1; }
