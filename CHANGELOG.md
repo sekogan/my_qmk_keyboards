@@ -2,8 +2,19 @@
 
 One entry per firmware version (`VERSION`, [Semantic Versioning](https://semver.org); rules in
 the [README](README.md#firmware-version)), newest first. The version covers all four
-keyboards. "Sofle" is the sha256 of `sofle.hex` (built with `SKIP_VERSION=yes`).
+keyboards. "Sofle" is the sha256 of `sofle.hex` and "Elora" of `elora.uf2`
+(built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
+
+## 1.1.0 — QMK 0.34.7
+
+- Source: the commit that adds this entry; the release `README` names it.
+- Sofle: `a1603f1e64b5dfb243f7e771bdc4fe685491818b98e45b315735ca0b5e628b07` (unchanged)
+- Elora: `74e5e7c9e9d80b1b4c6c1da83eea25f262bcc22e229815c1d218804a9172e218`
+- New keyboard: Halcyon Elora rev2 (`splitkb/halcyon/elora/rev2`, `elora.uf2`), with the
+  Sofle's layers and features. The keys L19, L20, R19 and R20 do nothing for now. A status
+  display on the Halcyon TFT module of the master half; it turns off after 120 s without
+  key activity. Sofle and KBD75 firmware unchanged.
 
 ## 1.0.17 — QMK 0.34.7
 
