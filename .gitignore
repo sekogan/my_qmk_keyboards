@@ -22,3 +22,6 @@ compile_commands.json
 
 # The upgrade plan is a working document, not versioned
 /UPGRADE_PLAN.md
+
+# The Elora plan is a working document, not versioned
+/ELORA_PLAN.md
