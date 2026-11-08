@@ -14,3 +14,23 @@
 #define TRI_LAYER_LOWER_LAYER 2  /* LOWER */
 #define TRI_LAYER_UPPER_LAYER 4  /* RAISE */
 #define TRI_LAYER_ADJUST_LAYER 5 /* EXTRA */
+
+// Halcyon TFT module: ST7789 on SPID1 (SCK/MOSI/MISO pins are in the board config.h).
+#define LCD_CS_PIN GP13
+#define LCD_DC_PIN GP16
+#define LCD_RST_PIN GP26
+#define LCD_SPI_DIVISOR 0
+#define LCD_SPI_MODE 3
+#define LCD_WIDTH 135
+#define LCD_HEIGHT 240
+#define LCD_OFFSET_X 52
+#define LCD_OFFSET_Y 40
+#define ST7789_NO_AUTOMATIC_VIEWPORT_OFFSETS
+#define QUANTUM_PAINTER_DISPLAY_TIMEOUT 0 // the panel timeout is in display.c, together with the backlight
+#define SEK_DISPLAY_TIMEOUT 120000 // ms without key activity before the panel and backlight go off
+
+// Backlight: GP27 = PWM slice 5, channel B.
+#define BACKLIGHT_PIN GP27
+#define BACKLIGHT_PWM_DRIVER PWMD5
+#define BACKLIGHT_PWM_CHANNEL RP2040_PWM_CHANNEL_B
+#define BACKLIGHT_LEVELS 10

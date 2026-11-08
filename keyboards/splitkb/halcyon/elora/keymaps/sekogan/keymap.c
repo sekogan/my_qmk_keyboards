@@ -4,6 +4,7 @@
 #include QMK_KEYBOARD_H
 #include "instant_qwerty_reasons.h"
 #include "layers.h"
+#include "display.h"
 #include "features/caps_word.h"
 #include "features/clipboard_shortcuts.h"
 #include "features/compact_russian_layout.h"
@@ -237,6 +238,10 @@ void language_set_user(void) {
         add_instant_qwerty_activation_reasons(NON_ENGLISH_LANGUAGE);
 }
 
+void suspend_power_down_user(void) {
+    display_suspend();
+}
+
 // NumLock forcing. Never taps from led_update_user() itself (see 12.1 in the plan).
 static bool     numlock_check_pending = true;
 static uint32_t numlock_armed_at      = 0;
@@ -260,6 +265,7 @@ bool led_update_user(led_t led_state) {
 }
 
 void housekeeping_task_user(void) {
+    display_task();
     if (!numlock_check_pending || !is_keyboard_master()) return;
     if (usb_device_state_get_configure_state() != USB_DEVICE_STATE_CONFIGURED) return;
     if (timer_elapsed32(numlock_armed_at) < 500) return; // give the host time to send its LED report
@@ -267,4 +273,12 @@ void housekeeping_task_user(void) {
     if (!host_keyboard_led_state().num_lock) {
         tap_code(KC_NUM_LOCK);
     }
+}
+
+void suspend_wakeup_init_user(void) {
+    display_wakeup();
+}
+
+void keyboard_post_init_user(void) {
+    display_init();
 }
