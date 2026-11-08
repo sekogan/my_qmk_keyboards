@@ -15,9 +15,9 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan` (shared code in
 
 ## Build and flash
 
-See the [root README](../../../../../../README.md). Flash **both halves** with the same
-`elora.uf2`: double-tap the reset button of a half, and copy the file to the `RPI-RP2` drive
-that appears.
+See the [root README](../../../../../../README.md): `make release`, then `make flash-elora`
+once for **each half**, with the same `elora.uf2` (double-tap that half's reset button; the
+bootloader appears as the `RPI-RP2` drive).
 
 ## Font
 
