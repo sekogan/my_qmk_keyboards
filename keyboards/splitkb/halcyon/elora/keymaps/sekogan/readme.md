@@ -10,8 +10,9 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan` (shared code in
 - Always connect USB to the **display half**: the half with USB is the master, and only the
   master draws on the display.
 - Left and right are set in hardware (GP23), so both halves run the same firmware.
-- The RGB LEDs and encoders are not used. The keys L19, L20, R19 and R20 do nothing on any
-  layer for now.
+- The RGB LEDs and encoders are not used. On the QWERTY and COLEMAK layers L20 is Left Shift,
+  L19 selects the primary language, R19 the alternative one and R20 holds the numpad layer; on
+  every other layer those four keys do nothing.
 
 ## Build and flash
 
