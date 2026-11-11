@@ -6,6 +6,18 @@ keyboards. "Sofle" is the sha256 of `sofle.hex` and "Elora" of `elora.uf2`
 (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.2.0 — QMK 0.34.7
+
+- Source: the commit that adds this entry; the release `README` names it.
+- Sofle: `d0e50b6ecc59cdad19d35df67e158b424aa9d630d781a0a5eadd69000a4d8b1b`
+- Elora: `42fe838a7a7fcf6f743d19cf857579b8087f28cd67323db261c5cbc48bdbc44e`
+- Sofle, Elora: on RAISE, `` ` ~ `` moves to the position of Esc (left half, row 2, column 5);
+  Esc is no longer on RAISE, and the old `` ` ~ `` position (column 6) is blank.
+- Elora: the four inner bottom-row keys are assigned on QWERTY and COLEMAK: L20 is a held
+  Left Shift, L19 selects the primary language, R19 the alternative language, and R20 is
+  L_NUM. They stay blank on every other layer.
+- KBD75 firmware unchanged.
+
 ## 1.1.0 — QMK 0.34.7
 
 - Source: the commit that adds this entry; the release `README` names it.
