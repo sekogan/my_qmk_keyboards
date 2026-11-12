@@ -16,6 +16,7 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan` (shared code in
 - Other differences from the Sofle layers:
   - QWERTY, COLEMAK: the outer thumb keys are plain Left and Right Super; tapping them does
     not select a language.
+  - EXTRA: display brightness down and up on the COLEMAK R and W positions (QWERTY S and W).
   - QWERTY, COLEMAK: the inner right thumb key is Enter (the numpad layer is on R20).
   - RAISE: the outer right key of the bottom row is transparent (Right Shift) instead of Enter.
 
