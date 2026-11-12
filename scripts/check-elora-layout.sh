@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Layer sync: the Elora keymap must hold the Sofle's layers, with the four inner bottom-row keys
-# set to the fixed Elora-only assignments on QWERTY and COLEMAK and blank on every other layer
-# (the keymap.c files are separate, so nothing else catches drift).
+# Layer sync: the Elora keymap must hold the Sofle's layers, except for the Elora-only keys
+# listed below (the keymap.c files are separate, so nothing else catches drift).
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 mkdir -p "$root/build/scratch"; tmp=$(mktemp -d -p "$root/build/scratch" .layout.XXXXXX); trap 'rm -rf "$tmp"' EXIT
@@ -13,15 +12,28 @@ python3 -I - "$tmp/sofle.json" "$tmp/elora.json" <<'PY'
 import json, sys
 sofle = json.load(open(sys.argv[1]))["layers"]
 elora = json.load(open(sys.argv[2]))["layers"]
-# Elora indices 42-45 (L20, L19, R19, R20), by layer: QWERTY and COLEMAK are assigned, the rest are blank.
+QWERTY, COLEMAK, LOWER, NUMPAD, RAISE, EXTRA = range(6)
+# Elora indices: rows of 12 (0-35), the bottom row of 16 with L20, L19, R19, R20 at 42-45,
+# then the thumbs (left 52-56, right 57-61). Sofle 42-43 (encoder pushes) are not carried over.
+# The four inner bottom-row keys: assigned on QWERTY and COLEMAK, blank on every other layer.
 assigned = ["KC_LSFT", "KC_LNG1", "KC_LNG2", "L_NUM"]
-inner = {0: assigned, 1: assigned}
+inner = {QWERTY: assigned, COLEMAK: assigned}
 blank = ["KC_NO"] * 4
+# Other Elora-only keys, by layer: {index: keycode}.
+elora_only = {
+    QWERTY:  {57: "KC_ENT"},
+    COLEMAK: {57: "KC_ENT"},
+}
 ok = len(sofle) == len(elora)
 for i, (s, e) in enumerate(zip(sofle, elora)):
-    # Sofle 42-43 (encoder pushes) are not carried over.
-    if len(s) != 60 or len(e) != 62 or e[42:46] != inner.get(i, blank) or e[:42] + e[46:] != s[:42] + s[44:]:
-        print(f"layer {i}: Elora differs from Sofle"); ok = False
+    if len(s) != 60 or len(e) != 62:
+        print(f"layer {i}: unexpected size"); ok = False; continue
+    expected = s[:42] + inner.get(i, blank) + s[44:]
+    for k, v in elora_only.get(i, {}).items():
+        expected[k] = v
+    for k, (want, got) in enumerate(zip(expected, e)):
+        if want != got:
+            print(f"layer {i} key {k}: Elora has {got}, expected {want}"); ok = False
 sys.exit(0 if ok else 1)
 PY
 echo "layer check OK: Elora matches Sofle"

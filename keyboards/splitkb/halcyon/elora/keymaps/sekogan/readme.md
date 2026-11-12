@@ -13,6 +13,8 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan` (shared code in
 - The RGB LEDs and encoders are not used. On the QWERTY and COLEMAK layers L20 is Left Shift,
   L19 selects the primary language, R19 the alternative one and R20 holds the numpad layer; on
   every other layer those four keys do nothing.
+- Other differences from the Sofle layers:
+  - QWERTY, COLEMAK: the inner right thumb key is Enter (the numpad layer is on R20).
 
 ## Build and flash
 
