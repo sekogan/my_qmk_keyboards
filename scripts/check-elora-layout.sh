@@ -21,8 +21,8 @@ inner = {QWERTY: assigned, COLEMAK: assigned}
 blank = ["KC_NO"] * 4
 # Other Elora-only keys, by layer: {index: keycode}.
 elora_only = {
-    QWERTY:  {57: "KC_ENT"},
-    COLEMAK: {57: "KC_ENT"},
+    QWERTY:  {52: "KC_LGUI", 57: "KC_ENT", 61: "KC_RGUI"},
+    COLEMAK: {52: "KC_LGUI", 57: "KC_ENT", 61: "KC_RGUI"},
     RAISE:   {51: "KC_TRNS"},
 }
 ok = len(sofle) == len(elora)

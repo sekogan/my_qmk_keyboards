@@ -14,6 +14,8 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan` (shared code in
   L19 selects the primary language, R19 the alternative one and R20 holds the numpad layer; on
   every other layer those four keys do nothing.
 - Other differences from the Sofle layers:
+  - QWERTY, COLEMAK: the outer thumb keys are plain Left and Right Super; tapping them does
+    not select a language.
   - QWERTY, COLEMAK: the inner right thumb key is Enter (the numpad layer is on R20).
   - RAISE: the outer right key of the bottom row is transparent (Right Shift) instead of Enter.
 
