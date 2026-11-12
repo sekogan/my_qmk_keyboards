@@ -18,6 +18,9 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan` (shared code in
     not select a language.
   - EXTRA: display brightness down and up on the COLEMAK R and W positions (QWERTY S and W);
     the OS selector is on G, under BASE, so all keyboard controls are on the left half.
+  - EXTRA, right half: media keys instead of the Sofle's left encoder, on the RAISE arrow
+    positions (volume up/down on up/down, previous/next track on left/right), with mute under
+    volume down and play/pause on the full stop.
   - QWERTY, COLEMAK: the inner right thumb key is Enter (the numpad layer is on R20).
   - RAISE: the outer right key of the bottom row is transparent (Right Shift) instead of Enter.
 
