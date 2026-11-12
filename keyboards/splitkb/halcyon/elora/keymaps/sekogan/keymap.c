@@ -139,7 +139,7 @@ XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXX
  * |------+------+------+------+------+------|                                  |------+------+------+------+------+------|
  * |      | LSFT | LALT | LCTL | TAB  |      |                                  | PGDN | LEFT | DOWN | RGHT | WDEL |WBSPC |
  * |------+------+------+------+------+------+-------------.      ,-------------+------+------+------+------+------+------|
- * | ___  | UNDO | CUT  | COPY |PASTE |PASTE |      |      |      |      |      | WSEL |LSTRT |FDOWN | LEND | LDEL | ENT  |
+ * | ___  | UNDO | CUT  | COPY |PASTE |PASTE |      |      |      |      |      | WSEL |LSTRT |FDOWN | LEND | LDEL | ___  |
  * `--------------------+------+------+------+------+------|      |------+------+------+------+------+--------------------'
  *                      | LGUI | ___  | ___  | ___  | FSPC |      | ___  | ___  | ___  | ___  | RGUI |
  *                      `----------------------------------'      `----------------------------------'
@@ -148,7 +148,7 @@ XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXX
 XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_CAPS,                                               XXXXXXX,   XXXXXXX,   SEK_FUP,   KC_PSCR,   KC_INS,    KC_PAUS,
 XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_GRV,    XXXXXXX,                                               KC_PGUP,   SEK_WPREV, KC_UP,     SEK_WNEXT, KC_DEL,    KC_BSPC,
 XXXXXXX,   KC_LSFT,   KC_LALT,   KC_LCTL,   KC_TAB,    XXXXXXX,                                               KC_PGDN,   KC_LEFT,   KC_DOWN,   KC_RGHT,   SEK_WDEL,  SEK_WBSPC,
-_______,   KC_UNDO,   KC_CUT,    KC_COPY,   KC_PASTE,  KC_PASTE,  XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   SEK_WSEL,  SEK_LSTRT, SEK_FDOWN, SEK_LEND,  SEK_LDEL,  KC_ENT,
+_______,   KC_UNDO,   KC_CUT,    KC_COPY,   KC_PASTE,  KC_PASTE,  XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   SEK_WSEL,  SEK_LSTRT, SEK_FDOWN, SEK_LEND,  SEK_LDEL,  _______,
                                  KC_LGUI,   _______,   _______,   _______,   SEK_FSPC,  _______,   _______,   _______,   _______,   KC_RGUI
 ),
 
