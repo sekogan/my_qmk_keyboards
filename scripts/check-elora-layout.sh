@@ -23,6 +23,7 @@ blank = ["KC_NO"] * 4
 elora_only = {
     QWERTY:  {57: "KC_ENT"},
     COLEMAK: {57: "KC_ENT"},
+    RAISE:   {51: "KC_TRNS"},
 }
 ok = len(sofle) == len(elora)
 for i, (s, e) in enumerate(zip(sofle, elora)):
