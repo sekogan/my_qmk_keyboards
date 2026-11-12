@@ -24,6 +24,7 @@ elora_only = {
     QWERTY:  {52: "KC_LGUI", 57: "KC_ENT", 61: "KC_RGUI"},
     COLEMAK: {52: "KC_LGUI", 57: "KC_ENT", 61: "KC_RGUI"},
     RAISE:   {51: "KC_TRNS"},
+    EXTRA:   {14: "BL_UP", 26: "BL_DOWN"},
 }
 ok = len(sofle) == len(elora)
 for i, (s, e) in enumerate(zip(sofle, elora)):
