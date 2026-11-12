@@ -6,6 +6,21 @@ keyboards. "Sofle" is the sha256 of `sofle.hex` and "Elora" of `elora.uf2`
 (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.3.0 — QMK 0.34.7
+
+- Source: the commit that adds this entry; the release `README` names it.
+- Sofle: `d0e50b6ecc59cdad19d35df67e158b424aa9d630d781a0a5eadd69000a4d8b1b` (unchanged)
+- Elora: `a83620301f14bb603c9f53bc1b2fa54a9282dfdac44f37fce08cd2b9817d920c`
+- Elora, QWERTY and COLEMAK: the inner right thumb key is Enter instead of the numpad layer
+  (still on R20). The outer thumb keys are plain Left and Right Super; tapping them no longer
+  selects a language (L19 and R19 do).
+- Elora, RAISE: the outer right key of the bottom row is transparent instead of Enter.
+- Elora, EXTRA: all keyboard controls are on the left half: display brightness up and down
+  on the COLEMAK W and R positions (new), BASE on B, the OS selector on G (moved from the right
+  half). Media keys on the right half, on the RAISE arrow positions: volume up and down,
+  previous and next track, mute under volume down, play/pause on the full stop.
+- KBD75 firmware unchanged.
+
 ## 1.2.0 — QMK 0.34.7
 
 - Source: the commit that adds this entry; the release `README` names it.
