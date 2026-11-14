@@ -6,6 +6,18 @@ keyboards. "Sofle" is the sha256 of `sofle.hex` and "Elora" of `elora.uf2`
 (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.3.1 — QMK 0.34.7
+
+- Source: the commit that adds this entry; the release `README` names it.
+- Sofle: `d0e50b6ecc59cdad19d35df67e158b424aa9d630d781a0a5eadd69000a4d8b1b` (unchanged)
+- Elora: `a83620301f14bb603c9f53bc1b2fa54a9282dfdac44f37fce08cd2b9817d920c` (unchanged)
+- Elora: the display framebuffer is explicitly 4-byte aligned. The rgb565 surface does
+  16-bit stores into it, and the RP2040 faults on misaligned access; in 1.3.0 it was
+  aligned only by chance, and a change that moved it to an odd address showed garbage on
+  the display at boot. The firmware is byte-identical to 1.3.0 (the buffer was already
+  at an aligned address); no behaviour change.
+- KBD75 firmware unchanged.
+
 ## 1.3.0 — QMK 0.34.7
 
 - Source: the commit that adds this entry; the release `README` names it.
