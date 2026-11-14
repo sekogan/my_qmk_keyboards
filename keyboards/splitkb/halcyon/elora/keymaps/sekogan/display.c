@@ -22,7 +22,8 @@
 static painter_device_t      lcd;
 static painter_device_t      surface;
 static painter_font_handle_t font;
-static uint8_t               framebuffer[SURFACE_REQUIRED_BUFFER_BYTE_SIZE(LCD_WIDTH, LCD_HEIGHT, 16)];
+// Aligned: the rgb565 surface does 16-bit stores into it, and the M0+ faults on misaligned access.
+static uint8_t               framebuffer[SURFACE_REQUIRED_BUFFER_BYTE_SIZE(LCD_WIDTH, LCD_HEIGHT, 16)] __attribute__((aligned(4)));
 static bool                  ready    = false;
 static bool                  panel_on = false;
 
