@@ -33,3 +33,9 @@
 #include "quantum.h"
 
 bool process_caps_word_both_shifts(uint16_t keycode, keyrecord_t* record);
+
+// Caps Word is on (not QMK's is_caps_word_on(), which core declares under CAPS_WORD_ENABLE).
+bool is_caps_word_both_shifts_on(void);
+
+// Caps Word has registered KC_LSFT itself (a letter was typed); that Shift is not the user's.
+bool is_caps_word_both_shifts_shifting(void);
