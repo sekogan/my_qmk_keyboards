@@ -24,4 +24,14 @@ SEK_FEATURES = yes
 
 SRC += display.c
 SRC += display_state.c
-SRC += graphics/spleen12x24.qff.c
+SRC += display_skin.c
+SRC += display_gfx_qp.c
+SRC += graphics/font_val28_caps.qff.c
+SRC += graphics/font_l24_caps.qff.c
+SRC += graphics/font_l18_caps.qff.c
+SRC += graphics/icon_shift.qgf.c
+SRC += graphics/icon_ctrl.qgf.c
+SRC += graphics/icon_alt.qgf.c
+SRC += graphics/icon_super.qgf.c
+SRC += graphics/icon_win.qgf.c
+SRC += graphics/icon_cmd.qgf.c

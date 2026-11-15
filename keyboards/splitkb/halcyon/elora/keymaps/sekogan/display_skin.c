@@ -232,12 +232,12 @@ void skin_draw_all(const display_state_t *s) {
     } else {
         for (uint8_t g = 0; g < sizeof GROUPS / sizeof GROUPS[0]; ++g) GROUPS[g].draw(s, GROUPS[g].k);
     }
-    gfx_flush();
 }
 
 void skin_draw_changes(const display_state_t *old, const display_state_t *s) {
     if (old->overlay != s->overlay) { // popup <-> main: the screens share nothing
         skin_draw_all(s);
+        gfx_flush();
     } else if (s->overlay) { // only the level can change in the popup
         if (old->backlight != s->backlight) {
             draw_level(s->backlight);
