@@ -18,6 +18,9 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan` (shared code in
     not select a language.
   - EXTRA: display brightness down and up on the COLEMAK R and W positions (QWERTY S and W);
     the OS selector is on G, under BASE, so all keyboard controls are on the left half.
+  - EXTRA (temporary): display preview next and previous on the COLEMAK F and S positions
+    (QWERTY E and D). The first press replaces the status screen with test pictures until
+    the next power cycle (`display_preview.c`, pictures from `display-sketches/hw-test/`).
   - EXTRA, right half: media keys instead of the Sofle's left encoder, on the RAISE arrow
     positions (volume up/down on up/down, previous/next track on left/right), with mute under
     volume down and play/pause on the full stop.

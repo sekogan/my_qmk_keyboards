@@ -28,6 +28,7 @@
 #define ST7789_NO_AUTOMATIC_VIEWPORT_OFFSETS
 #define QUANTUM_PAINTER_DISPLAY_TIMEOUT 0 // the panel timeout is in display.c, together with the backlight
 #define SEK_DISPLAY_TIMEOUT 120000 // ms without key activity before the panel and backlight go off
+#define QUANTUM_PAINTER_SUPPORTS_NATIVE_COLORS TRUE // rgb565 pictures of the temporary preview (display_preview.c)
 
 // Backlight: GP27 = PWM slice 5, channel B.
 #define BACKLIGHT_PIN GP27

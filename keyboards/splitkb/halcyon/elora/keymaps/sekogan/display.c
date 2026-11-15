@@ -6,6 +6,7 @@
 #include "qp.h"
 #include "qp_surface.h"
 #include "display.h"
+#include "display_preview.h"
 #include "layers.h"
 #include "features/instant_qwerty.h"
 #include "features/language_stash.h"
@@ -26,6 +27,7 @@ static painter_font_handle_t font;
 static uint8_t               framebuffer[SURFACE_REQUIRED_BUFFER_BYTE_SIZE(LCD_WIDTH, LCD_HEIGHT, 16)] __attribute__((aligned(4)));
 static bool                  ready    = false;
 static bool                  panel_on = false;
+static bool                  resend   = false; // the panel came back on: the preview sends the whole frame again
 
 typedef struct {
     bool    os_auto, instant_qwerty, language_stash_empty, caps;
@@ -135,11 +137,18 @@ void display_task(void) {
     const bool idle = last_input_activity_elapsed() > SEK_DISPLAY_TIMEOUT;
     if (idle == panel_on) {
         panel_on = !idle;
+        resend   = panel_on;
         qp_power(lcd, panel_on);
         if (panel_on)
             backlight_enable_noeeprom();
         else
             backlight_disable_noeeprom();
+    }
+
+    if (display_preview_active()) {
+        if (display_preview_render(surface) || resend) qp_surface_draw(surface, lcd, 0, 0, true);
+        resend = false;
+        return;
     }
 
     const status_t status = {
@@ -173,6 +182,6 @@ void display_suspend(void) {
 void display_wakeup(void) {
     if (ready && !panel_on) {
         qp_power(lcd, true);
-        panel_on = true;
+        panel_on = resend = true;
     }
 }

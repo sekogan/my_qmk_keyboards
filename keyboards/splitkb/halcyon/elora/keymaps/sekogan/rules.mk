@@ -24,3 +24,7 @@ SEK_FEATURES = yes
 
 SRC += display.c
 SRC += graphics/spleen12x24.qff.c
+
+# Temporary hardware preview of display mockups (display_preview.c).
+SRC += display_preview.c
+SRC += $(foreach p,01 02 03 04 05 06 07 08 09 10,graphics/preview/preview_t$(p).qgf.c)
