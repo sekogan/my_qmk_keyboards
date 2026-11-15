@@ -196,6 +196,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case SEK_BASE:
             if (record->event.pressed) set_single_persistent_default_layer(IS_LAYER_ON_STATE(default_layer_state, QWERTY) ? COLEMAK : QWERTY);
             return false;
+        case QK_BACKLIGHT_UP:
+        case QK_BACKLIGHT_DOWN:
+            if (record->event.pressed) display_backlight_adjusted(); // the level changes later, in process_backlight()
+            return true;
     }
     return true;
 }
@@ -207,6 +211,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
         case LOWER:
+            display_snapshot_before_lower();
             stash_current_language();
             break;
         default:
