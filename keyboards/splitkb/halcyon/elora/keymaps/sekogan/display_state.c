@@ -43,6 +43,8 @@ void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out) {
         .qwerty      = stashed ? ctx->pre_lower_qwerty : raw->qwerty,
         .layout_auto = stashed ? ctx->pre_lower_layout_auto : raw->instant_qwerty,
         .secondary   = stashed ? ctx->pre_lower_secondary : raw->secondary,
+        // The language only matters on BASE with Linux or Windows: elsewhere it is shown muted.
+        .lang_muted  = raw->layer != DS_LAYER_BASE || raw->os == DS_OS_MAC || raw->os == DS_OS_UNKNOWN,
         .shift       = (mods & (DS_MOD_LSFT | DS_MOD_RSFT)) != 0,
         .ctrl        = (mods & (DS_MOD_LCTL | DS_MOD_RCTL)) != 0,
         .alt         = (mods & (DS_MOD_LALT | DS_MOD_RALT)) != 0,

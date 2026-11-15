@@ -46,6 +46,7 @@ check: submodule
 	  $(SCRIPTS)/qmk lint -kb "$${t%%:*}" -km "$${t##*:}"; \
 	done
 	$(SCRIPTS)/check-elora-layout.sh
+	$(SCRIPTS)/check-elora-display.sh
 
 help:
 	echo 'make                build all targets, print size + sha256 (scripts/build_all.sh);'
@@ -58,6 +59,7 @@ help:
 	echo '                    (scripts/flash-elora.sh); FW=<dir|uf2> flashes another build'
 	echo 'make check          hook canary (scripts/canary.sh) + qmk lint for every target in qmk.json'
 	echo '                    + Elora/Sofle layer sync (scripts/check-elora-layout.sh)'
+	echo '                    + Elora display pixel-exact with the skin natives (scripts/check-elora-display.sh)'
 	echo 'make keymapviz      regenerate the layer diagrams in the Sofle and Elora keymap.c'
 	echo 'make venv           create the keymapviz venv in build/venv'
 	echo 'make clean          remove build/qmk and build/scratch (never build/readback)'

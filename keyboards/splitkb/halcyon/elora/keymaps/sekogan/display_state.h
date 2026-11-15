@@ -20,14 +20,11 @@ typedef struct {
     bool    os_auto;              // autodetection on AND os != unknown
     bool    qwerty, layout_auto;  // actual layout; instant QWERTY active
     bool    secondary;            // language (pre-LOWER value while the stash is full)
+    bool    lang_muted;           // the language does not apply: not BASE, or macOS / unknown OS
     bool    shift, ctrl, alt, gui; // held or one-shot, minus Caps Word's synthetic LSFT
     bool    caps, word, num, scrl;
     bool    overlay; // full-screen backlight popup visible
 } display_state_t;
-
-// The SPEC test states (SPEC §2, sketchlib STATE_ORDER): idle, lower-secondary, extra-no-os,
-// numpad-shortcut, backlight-adjust. In display_test_states.c.
-extern const display_state_t display_test_states[5];
 
 // 8-bit mod bits as in QMK (MOD_BIT(KC_LCTL) ...); display_state.c checks them against QMK.
 #define DS_MOD_LCTL 0x01

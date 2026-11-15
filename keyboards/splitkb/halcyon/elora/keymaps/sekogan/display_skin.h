@@ -1,0 +1,15 @@
+// Copyright 2026 Sergei Kogan
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#pragma once
+
+// The skin renderer over display_gfx.h. No QMK dependencies: it also runs on the host.
+
+#include <stdint.h>
+#include "display_state.h"
+
+// Clear to black, then draw the main screen or the popup; one flush.
+void skin_draw_all(const display_state_t *s);
+// Redraw the groups that differ between old (on the screen) and s, flushing after each.
+// The fields are in range (ds_resolve()).
+void skin_draw_changes(const display_state_t *old, const display_state_t *s);

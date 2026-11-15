@@ -11,11 +11,20 @@
 // Text-cell x of the centred labels, measured on the ink with the sketch's centred_cell_x():
 // cell x = x0 + (w - ink width) / 2 - ink left offset.
 
-// The tally (box 4,4,127,20), by ds_layer_t: BASE, LOWER, RAISE, NUMPAD, EXTRA.
-__attribute__((unused)) static const uint8_t SKIN_TALLY_X[5] = {43, 37, 37, 31, 37};
+// The tally (box 4,4,127,20), by ds_layer_t.
+#define SKIN_TALLY_X_BASE 43
+#define SKIN_TALLY_X_LOWER 37
+#define SKIN_TALLY_X_RAISE 37
+#define SKIN_TALLY_X_NUMPAD 31
+#define SKIN_TALLY_X_EXTRA 37
+__attribute__((unused)) static const uint8_t SKIN_TALLY_X[5] = {SKIN_TALLY_X_BASE, SKIN_TALLY_X_LOWER, SKIN_TALLY_X_RAISE, SKIN_TALLY_X_NUMPAD, SKIN_TALLY_X_EXTRA};
 
-// The lock labels (61-wide bars): CAPS, WORD, NUM, SCRL.
-__attribute__((unused)) static const uint8_t SKIN_LOCK_X[4] = {10, 76, 16, 76};
+// The lock labels (61-wide bars).
+#define SKIN_LOCK_X_CAPS 10
+#define SKIN_LOCK_X_WORD 76
+#define SKIN_LOCK_X_NUM 16
+#define SKIN_LOCK_X_SCRL 76
+__attribute__((unused)) static const uint8_t SKIN_LOCK_X[4] = {SKIN_LOCK_X_CAPS, SKIN_LOCK_X_WORD, SKIN_LOCK_X_NUM, SKIN_LOCK_X_SCRL};
 
 // The popup readout "{n}/10" (centred in 4..130), by n = 0..10.
 __attribute__((unused)) static const uint8_t SKIN_READOUT_X[11] = {40, 39, 40, 40, 40, 40, 40, 40, 40, 40, 32};
