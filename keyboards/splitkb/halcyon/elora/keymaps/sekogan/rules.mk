@@ -23,4 +23,5 @@ QUANTUM_PAINTER_DRIVERS += st7789_spi surface
 SEK_FEATURES = yes
 
 SRC += display.c
+SRC += display_state.c
 SRC += graphics/spleen12x24.qff.c
