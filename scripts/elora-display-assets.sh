@@ -10,7 +10,7 @@ root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 gfx=keyboards/splitkb/halcyon/elora/keymaps/sekogan/graphics
 "$root/scripts/qmk" --exec sh -euc '
   gfx=$1
-  python3 -I scripts/elora-display-assets.py
+  python3 -I -B scripts/elora-display-assets.py
   for f in font_val28_caps font_l24_caps font_l18_caps; do
     qmk painter-convert-font-image -i "$gfx/$f.png" -f mono2 -o "$gfx"
   done

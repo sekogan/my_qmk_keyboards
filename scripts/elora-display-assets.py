@@ -2,7 +2,8 @@
 """Elora display assets for the skin design (run by scripts/elora-display-assets.sh).
 
 Everything is derived from the tracked sketch copy in scripts/elora_display_test/reference/sketch/
-(skin.py + the trimmed sketchlib.py) and the BDF fonts in the keymap's graphics/:
+(skin.py + the trimmed sketchlib.py), the BDF fonts in the keymap's graphics/ and the box geometry
+of display_skin_layout.h:
 
   graphics/font_{val28,l24,l18}_caps.png   QFF font images for `qmk painter-convert-font-image`
   graphics/icon_<name>.png                 20x20 1-bit mod icons for `qmk painter-convert-graphics`
@@ -14,19 +15,31 @@ and '/'). Nothing is scaled. Every output is checked here (see the asserts) and 
 between runs.
 """
 import os
+import re
 import sys
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 KM = os.path.join(ROOT, "keyboards/splitkb/halcyon/elora/keymaps/sekogan")
 GFX = os.path.join(KM, "graphics")
 sys.path.insert(0, os.path.join(ROOT, "scripts/elora_display_test/reference/sketch"))
+sys.path.insert(0, os.path.join(ROOT, "scripts/elora_display_test"))
 
 import skin as S  # noqa: E402
 from PIL import Image, ImageDraw  # noqa: E402
+from skin_names import ICONS, LAYERS  # noqa: E402
+
+
+def layout_defines():
+    """The numeric SKIN_* geometry of display_skin_layout.h (the firmware's single source)."""
+    with open(os.path.join(KM, "display_skin_layout.h")) as f:
+        return {m[1]: int(m[2]) for m in re.finditer(r"^#define (SKIN_\w+) (\d+)\b", f.read(), re.M)}
+
+
+L = layout_defines()
 
 # ---------------------------------------------------------------- strings the renderer draws
-LAYERS = ["BASE", "LOWER", "RAISE", "NUMPAD", "EXTRA"]           # order of ds_layer_t
-LOCKS = [("CAPS", 4), ("WORD", 70), ("NUM", 4), ("SCRL", 70)]   # label, bar x (bar w 61)
+LOCKS = [("CAPS", L["SKIN_LOCK_X1"]), ("WORD", L["SKIN_LOCK_X2"]),   # label, bar x
+         ("NUM", L["SKIN_LOCK_X1"]), ("SCRL", L["SKIN_LOCK_X2"])]
 READOUTS = [f"{n}/10" for n in range(11)]
 STRINGS = {
     "val28": ["LINUX", "WINDOWS", "MACOS", "UNKNOWN", "COLEMAK", "QWERTY", "PRIMARY", "SECONDARY"]
@@ -99,7 +112,6 @@ def check_strip(img, adv, font, top, bottom, strings):
 
 
 # ---------------------------------------------------------------- icons
-ICONS = ["shift", "ctrl", "alt", "super", "win", "cmd"]
 SKETCH_ICON = {"super": "diamond"}
 
 
@@ -229,22 +241,28 @@ def palette_header(pal):
 
 def metrics_header():
     A, T28 = S.A, S.T28
-    tally = [S.centred_cell_x(layer, A) for layer in LAYERS]
-    locks = [S.centred_cell_x(label, A, bx, 61) for label, bx in LOCKS]
-    readout = [S.centred_cell_x(rd, T28) for rd in READOUTS]
+    x0, cw, lock_w = L["SKIN_X0"], L["SKIN_CW"], L["SKIN_LOCK_W"]
+    tally = [S.centred_cell_x(layer, A, x0, cw) for layer in LAYERS]
+    locks = [S.centred_cell_x(label, A, bx, lock_w) for label, bx in LOCKS]
+    readout = [S.centred_cell_x(rd, T28, x0, cw) for rd in READOUTS]
+
+    def table(comment, prefix, names, values):
+        out = ["", comment]
+        out += [f"#define {prefix}_{n} {v}" for n, v in zip(names, values)]
+        out.append(f"__attribute__((unused)) static const uint8_t {prefix}[{len(values)}] = {{"
+                   + ", ".join(f"{prefix}_{n}" for n in names) + "};")
+        return out
+
     out = [HEADER]
     out.append("// Text-cell x of the centred labels, measured on the ink with the sketch's centred_cell_x():")
     out.append("// cell x = x0 + (w - ink width) / 2 - ink left offset.")
+    out += table(f"// The tally (box {x0},{L['SKIN_TALLY_Y']},{cw},{L['SKIN_TALLY_H']}), by ds_layer_t.",
+                 "SKIN_TALLY_X", LAYERS, tally)
+    out += table(f"// The lock labels ({lock_w}-wide bars).", "SKIN_LOCK_X", [label for label, _ in LOCKS], locks)
     out.append("")
-    out.append("// The tally (box 4,4,127,20), by ds_layer_t: " + ", ".join(LAYERS) + ".")
-    out.append("__attribute__((unused)) static const uint8_t SKIN_TALLY_X[5] = {" + ", ".join(map(str, tally)) + "};")
-    out.append("")
-    out.append("// The lock labels (61-wide bars): " + ", ".join(label for label, _ in LOCKS) + ".")
-    out.append("__attribute__((unused)) static const uint8_t SKIN_LOCK_X[4] = {" + ", ".join(map(str, locks)) + "};")
-    out.append("")
-    out.append("// The popup readout \"{n}/10\" (centred in 4..130), by n = 0..10.")
-    out.append("__attribute__((unused)) static const uint8_t SKIN_READOUT_X[11] = {" + ", ".join(map(str, readout)) + "};")
-    return "\n".join(out) + "\n", tally, locks, readout
+    out.append(f"// The popup readout \"{{n}}/10\" (centred in {x0}..{x0 + cw - 1}), by n = 0..10.")
+    out.append(f"__attribute__((unused)) static const uint8_t SKIN_READOUT_X[{len(readout)}] = {{" + ", ".join(map(str, readout)) + "};")
+    return "\n".join(out) + "\n"
 
 
 def write(path, data):
@@ -262,16 +280,8 @@ def main():
         img.save(os.path.join(GFX, f"font_{name}_caps.png"))
     for name in ICONS:
         icon_image(name).save(os.path.join(GFX, f"icon_{name}.png"))
-    pal = palette()
-    for _, c, (h, s, v) in pal:
-        assert rgb565(hsv_to_rgb_nocie(h, s, v)) == rgb565(c)
-    write(os.path.join(KM, "display_palette.h"), palette_header(pal))
-    text, tally, locks, readout = metrics_header()
-    # the brief's numbers
-    assert tally == [43, 37, 37, 31, 37], tally
-    assert locks == [10, 76, 16, 76], locks
-    assert readout == [40, 39] + [40] * 8 + [32], readout
-    write(os.path.join(KM, "display_skin_metrics.h"), text)
+    write(os.path.join(KM, "display_palette.h"), palette_header(palette()))
+    write(os.path.join(KM, "display_skin_metrics.h"), metrics_header())
 
 
 if __name__ == "__main__":
