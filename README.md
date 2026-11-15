@@ -124,7 +124,7 @@ put the output in `qmk_firmware/.build/` plus `*.hex` copies in the repo root (d
 afterwards). 1.0.0 and 1.0.1 were built outside this repo layout; 1.0.0 used the 2024 host
 toolchain (avr-gcc 14.1) and cannot be reproduced with the pinned image.
 
-Checks used when changing things (`make check` runs all three):
+Checks used when changing things (`make check` runs all four):
 
 - `scripts/canary.sh`: verifies that every QMK hook the keymaps implement is
   really linked (QMK hooks are weak symbols; a renamed hook would compile and
@@ -133,6 +133,10 @@ Checks used when changing things (`make check` runs all three):
 - `scripts/qmk lint -kb <kb> -km sekogan` for each target in `qmk.json`.
 - `scripts/check-elora-layout.sh`: fails if a layer of the Elora keymap differs from the
   Sofle's (the two `keymap.c` files hold separate copies).
+- `scripts/check-elora-display.sh`: compiles the Elora display renderer and its view model
+  with host gcc in the pinned image and fails unless every rendered screen is pixel-exact
+  with the skin's reference renders (`scripts/elora_display_test/`); diff images of failing
+  states go to `build/scratch/display-diff-*.png`.
 
 ## Flash
 
