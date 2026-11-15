@@ -8,7 +8,8 @@
 #include <stdint.h>
 #include "display_state.h"
 
-// Clear to black, then draw the main screen or the popup; one flush.
+// Clear to black, then draw the main screen or the popup. The caller flushes: every pixel is
+// drawn, so one gfx_flush() sends the whole screen.
 void skin_draw_all(const display_state_t *s);
 // Redraw the groups that differ between old (on the screen) and s, flushing after each.
 // The fields are in range (ds_resolve()).
