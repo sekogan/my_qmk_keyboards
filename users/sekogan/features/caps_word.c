@@ -18,9 +18,18 @@
 
 #include "caps_word.h"
 
+static bool caps_word_enabled = false;
+static bool shifted           = false; // Caps Word itself holds KC_LSFT
+
+bool is_caps_word_both_shifts_on(void) {
+    return caps_word_enabled;
+}
+
+bool is_caps_word_both_shifts_shifting(void) {
+    return shifted;
+}
+
 bool process_caps_word_both_shifts(uint16_t keycode, keyrecord_t* record) {
-    static bool caps_word_enabled = false;
-    static bool shifted           = false;
 #ifndef NO_ACTION_ONESHOT
     const uint8_t mods = get_mods() | get_oneshot_mods();
 #else
