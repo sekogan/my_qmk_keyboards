@@ -1,36 +1,87 @@
 # Firmware for Halcyon Elora rev2
 
-QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan` (shared code in
-[`users/sekogan/`](../../../../../../users/sekogan/)).
+A keymap for the [splitkb Halcyon Elora](https://splitkb.com) rev2 split keyboard with a
+Halcyon TFT display module on one half. It uses the same layers as the
+[Sofle keymap](../../../../../sofle/keymaps/sekogan/readme.md), adapted to the Elora's
+extra keys, and adds a colour status display.
+
+QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features are in
+[`users/sekogan/`](../../../../../../users/sekogan/).
+
+## Features
+
+- **Six layers**: a base layer (QWERTY or Colemak), LOWER (symbols and F-keys), RAISE
+  (navigation and editing), NUMPAD (held on R20), and EXTRA (LOWER + RAISE together: keyboard
+  settings and media keys). The layer diagrams are at the top of [keymap.c](keymap.c).
+- **QWERTY or Colemak**: BASE on EXTRA switches the base layout; the choice is remembered.
+- **Two input languages**: L19 selects the primary language and R19 the secondary one, no
+  matter what the host's current language is (Linux and Windows). While LOWER is held, the
+  primary language is used, so symbols always come out right.
+- **Instant QWERTY**: with the secondary language, the base layer acts as QWERTY so the host's
+  Russian layout lands on its usual keys. While Ctrl, Alt or GUI is held, your chosen layout
+  is back, so shortcuts stay where you expect them.
+- **Compact Russian layout**: Right Alt + е types ё and Right Alt + ь types ъ.
+- **OS selection**: the OS is detected automatically; OS on EXTRA cycles through Linux,
+  Windows, macOS and back to autodetection. The language keys and the display follow the OS.
+- **Caps Word**: press both Shifts to type one word in capitals; it turns off by itself.
+- **Editing on RAISE**: arrows and page keys, previous/next word, line start/end, select
+  word, delete word forward/backward, delete line, undo/cut/copy/paste, and "fast" up, down
+  and space keys that repeat several times per press.
+- **One-shot Shifts** on the outer keys of the bottom row, and Num Lock is kept on.
+- **Media and display controls on EXTRA**: volume, previous/next track, mute, play/pause,
+  and display brightness (BL+/BL-).
+
+## Status display
+
+![The default skin in five states: idle, LOWER with the secondary language, EXTRA with an unknown OS, a NUMPAD shortcut with mods held, and the backlight popup](display_skin.png)
+
+The display shows, top to bottom:
+
+- the active layer, each in its own colour;
+- Shift, Ctrl, Alt and GUI tiles, lit while the modifier is held or one-shot (the GUI icon
+  follows the OS);
+- Caps Lock, Caps Word, Num Lock and Scroll Lock;
+- the OS, the layout and the language, with an AUTO tag while OS autodetection or instant
+  QWERTY is in effect.
+
+BL+ or BL- shows the brightness level for a moment. The display turns off after two minutes
+without typing and while the computer sleeps; the next key turns it back on.
+
+Display design rules (default skin): [display_skin.md](display_skin.md).
 
 ## Hardware
 
-- Two Elora rev2 halves (RP2040). The display half carries a Halcyon TFT module (ST7789,
-  135x240); the other half has no modules. No other module configuration is handled.
-- Always connect USB to the **display half**: the half with USB is the master, and only the
-  master draws on the display.
-- Left and right are set in hardware (GP23), so both halves run the same firmware.
-- The RGB LEDs and encoders are not used. On the QWERTY and COLEMAK layers L20 is Left Shift,
-  L19 selects the primary language, R19 the alternative one and R20 holds the numpad layer; on
-  every other layer those four keys do nothing.
-- Other differences from the Sofle layers:
-  - QWERTY, COLEMAK: the outer thumb keys are plain Left and Right Super; tapping them does
-    not select a language.
-  - EXTRA: display brightness down and up on the COLEMAK R and W positions (QWERTY S and W);
-    the OS selector is on G, under BASE, so all keyboard controls are on the left half.
-  - EXTRA, right half: media keys instead of the Sofle's left encoder, on the RAISE arrow
-    positions (volume up/down on up/down, previous/next track on left/right), with mute under
-    volume down and play/pause on the full stop.
-  - QWERTY, COLEMAK: the inner right thumb key is Enter (the numpad layer is on R20).
-  - RAISE: the outer right key of the bottom row is transparent (Right Shift) instead of Enter.
+- Two Elora rev2 halves; the display half carries a Halcyon TFT module, the other half no
+  module.
+- Always connect USB to the **display half**: only the half with USB draws on the display.
+- Both halves run the same firmware.
 
 ## Build and flash
 
-See the [root README](../../../../../../README.md): `make release`, then `make flash-elora`
-once for **each half**, with the same `elora.uf2` (double-tap that half's reset button; the
-bootloader appears as the `RPI-RP2` drive).
+You need `git`, `make`, and rootless [Podman](https://podman.io): the compiler and the QMK
+CLI run in a pinned container image, so nothing else has to be installed. See the
+[root README](../../../../../../README.md) for setup.
 
-## Font
+```bash
+make release        # builds build/firmware/qmk-<QMK version>-<VERSION>/elora.uf2
+make flash-elora    # flash one half; run it again for the other half
+```
 
-The display uses [Spleen](https://github.com/fcambus/spleen) 12x24 2.2.0 by Frederic Cambus,
-BSD-2-Clause. The font, its licence and the generated QMK font data are in `graphics/`.
+`make flash-elora` waits for you to double-tap the reset button of the half. The bootloader
+appears as a USB drive called `RPI-RP2`; the script copies `elora.uf2` there and the half
+restarts by itself. Both halves take the same file. `make flash-elora FW=<dir>` flashes
+another build, e.g. `FW=build/scratch/check` after a plain `make`.
+
+## Fonts
+
+- Labels: [Leggie](https://memleek.org/leggie/) by Wiktor Kerr,
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (`graphics/LICENCE.leggie`).
+- Values: a font derived from [Terminus Font](https://terminus-font.sourceforge.net/) by
+  Dimitar Toshkov Zhekov, [SIL OFL 1.1](https://openfontlicense.org)
+  (`graphics/OFL.terminus.txt`). It is not called Terminus, a Reserved Font Name.
+
+Both were cropped to their inked rows and converted to QMK's font format; details in
+[development.md](development.md#fonts).
+
+Maintainer notes (implementation details, differences from the Sofle layers, checks):
+[development.md](development.md).

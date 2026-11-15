@@ -6,6 +6,25 @@ keyboards. "Sofle" is the sha256 of `sofle.hex` and "Elora" of `elora.uf2`
 (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.4.0 — QMK 0.34.7
+
+- Source: the commit that adds this entry; the release `README` names it.
+- Sofle: `d0e50b6ecc59cdad19d35df67e158b424aa9d630d781a0a5eadd69000a4d8b1b` (unchanged)
+- Elora: `09847a4778129a93d8ccb1337057e6b53dcc3f9dcdf3c308f34d752c047dd810`
+- Elora: a new status display (the default skin) replaces the ten text rows. Top to bottom:
+  the layer tally, one colour per layer; Shift, Ctrl, Alt and GUI icon tiles (the GUI icon
+  follows the OS), lit while the modifier is held or one-shot; CAPS and WORD over NUM and
+  SCRL lock bars; the OS, layout and language sections, each with an AUTO tag where it
+  applies (OS autodetection, instant QWERTY). Labels in Leggie 12x24 and 9x18 bold
+  (CC BY 4.0), values in a font derived from Terminus Font 14x28 bold (SIL OFL 1.1), both
+  cropped to their inked rows; Spleen is removed. Only the parts that changed are redrawn.
+- Elora: BL+/BL- on EXTRA shows a full-screen backlight popup (the level as `n/10` and a
+  10-segment meter). It hides 2.5 s after the last BL+/BL-, or at once when EXTRA is left.
+- Sofle, Elora (shared code): Caps Word getters `is_caps_word_both_shifts_on()` and
+  `is_caps_word_both_shifts_shifting()`, used by the Elora display. The Sofle firmware is
+  byte-identical to 1.3.1.
+- KBD75 firmware unchanged.
+
 ## 1.3.1 — QMK 0.34.7
 
 - Source: the commit that adds this entry; the release `README` names it.
