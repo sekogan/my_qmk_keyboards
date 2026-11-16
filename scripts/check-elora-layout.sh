@@ -23,7 +23,9 @@ blank = ["KC_NO"] * 4
 elora_only = {
     QWERTY:  {52: "KC_LGUI", 57: "KC_ENT", 61: "KC_RGUI"},
     COLEMAK: {52: "KC_LGUI", 57: "KC_ENT", 61: "KC_RGUI"},
-    RAISE:   {51: "KC_TRNS"},
+    NUMPAD:  {52: "KC_TRNS", 61: "KC_TRNS"},
+    LOWER:   {52: "KC_TRNS", 61: "KC_TRNS"},
+    RAISE:   {51: "KC_TRNS", 52: "KC_TRNS", 61: "KC_TRNS"},
     EXTRA:   {14: "BL_UP", 18: "KC_NO", 20: "KC_VOLU", 26: "BL_DOWN", 29: "SEK_OS",
               31: "KC_MPRV", 32: "KC_VOLD", 33: "KC_MNXT", 48: "KC_MUTE", 49: "KC_MPLY"},
 }
