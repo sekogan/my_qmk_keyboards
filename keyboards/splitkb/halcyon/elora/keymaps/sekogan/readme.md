@@ -84,5 +84,4 @@ another build, e.g. `FW=build/scratch/check` after a plain `make`.
 Both were cropped to their inked rows and converted to QMK's font format; details in
 [development.md](development.md#fonts).
 
-Maintainer notes (implementation details, differences from the Sofle layers, checks):
-[development.md](development.md).
+Maintainer notes: [development.md](development.md).
