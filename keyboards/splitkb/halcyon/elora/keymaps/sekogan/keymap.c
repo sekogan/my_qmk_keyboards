@@ -43,8 +43,6 @@ _Static_assert(LOWER == TRI_LAYER_LOWER_LAYER && RAISE == TRI_LAYER_UPPER_LAYER 
 
 #define SEK_LDEL C(S(KC_K))
 
-#define OSM_LSFT OSM(MOD_LSFT)
-#define OSM_RSFT OSM(MOD_RSFT)
 
 // L20, L19, R19 and R20 are assigned on QWERTY and COLEMAK, and are KC_NO on every other layer.
 // KC_LNG1 selects the primary language and KC_LNG2 the alternative one (process_language).
@@ -58,7 +56,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                                  |------+------+------+------+------+------|
  * | TAB  |  A   |  S   |  D   |  F   |  G   |                                  |  H   |  J   |  K   |  L   | ; :  | ' "  |
  * |------+------+------+------+------+------+-------------.      ,-------------+------+------+------+------+------+------|
- * |Shift |  Z   |  X   |  C   |  V   |  B   | LSFT | LNG1 |      | LNG2 |L_NUM |  N   |  M   | , <  | . >  | / ?  |Shift |
+ * | LSFT |  Z   |  X   |  C   |  V   |  B   | LSFT | LNG1 |      | LNG2 |L_NUM |  N   |  M   | , <  | . >  | / ?  | RSFT |
  * `--------------------+------+------+------+------+------|      |------+------+------+------+------+--------------------'
  *                      | LGUI | LALT | LCTL |LOWER | SPC  |      | ENT  |RAISE | RCTL | RALT | RGUI |
  *                      `----------------------------------'      `----------------------------------'
@@ -67,7 +65,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,                                               XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_LBRC,   KC_RBRC,
 KC_ESC,    KC_Q,      KC_W,      KC_E,      KC_R,      KC_T,                                                  KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,      KC_BSPC,
 KC_TAB,    KC_A,      KC_S,      KC_D,      KC_F,      KC_G,                                                  KC_H,      KC_J,      KC_K,      KC_L,      KC_SCLN,   KC_QUOT,
-OSM_LSFT,  KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_LSFT,   KC_LNG1,   KC_LNG2,   L_NUM,     KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,   OSM_RSFT,
+KC_LSFT,   KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_LSFT,   KC_LNG1,   KC_LNG2,   L_NUM,     KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,   KC_RSFT,
                                  KC_LGUI,   KC_LALT,   KC_LCTL,   TL_LOWR,   KC_SPC,    KC_ENT,    TL_UPPR,   KC_RCTL,   KC_RALT,   KC_RGUI
 ),
 
@@ -78,7 +76,7 @@ OSM_LSFT,  KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_LSFT,   KC_
  * |------+------+------+------+------+------|                                  |------+------+------+------+------+------|
  * | TAB  |  A   |  R   |  S   |  T   |  G   |                                  |  M   |  N   |  E   |  I   |  O   |      |
  * |------+------+------+------+------+------+-------------.      ,-------------+------+------+------+------+------+------|
- * |Shift |  Z   |  X   |  C   |  D   |  V   | LSFT | LNG1 |      | LNG2 |L_NUM |  K   |  H   | , <  | . >  |      |Shift |
+ * | LSFT |  Z   |  X   |  C   |  D   |  V   | LSFT | LNG1 |      | LNG2 |L_NUM |  K   |  H   | , <  | . >  |      | RSFT |
  * `--------------------+------+------+------+------+------|      |------+------+------+------+------+--------------------'
  *                      | LGUI | LALT | LCTL |LOWER | SPC  |      | ENT  |RAISE | RCTL | RALT | RGUI |
  *                      `----------------------------------'      `----------------------------------'
@@ -87,7 +85,7 @@ OSM_LSFT,  KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_LSFT,   KC_
 KC_F1,     KC_F2,     KC_F3,     KC_F4,     KC_F5,     KC_F6,                                                 KC_F7,     KC_F8,     KC_F9,     KC_F10,    KC_F11,    KC_F12,
 KC_ESC,    KC_Q,      KC_W,      KC_F,      KC_P,      KC_B,                                                  KC_J,      KC_L,      KC_U,      KC_Y,      XXXXXXX,   KC_BSPC,
 KC_TAB,    KC_A,      KC_R,      KC_S,      KC_T,      KC_G,                                                  KC_M,      KC_N,      KC_E,      KC_I,      KC_O,      XXXXXXX,
-OSM_LSFT,  KC_Z,      KC_X,      KC_C,      KC_D,      KC_V,      KC_LSFT,   KC_LNG1,   KC_LNG2,   L_NUM,     KC_K,      KC_H,      KC_COMM,   KC_DOT,    XXXXXXX,   OSM_RSFT,
+KC_LSFT,   KC_Z,      KC_X,      KC_C,      KC_D,      KC_V,      KC_LSFT,   KC_LNG1,   KC_LNG2,   L_NUM,     KC_K,      KC_H,      KC_COMM,   KC_DOT,    XXXXXXX,   KC_RSFT,
                                  KC_LGUI,   KC_LALT,   KC_LCTL,   TL_LOWR,   KC_SPC,    KC_ENT,    TL_UPPR,   KC_RCTL,   KC_RALT,   KC_RGUI
 ),
 

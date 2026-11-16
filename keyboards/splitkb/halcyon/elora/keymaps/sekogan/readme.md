@@ -24,11 +24,12 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features a
 - **Compact Russian layout**: Right Alt + е types ё and Right Alt + ь types ъ.
 - **OS selection**: the OS is detected automatically; OS on EXTRA cycles through Linux,
   Windows, macOS and back to autodetection. The language keys and the display follow the OS.
-- **Caps Word**: press both Shifts to type one word in capitals; it turns off by itself.
+- **Caps Word**: press both Shifts to type one word in capitals; it turns off by itself, or
+  when you tap a Shift.
 - **Editing on RAISE**: arrows and page keys, previous/next word, line start/end, select
   word, delete word forward/backward, delete line, undo/cut/copy/paste, and "fast" up, down
   and space keys that repeat several times per press.
-- **One-shot Shifts** on the outer keys of the bottom row, and Num Lock is kept on.
+- **Num Lock** is kept on.
 - **Media and display controls on EXTRA**: volume, previous/next track, mute, play/pause,
   and display brightness (BL+/BL-).
 
@@ -39,7 +40,7 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features a
 The display shows, top to bottom:
 
 - the active layer, each in its own colour;
-- Shift, Ctrl, Alt and GUI tiles, lit while the modifier is held or one-shot (the GUI icon
+- Shift, Ctrl, Alt and GUI tiles, lit while the modifier is held (the GUI icon
   follows the OS);
 - Caps Lock, Caps Word, Num Lock and Scroll Lock;
 - the OS, the layout and the language, with an AUTO tag while OS autodetection or instant
