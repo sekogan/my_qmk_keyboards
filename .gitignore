@@ -19,3 +19,6 @@ compile_commands.json
 # keymapviz venv) lives in build/ and is disposable; build/readback/ (flash dumps read
 # from the keyboard, not recreatable) also lives there but must be kept
 /build/
+
+# Agents' working directory (plans, sketches, scratch), not versioned
+/scratch/

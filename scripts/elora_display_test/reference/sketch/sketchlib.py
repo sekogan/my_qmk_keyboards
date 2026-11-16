@@ -1,4 +1,4 @@
-"""Trimmed copy of display-sketches/lib/sketchlib.py: only what skin.py uses.
+"""Trimmed copy of scratch/display-sketches/lib/sketchlib.py: only what skin.py uses.
 
 The functions and the test states are copied verbatim. Changes: fonts are read from the
 keymap's graphics/ directory (GRAPHICS_DIR); the Spleen fonts, OTF, glyph(), CAPTIONS and the
