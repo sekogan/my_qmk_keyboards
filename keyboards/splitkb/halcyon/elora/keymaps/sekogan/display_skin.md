@@ -232,8 +232,8 @@ Value rules:
   PRIMARY is `VFD` and SECONDARY is `FL_AMBER`. It is **muted** (`MUTED` / `MUTED_AMBER`) on every
   layer except BASE (the language keys live on BASE), and also on macOS or an unknown OS, where
   the language keys do nothing (`lang_muted` in `ds_resolve()`).
-- **While LOWER holds the language stash,** the language and layout from before LOWER are shown,
-  so tapping LOWER doesn't make them flicker. There is no stash indicator.
+- **While LOWER or NUMPAD holds the language stash,** the language and layout from before it are
+  shown, so tapping LOWER doesn't make them flicker. There is no stash indicator.
 - **Layer names are BASE, LOWER, RAISE, NUMPAD, EXTRA.** It is never "NUM": that is the lock.
 
 ## 7. Icons

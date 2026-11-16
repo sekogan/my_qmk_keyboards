@@ -181,7 +181,7 @@ static int model(void) {
         ds_ctx_t        ctx    = {0};
         display_state_t out;
         const ds_raw_t  before = {.layer = DS_LAYER_BASE, .secondary = true, .qwerty = true, .instant_qwerty = true};
-        ds_snapshot_before_lower(&ctx, &before);
+        ds_snapshot_before_stash(&ctx, &before);
         const ds_raw_t lower = {.layer = DS_LAYER_LOWER, .stash_full = true}; // host switched to PRIMARY, instant QWERTY ended
         ds_resolve(&lower, &ctx, &out);
         EXPECT(out.layer == DS_LAYER_LOWER && out.secondary && out.qwerty && out.layout_auto);

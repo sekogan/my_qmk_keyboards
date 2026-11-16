@@ -58,7 +58,7 @@ typedef struct {
 typedef struct {
     bool     overlay_armed;
     uint32_t bl_pressed_at;
-    bool     pre_lower_secondary, pre_lower_qwerty, pre_lower_layout_auto;
+    bool     pre_stash_secondary, pre_stash_qwerty, pre_stash_layout_auto;
 } ds_ctx_t;
 
 // Pure: the view model of raw. Disarms an armed popup when the highest layer is not EXTRA or
@@ -66,8 +66,8 @@ typedef struct {
 void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out);
 // Pure: a BL+/BL- press at time now.
 void ds_backlight_pressed(ds_ctx_t *ctx, uint32_t now);
-// Pure: remember language and layout before LOWER stashes the language.
-void ds_snapshot_before_lower(ds_ctx_t *ctx, const ds_raw_t *raw);
+// Pure: remember language and layout before LOWER or NUMPAD stashes the language.
+void ds_snapshot_before_stash(ds_ctx_t *ctx, const ds_raw_t *raw);
 
 // Firmware only: the view model from the live getters.
 void display_state_read(display_state_t *out);
