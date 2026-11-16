@@ -6,6 +6,27 @@ keyboards. "Sofle" is the sha256 of `sofle.hex` and "Elora" of `elora.uf2`
 (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.5.0 — QMK 0.34.7
+
+- Source: the commit that adds this entry; the release `README` names it.
+- Sofle: `c647f84028b65bade7eacbc1535cb2ccb00a901b97d4e9992ddd65ed32fc8563`
+- Elora: `62ddb02ab9675b40f4392fe6843a28ee8d4aa345b0e3ee7a2058e9fa4b75f37f`
+- Sofle, Elora: sticky NUMPAD. Tapping L_NUM toggles NUMPAD on until the next tap; holding
+  it works as before. LOWER, RAISE and EXTRA are now above NUMPAD, so they still work while
+  it is on and releasing them goes back to it (LOWER held with L_NUM used to lose to NUMPAD).
+- Sofle, Elora, NUMPAD: `:` above `.` in the inner column, `/` next to `-` on the outer home
+  key (moved from the number row).
+- Sofle, Elora, RAISE: CAPS moves from the inner number-row key to the G position, next to
+  TAB; ESC is new on the T position, above it.
+- Sofle, Elora: NUMPAD and RAISE switch to the primary language while they are on, like
+  LOWER, and back to the secondary one when they are off. RAISE used to keep the secondary
+  language (`` ` `` came out as `ё`).
+- Sofle, Elora: the outer Shifts on the bottom row are plain Shift instead of one-shot.
+  Tapping a Shift ends Caps Word without leaving Shift on for the next key.
+- Elora: the GUI thumb keys on NUMPAD, LOWER and RAISE are transparent to the base layer's
+  (same behaviour).
+- KBD75 firmware unchanged.
+
 ## 1.4.0 — QMK 0.34.7
 
 - Source: the commit that adds this entry; the release `README` names it.
