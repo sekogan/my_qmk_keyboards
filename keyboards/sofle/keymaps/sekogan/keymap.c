@@ -245,6 +245,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
         case NUMPAD: // ':' is not a keypad key
         case LOWER:
+        case RAISE:
             stash_current_language();
             break;
         default:

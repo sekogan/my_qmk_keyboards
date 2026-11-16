@@ -31,8 +31,8 @@ void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out) {
     if (raw->caps_word_shifting) mods &= (uint8_t)~DS_MOD_LSFT;
     mods |= raw->oneshot_mods;
 
-    // LOWER and NUMPAD stash the language (and the host may switch back to primary): while the
-    // stash is full, show the language and layout from before the stash.
+    // LOWER, RAISE and NUMPAD stash the language (and the host may switch back to primary): while
+    // the stash is full, show the language and layout from before the stash.
     const bool stashed = raw->stash_full;
 
     *out = (display_state_t){

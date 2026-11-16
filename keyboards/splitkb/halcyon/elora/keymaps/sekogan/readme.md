@@ -16,8 +16,8 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features a
   keys). The layer diagrams are at the top of [keymap.c](keymap.c).
 - **QWERTY or Colemak**: BASE on EXTRA switches the base layout; the choice is remembered.
 - **Two input languages**: L19 selects the primary language and R19 the secondary one, no
-  matter what the host's current language is (Linux and Windows). On LOWER and NUMPAD the
-  primary language is used, so symbols always come out right.
+  matter what the host's current language is (Linux and Windows). On LOWER, RAISE and NUMPAD
+  the primary language is used, so symbols always come out right.
 - **Instant QWERTY**: with the secondary language, the base layer acts as QWERTY so the host's
   Russian layout lands on its usual keys. While Ctrl, Alt or GUI is held, your chosen layout
   is back, so shortcuts stay where you expect them.
