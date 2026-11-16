@@ -15,7 +15,7 @@ SCRIPTS := $(QMK_USERSPACE)/scripts
 # "<keyboard>:<keymap>" for every build target in qmk.json (used by `make check`).
 QMK_TARGETS = $(shell python3 -I -c 'import json, sys; print(" ".join(kb + ":" + km for kb, km in json.load(open(sys.argv[1]))["build_targets"]))' $(QMK_USERSPACE)/qmk.json)
 
-# Optional firmware directory or file for `make flash`/`make flash-elora` (default: the release of HEAD's VERSION).
+# Optional firmware directory or file for `make flash-sofle`/`make flash-elora` (default: the release of HEAD's VERSION).
 FW ?=
 
 # keymapviz only rewrites the ASCII-art comments in keymap.c, so it runs on the
@@ -25,7 +25,7 @@ KEYMAPVIZ ?= $(VENV)/bin/keymapviz
 KM_SOFLE := $(QMK_USERSPACE)/keyboards/sofle/keymaps/sekogan
 KM_ELORA := $(QMK_USERSPACE)/keyboards/splitkb/halcyon/elora/keymaps/sekogan
 
-.PHONY: all release flash flash-elora check help keymapviz venv clean submodule
+.PHONY: all release flash flash-sofle flash-elora check help keymapviz venv clean submodule
 
 all: submodule
 	$(SCRIPTS)/build_all.sh
@@ -33,7 +33,10 @@ all: submodule
 release: submodule
 	$(SCRIPTS)/build_all.sh --release
 
-flash: submodule
+flash:
+	echo 'Which keyboard? make flash-sofle or make flash-elora (FW=<dir> for another build; make help)' >&2; exit 1
+
+flash-sofle: submodule
 	$(SCRIPTS)/flash-sofle.sh $(if $(FW),"$(FW)")
 
 flash-elora: submodule
@@ -53,7 +56,7 @@ help:
 	echo '                    a copy goes to build/scratch/check/'
 	echo 'make release        build a release: build/firmware/qmk-<QMK version>-<VERSION>/'
 	echo '                    (scripts/build_all.sh --release; clean tree only)'
-	echo 'make flash          flash one Sofle half from the release of HEAD'"'"'s VERSION'
+	echo 'make flash-sofle    flash one Sofle half from the release of HEAD'"'"'s VERSION'
 	echo '                    (scripts/flash-sofle.sh); FW=<dir|hex> flashes another build'
 	echo 'make flash-elora    flash one Elora half (same file on both) from the release of HEAD'"'"'s VERSION'
 	echo '                    (scripts/flash-elora.sh); FW=<dir|uf2> flashes another build'

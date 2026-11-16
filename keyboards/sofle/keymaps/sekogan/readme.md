@@ -6,7 +6,7 @@ Derived from the [default keymap](https://github.com/qmk/qmk_firmware/tree/maste
 
 ## Build and flash
 
-See the [root README](../../../../README.md): `make release`, then `make flash` once for
+See the [root README](../../../../README.md): `make release`, then `make flash-sofle` once for
 **each half** (double-tap that half's reset button).
 
 The keyboard has no handedness configuration: the half with the USB cable acts as the

@@ -20,6 +20,12 @@ targets=(sofle/rev1 kbdfans/kbd75hs kbdfans/kbd75/rev2 splitkb/halcyon/elora/rev
 declare -A short=([sofle_rev1_sekogan]=sofle [kbdfans_kbd75hs_sekogan]=kbd75hs [kbdfans_kbd75_rev2_sekogan]=kbd75v2 [splitkb_halcyon_elora_rev2_sekogan]=elora)
 declare -A format=([splitkb_halcyon_elora_rev2_sekogan]=uf2)   # default: hex
 ext() { echo "${format[$1]:-hex}"; }   # file extension of target $1
+next_steps() {   # how to flash what was just built; $1: the FW= argument, if any
+  echo
+  echo "Flash each half (one per run):"
+  echo "  make flash-sofle${1:+ FW=$1}"
+  echo "  make flash-elora${1:+ FW=$1}"
+}
 km=sekogan
 build="$root/build/qmk"; fw="$root/build/firmware"; scratch="$root/build/scratch"
 mkdir -p "$scratch"
@@ -67,6 +73,7 @@ if [ $release = no ]; then
   (cd "$scratch/check" && sha256sum "${files[@]}" > SHA256SUMS)
   printf 'Check build (unversioned, disposable; replaced by the next scripts/build_all.sh)\n\n  describe:  %s\n  commit:    %s\n  qmk:       %s\n  toolchain: %s\n  built:     %s\n' \
     "$describe" "$(git -C "$root" rev-parse HEAD)" "$qmkdesc" "$QMK_IMAGE_ID" "$(date -u +%F)" > "$scratch/check/README"
+  next_steps build/scratch/check
   exit 0
 fi
 
@@ -81,6 +88,7 @@ if [ -e "$dest" ]; then
   done
   (cd "$dest" && sha256sum -c --quiet SHA256SUMS) || { echo "$dest: SHA256SUMS check failed" >&2; exit 1; }
   echo "already released, identical: build/firmware/qmk-$qmkver-$version"
+  next_steps
   exit 0
 fi
 tags=$(git -C "$root" tag --points-at HEAD | tr '\n' ' ' | sed 's/ $//')
@@ -97,3 +105,4 @@ tags=$(git -C "$root" tag --points-at HEAD | tr '\n' ' ' | sed 's/ $//')
 (cd "$stage" && sha256sum $(printf '%s\n' "${files[@]}" | sort) > SHA256SUMS && chmod a-w ./* && chmod 755 .)
 mkdir -p "$fw"; mv "$stage" "$dest"; stage=
 echo "released to build/firmware/qmk-$qmkver-$version"
+next_steps
