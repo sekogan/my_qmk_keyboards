@@ -15,9 +15,9 @@ elora = json.load(open(sys.argv[2]))["layers"]
 QWERTY, COLEMAK, NUMPAD, LOWER, RAISE, EXTRA = range(6)
 # Elora indices: rows of 12 (0-35), the bottom row of 16 with L20, L19, R19, R20 at 42-45,
 # then the thumbs (left 52-56, right 57-61). Sofle 42-43 (encoder pushes) are not carried over.
-# The four inner bottom-row keys: assigned on QWERTY and COLEMAK, blank on every other layer.
+# The four inner bottom-row keys: assigned on QWERTY and COLEMAK, R20 transparent on NUMPAD, blank otherwise.
 assigned = ["KC_LSFT", "KC_LNG1", "KC_LNG2", "L_NUM"]
-inner = {QWERTY: assigned, COLEMAK: assigned}
+inner = {QWERTY: assigned, COLEMAK: assigned, NUMPAD: ["KC_NO"] * 3 + ["KC_TRNS"]}  # R20 (L_NUM) toggles NUMPAD off
 blank = ["KC_NO"] * 4
 # Other Elora-only keys, by layer: {index: keycode}.
 elora_only = {

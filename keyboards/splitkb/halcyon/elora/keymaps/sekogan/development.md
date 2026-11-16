@@ -18,7 +18,8 @@ The Elora `keymap.c` holds its own copy of the Sofle layers. `scripts/check-elor
 script must match):
 
 - QWERTY, COLEMAK: L20 is Left Shift, L19 selects the primary language, R19 the alternative
-  one and R20 holds the numpad layer; on every other layer those four keys do nothing.
+  one and R20 is the numpad key. On NUMPAD, R20 is transparent (so a tap toggles NUMPAD
+  off); on every other layer those four keys do nothing.
 - QWERTY, COLEMAK: the outer thumb keys are plain Left and Right Super; tapping them does
   not select a language.
 - QWERTY, COLEMAK: the inner right thumb key is Enter (the numpad layer is on R20).

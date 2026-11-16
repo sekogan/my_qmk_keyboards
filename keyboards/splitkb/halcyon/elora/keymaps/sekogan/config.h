@@ -6,6 +6,9 @@
 #undef TAPPING_TERM
 #define TAPPING_TERM 200
 
+#define TAPPING_TOGGLE 1 // a single tap of TT(NUMPAD) toggles it
+#define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+
 // Delay between press and release in tap_code(); the board default is 0.
 #define TAP_CODE_DELAY 10
 

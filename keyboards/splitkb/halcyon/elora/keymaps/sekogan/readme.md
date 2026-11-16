@@ -11,8 +11,9 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features a
 ## Features
 
 - **Six layers**: a base layer (QWERTY or Colemak), LOWER (symbols and F-keys), RAISE
-  (navigation and editing), NUMPAD (held on R20), and EXTRA (LOWER + RAISE together: keyboard
-  settings and media keys). The layer diagrams are at the top of [keymap.c](keymap.c).
+  (navigation and editing), NUMPAD (held on R20, or toggled by tapping it; LOWER and RAISE
+  still work on top of it), and EXTRA (LOWER + RAISE together: keyboard settings and media
+  keys). The layer diagrams are at the top of [keymap.c](keymap.c).
 - **QWERTY or Colemak**: BASE on EXTRA switches the base layout; the choice is remembered.
 - **Two input languages**: L19 selects the primary language and R19 the secondary one, no
   matter what the host's current language is (Linux and Windows). While LOWER is held, the
