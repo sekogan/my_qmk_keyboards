@@ -6,8 +6,8 @@
 enum layers {
     QWERTY,
     COLEMAK,
-    LOWER,
     NUMPAD,
+    LOWER,
     RAISE,
     EXTRA,
 };

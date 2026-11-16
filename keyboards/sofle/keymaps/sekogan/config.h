@@ -11,7 +11,7 @@
 
 // Core Tri Layer (TL_LOWR/TL_UPPR). quantum/tri_layer.c compiles these without layers.h,
 // so they are numbers; keymap.c checks them against enum layers.
-#define TRI_LAYER_LOWER_LAYER 2  /* LOWER */
+#define TRI_LAYER_LOWER_LAYER 3  /* LOWER */
 #define TRI_LAYER_UPPER_LAYER 4  /* RAISE */
 #define TRI_LAYER_ADJUST_LAYER 5 /* EXTRA */
 

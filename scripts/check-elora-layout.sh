@@ -12,7 +12,7 @@ python3 -I - "$tmp/sofle.json" "$tmp/elora.json" <<'PY'
 import json, sys
 sofle = json.load(open(sys.argv[1]))["layers"]
 elora = json.load(open(sys.argv[2]))["layers"]
-QWERTY, COLEMAK, LOWER, NUMPAD, RAISE, EXTRA = range(6)
+QWERTY, COLEMAK, NUMPAD, LOWER, RAISE, EXTRA = range(6)
 # Elora indices: rows of 12 (0-35), the bottom row of 16 with L20, L19, R19, R20 at 42-45,
 # then the thumbs (left 52-56, right 57-61). Sofle 42-43 (encoder pushes) are not carried over.
 # The four inner bottom-row keys: assigned on QWERTY and COLEMAK, blank on every other layer.
