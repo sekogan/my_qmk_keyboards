@@ -15,10 +15,10 @@ void ds_backlight_pressed(ds_ctx_t *ctx, uint32_t now) {
     ctx->overlay_armed = true;
 }
 
-void ds_snapshot_before_stash(ds_ctx_t *ctx, const ds_raw_t *raw) {
-    ctx->pre_stash_secondary   = raw->secondary;
-    ctx->pre_stash_qwerty      = raw->qwerty;
-    ctx->pre_stash_layout_auto = raw->instant_qwerty;
+void ds_snapshot_before_lower(ds_ctx_t *ctx, const ds_raw_t *raw) {
+    ctx->pre_lower_secondary   = raw->secondary;
+    ctx->pre_lower_qwerty      = raw->qwerty;
+    ctx->pre_lower_layout_auto = raw->instant_qwerty;
 }
 
 void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out) {
@@ -31,8 +31,8 @@ void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out) {
     if (raw->caps_word_shifting) mods &= (uint8_t)~DS_MOD_LSFT;
     mods |= raw->oneshot_mods;
 
-    // LOWER and NUMPAD stash the language (and the host may switch back to primary): while the
-    // stash is full, show the language and layout from before the stash.
+    // LOWER stashes the language (and the host may switch back to primary): while the stash is
+    // full, show the language and layout from before LOWER.
     const bool stashed = raw->stash_full;
 
     *out = (display_state_t){
@@ -40,9 +40,9 @@ void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out) {
         .os          = raw->os,
         .backlight   = raw->backlight <= DS_BACKLIGHT_MAX ? raw->backlight : DS_BACKLIGHT_MAX,
         .os_auto     = raw->os_autodetect && raw->os != DS_OS_UNKNOWN,
-        .qwerty      = stashed ? ctx->pre_stash_qwerty : raw->qwerty,
-        .layout_auto = stashed ? ctx->pre_stash_layout_auto : raw->instant_qwerty,
-        .secondary   = stashed ? ctx->pre_stash_secondary : raw->secondary,
+        .qwerty      = stashed ? ctx->pre_lower_qwerty : raw->qwerty,
+        .layout_auto = stashed ? ctx->pre_lower_layout_auto : raw->instant_qwerty,
+        .secondary   = stashed ? ctx->pre_lower_secondary : raw->secondary,
         // The language only matters on BASE with Linux or Windows: elsewhere it is shown muted.
         .lang_muted  = raw->layer != DS_LAYER_BASE || raw->os == DS_OS_MAC || raw->os == DS_OS_UNKNOWN,
         .shift       = (mods & (DS_MOD_LSFT | DS_MOD_RSFT)) != 0,
@@ -134,11 +134,11 @@ void display_backlight_adjusted(void) {
     ds_backlight_pressed(&ctx, timer_read32());
 }
 
-void display_snapshot_before_stash(void) {
-    if (!is_language_stash_empty()) return; // LOWER over NUMPAD, or again over a full stash: keep the first snapshot
+void display_snapshot_before_lower(void) {
+    if (!is_language_stash_empty()) return; // LOWER again over a full stash: keep the first snapshot
     ds_raw_t raw;
     read_raw(&raw);
-    ds_snapshot_before_stash(&ctx, &raw);
+    ds_snapshot_before_lower(&ctx, &raw);
 }
 
 #endif // SEK_DISPLAY_HOST
