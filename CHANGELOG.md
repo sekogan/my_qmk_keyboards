@@ -6,6 +6,20 @@ keyboards. "Sofle" is the sha256 of `sofle.hex` and "Elora" of `elora.uf2`
 (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.5.1 — QMK 0.34.7
+
+- Source: the commit that adds this entry; the release `README` names it.
+- Sofle: `29d3410963e3f7a109795d7c1eeffaebb8b065950a70022b90a982c18ff0805b`
+- Elora: `4c1678aead2d08fa2849f060c345035c2028cd205dc3d8edbe5ac651985bd68c`
+- Sofle, Elora: fixes 1.5.0. NUMPAD and RAISE no longer switch to the primary language; only
+  LOWER does, as before 1.5.0. The switch made the host see held modifiers released for a
+  moment (Alt+Tab, then RAISE, ended the window switcher).
+- Sofle: without the language switch, `:` on NUMPAD would not type `:`, so NUMPAD is back to
+  its layout before 1.5.0: no `:`, `/` on the number row.
+- Elora, NUMPAD: `.` on the inner home key next to 4, `-` and `+` on the home row, `/` and `*`
+  below them; PENT is removed (the right thumb Enter still works).
+- KBD75 firmware unchanged.
+
 ## 1.5.0 — QMK 0.34.7
 
 - Source: the commit that adds this entry; the release `README` names it.
