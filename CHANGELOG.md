@@ -6,6 +6,25 @@ keyboards. "Sofle" is the sha256 of `sofle.hex` and "Elora" of `elora.uf2`
 (built with `SKIP_VERSION=yes`).
 Versions 1.0.0–1.0.3 were assigned retroactively; `VERSION` itself was introduced at 1.0.3.
 
+## 1.6.0 — QMK 0.34.7
+
+- Source: the commit that adds this entry; the release `README` names it.
+- Sofle: `81564aec7e1c71c7b5fafcd4c28b1d331c01720460551d9f6f5abd559df53b02`
+- Elora: `fffb7d59d082962a3091e9e3cd00858affdd32a1d7fe09a79e62d79a67da4445`
+- Elora: V on EXTRA shows the keymap and QMK versions full screen for 2.5 s, or until EXTRA is
+  left. It and the backlight popup replace each other. The firmware now contains the version,
+  so the Elora hash changes with every `VERSION` bump, and the Elora build needs `qmk_firmware`
+  on a release tag.
+- Sofle, Elora: RAISE's paste and EXTRA's V work only under V of the layout you selected
+  (instant QWERTY doesn't count); the key under V of the other layout does nothing.
+- Sofle, Elora, LOWER: `.` on the rightmost bottom-row key, right of `,`; the left thumb key in
+  the Space position is transparent (Space).
+- Sofle, Elora, NUMPAD: no `/` `*` `-` `+`; type them on LOWER, which works while NUMPAD is on.
+  The Sofle keeps PENT.
+- Sofle, NUMPAD: `.` on the inner home key next to 4, as on the Elora.
+- The repo uses American spelling; no firmware change.
+- KBD75 firmware unchanged.
+
 ## 1.5.1 — QMK 0.34.7
 
 - Source: the commit that adds this entry; the release `README` names it.
