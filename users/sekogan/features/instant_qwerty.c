@@ -64,3 +64,7 @@ void unmask_instant_qwerty_activation_reasons(uint8_t reasons) {
 bool is_instant_qwerty_activated(void) {
     return !_stash_empty;
 }
+
+uint8_t get_selected_default_layer(void) {
+    return get_highest_layer(_stash_empty ? default_layer_state : _stashed_default_layer_state);
+}

@@ -31,7 +31,8 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features a
   and space keys that repeat several times per press.
 - **Num Lock** is kept on.
 - **Media and display controls on EXTRA**: volume, previous/next track, mute, play/pause,
-  and display brightness (BL+/BL-).
+  and display brightness (BL+/BL-). V on EXTRA (wherever V is in your chosen layout) shows
+  the firmware version.
 
 ## Status display
 
@@ -46,7 +47,8 @@ The display shows, top to bottom:
 - the OS, the layout and the language, with an AUTO tag while OS autodetection or instant
   QWERTY is in effect.
 
-BL+ or BL- shows the brightness level for a moment. The display turns off after two minutes
+BL+ or BL- shows the brightness level for a moment, and V on EXTRA shows the keymap version
+(`VERSION`) and the QMK version the firmware was built from. The display turns off after two minutes
 without typing and while the computer sleeps; the next key turns it back on.
 
 Display design rules (default skin): [display_skin.md](display_skin.md).

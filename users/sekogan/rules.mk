@@ -12,5 +12,6 @@ ifeq ($(strip $(SEK_FEATURES)), yes)
     SRC += features/non_qwerty_shortcuts.c
     SRC += features/os.c
     SRC += features/select_word.c
+    SRC += features/selected_layout.c
     SRC += features/text_editing.c
 endif

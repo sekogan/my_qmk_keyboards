@@ -10,13 +10,14 @@ The panel is the Halcyon TFT: a 135x240 ST7789 driven by Quantum Painter, RGB565
 | What | Where |
 |---|---|
 | Geometry: boxes, origins, gaps; layout static asserts | `display_skin_layout.h` (`SKIN_*`) |
-| Centered text x tables (generated) | `display_skin_metrics.h` |
+| Centered text x tables, version glyph ink columns (generated) | `display_skin_metrics.h` |
 | Colors (generated) | `display_palette.h` (`enum skin_color`, `skin_565[]`) |
 | Fonts and icons | `display_gfx.h` (`enum gfx_font`, `enum gfx_icon`), `graphics/` |
 | Drawing | `display_skin.c` |
 | What is shown, and when (muting, popup timing, mods) | `display_state.c`, `display_state.h` |
 | The design oracle: colors, icons, the on/off rule, the reference drawing | `scripts/elora_display_test/reference/sketch/skin.py` |
 | The reference images | `scripts/elora_display_test/reference/natives/skin-*.png` |
+| The versions on the version popup | `rules.mk` (`SEK_KEYMAP_VERSION`, `SEK_QMK_VERSION`) |
 
 Paths without a directory are in `keyboards/splitkb/halcyon/elora/keymaps/sekogan/`.
 
@@ -36,7 +37,7 @@ Paths without a directory are in `keyboards/splitkb/halcyon/elora/keymaps/sekoga
 4. **Flat.** Use solid rectangles and bitmap text only. No frames, outlines, rules, gradients,
    glows, shadows or rounded corners.
 5. **Pixel-exact.** The firmware reproduces the reference sketch exactly, and `make check`
-   enforces it (section 10).
+   enforces it (section 11).
 
 ## 2. Type
 
@@ -47,16 +48,17 @@ can't be read at all. Scaled bitmaps look blocky and uneven.
 
 | `enum gfx_font` | Font (native cell) | Cropped cell w x h (`SKIN_*_ADV`, `SKIN_*_H`) | Cap height | Use |
 |---|---|---|---|---|
-| `GFX_VAL28` | Terminus 14x28 bold (derivative) | 14 x 20 | 18 (cell rows 0..17) | **Class A values:** OS, layout and language values; the popup readout `{n}/10` |
-| `GFX_L24` | Leggie 12x24 bold | 12 x 18 | 14 (cell rows 2..15) | **The tally** (layer name); **the lock labels**; the popup title DISPLAY / BACKLIGHT |
+| `GFX_VAL28` | Terminus 14x28 bold (derivative) | 14 x 20 | 18 (cell rows 0..17) | **Class A values:** OS, layout and language values; the popup readout `{n}/10`; the versions |
+| `GFX_L24` | Leggie 12x24 bold | 12 x 18 | 14 (cell rows 2..15) | **The tally** (layer name); **the lock labels**; the popup title DISPLAY / BACKLIGHT; the version labels KEYMAP / QMK |
 | `GFX_L18` | Leggie 9x18 bold | 9 x 11 | 11 (the whole cell) | **Class B:** the legends OS / LAYOUT / LANGUAGE, AUTO, the scale `0` `5` `10` |
 
 Rules:
-- **Uppercase A–Z, 0–9 and `/` only.** The fonts are cropped to the rows these glyphs ink (VAL28
-  rows 4..23 of the BDF cell, where the `Q` tail ends on row 23; L24 rows 4..21; L18 rows
-  4..14). `scripts/elora-display-assets.py` asserts that every string the renderer draws
-  (`STRINGS`) uses only the glyphs allowed for its font (`ALLOWED`). L18 has no `/`, because its
-  `/` inks outside the crop.
+- **Uppercase A–Z, 0–9 and `/` only**, plus `.` in VAL28 for the versions. The fonts are cropped
+  to the rows these glyphs ink (VAL28 rows 4..23 of the BDF cell, where the `Q` tail ends on row
+  23; L24 rows 4..21; L18 rows 4..14). `scripts/elora-display-assets.py` asserts that every
+  string the renderer draws (`STRINGS`) uses only the glyphs allowed for its font (`ALLOWED`).
+  L18 has no `/`, because its `/` inks outside the crop. The VAL28 `.` is the font's own glyph
+  (cell rows 18..21, inside the crop), never a drawn one.
 - **The text origin is the top-left of the cropped cell** (the BDF cell's y + 4). Glyphs have no
   gap between cells; the advance is the cell width.
 - **Budget rows by cap height, not by the cell.** All text is capitals, so layout is planned on the
@@ -66,7 +68,10 @@ Rules:
 - **Text that is centered is centered on its measured ink**, not on its cell:
   `cell x = x0 + (w - ink width) / 2 - ink left offset` (`centered_cell_x()` in `skin.py`). Never
   hand-compute these: they are generated into `display_skin_metrics.h` (`SKIN_TALLY_X[]`,
-  `SKIN_LOCK_X[]`, `SKIN_READOUT_X[]`).
+  `SKIN_LOCK_X[]`, `SKIN_READOUT_X[]`, `SKIN_VER_X_*`). The only exception is a string that is
+  known only at build time (the versions, section 9): the firmware centers it at run time with
+  the same rule, from the generated ink columns of each glyph (`SKIN_VERSION_INK_L[]`/`_R[]`), and
+  `make check` proves that this equals `centered_cell_x()` for every first/last glyph pair.
 - **Hierarchy comes from color and fill, never from a new size.** Don't add a fourth font or
   size, and don't enlarge something to emphasize it.
 - The lock labels and the popup title are class B in meaning but use L24, deliberately: the lock bars
@@ -91,10 +96,10 @@ All colors are in `display_palette.h`, which is generated from the constants in 
 | `SKIN_*` | Hex | RGB565 | L* | Role |
 |---|---|---|---|---|
 | `BLACK` | #000000 | 0x0000 | 0 | Background; text and icons on **lit** fills |
-| `VFD` | #66FAE6 | 0x67DC | 90 | Live class A values: OS, layout, PRIMARY, the popup readout |
+| `VFD` | #66FAE6 | 0x67DC | 90 | Live class A values: OS, layout, PRIMARY, the popup readout, the versions |
 | `FL_AMBER` | #FFA000 | 0xFD00 | 74 | SECONDARY (live); meter segments 7–8 |
 | `ALERT` | #FF3018 | 0xF983 | 56 | The UNKNOWN OS value; meter segments 9–10. Nothing else |
-| `PANEL` | #CCCCCC | 0xCE79 | 82 | Class B text on black: legends, scale, the popup title |
+| `PANEL` | #CCCCCC | 0xCE79 | 82 | Class B text on black: legends, scale, the popup title, the version labels |
 | `MUTED` | #6E7380 | 0x6B90 | 48 | PRIMARY when the language doesn't apply |
 | `MUTED_AMBER` | #966614 | 0x9322 | 47 | SECONDARY when the language doesn't apply |
 | `BASE_FILL` / `BASE_TXT` | #1C1E22 / #8A8F98 | 0x18E4 / 0x8C73 | 11 / 59 | The quiet BASE tally |
@@ -158,7 +163,7 @@ does: every lit indicator is equally bright, and every off one is equally dim.
 - **Amber marks a secondary or automatic state:** SECONDARY, WORD and AUTO.
 - **Plain vs inverted:** text whose words change (values) is colored text on black. On/off modes
   (tally, locks, AUTO, mod tiles) are `BLACK` content on a fill. Never invert legends or values.
-- Add a color only through `skin.py` and the generator (section 10), never in the C code.
+- Add a color only through `skin.py` and the generator (section 11), never in the C code.
 
 ## 4. Grid and spacing
 
@@ -253,9 +258,10 @@ Value rules:
 
 ## 8. Backlight popup
 
-- **When:** a BL+ or BL- press on EXTRA shows it. It hides `SEK_DISPLAY_BL_OVERLAY_MS` (2500 ms,
+- **When:** a BL+ or BL- press on EXTRA shows it. It hides `SEK_DISPLAY_POPUP_MS` (2500 ms,
   `config.h`) after the last press, **or at once when EXTRA is left**. Once hidden, it stays hidden
-  when you come back to EXTRA (`ds_resolve()`). It is never shown permanently.
+  when you come back to EXTRA (`ds_resolve()`). It is never shown permanently. A BL+/BL- press
+  while the version popup (section 9) is up replaces it: only one popup is ever armed.
 - **Full screen:** the main screen isn't drawn under it, and nothing else shares the screen.
 - **The whole group is centered vertically:** it is 104 rows with **68 black rows above and 68
   below**. Every line is centered horizontally on its ink.
@@ -276,7 +282,46 @@ Value rules:
 - The title is two lines, because DISPLAY BACKLIGHT is 204 px wide and doesn't fit on one.
 - The scale labels are tied to the segment positions, not centered.
 
-## 9. Don'ts
+## 9. Version popup
+
+- **When:** V on EXTRA (`SEK_VER`) shows it. EXTRA has `SEK_VER` under both V positions (QWERTY:
+  bottom row, column 4; Colemak: column 5), and `keymap.c` ignores the one that isn't V in the
+  base layout the user selected (instant QWERTY doesn't count). Same lifecycle as the backlight
+  popup: it hides `SEK_DISPLAY_POPUP_MS` (2500 ms, `config.h`) after the press, **or at once
+  when EXTRA is left**, and stays hidden when you come back to EXTRA. The two popups are
+  mutually exclusive: a BL+/BL- press replaces this one, and a V press replaces the backlight
+  popup (`ds_ctx_t.popup`).
+- **Full screen,** like the backlight popup. Nothing on it changes while it is shown.
+- **What:** the keymap version (`VERSION` at the repo root) and the QMK version (the
+  `qmk_firmware` submodule's release tag): the two parts of the release name
+  `qmk-<QMK version>-<VERSION>`. `rules.mk` passes them in at build time, so the same commit
+  still gives the same firmware.
+- **Two label/value pairs**, label above value. Each label sits 6 rows from its own value and 16
+  rows from the value above it, so it groups with its value. The whole group is 92 rows with
+  **74 black rows above and 74 below**. Every line is centered horizontally on its ink.
+
+| Rows (ink) | Element | Font / color | Constants |
+|---|---|---|---|
+| 74–87 | `KEYMAP` | L24 / `PANEL` | `SKIN_VER_X_KEYMAP` 31, `SKIN_VER_KEYMAP_Y` 72 |
+| 94–111 | the keymap version, e.g. `1.5.1` (**6-row gap** above) | VAL28 / `VFD` | x at run time, `SKIN_VER_KEYMAP_V_Y` 94 |
+| 128–141 | `QMK` (**16-row gap** above) | L24 / `PANEL` | `SKIN_VER_X_QMK` 49, `SKIN_VER_QMK_Y` 126 |
+| 148–165 | the QMK version, e.g. `0.34.7` (6-row gap) | VAL28 / `VFD` | x at run time, `SKIN_VER_QMK_V_Y` 148 |
+
+- **Plain `MAJOR.MINOR.PATCH` only, at most 9 glyphs** (`SKIN_VER_MAX_GLYPHS`: 9 VAL28 cells,
+  126 px, fill the content width). `rules.mk` fails the build on anything else (a pre-release
+  suffix, a QMK submodule that isn't on a release tag), and `display_skin.c` asserts the length.
+  No `V` prefix: the label says what the number is.
+- **Centered at run time:** the versions are build-time strings, so their x can't be a generated
+  table. `version_x()` in `display_skin.c` applies `centered_cell_x()`'s rule to the ink from the
+  first cell's first inked column to the last cell's last one (`SKIN_VERSION_INK_L[]`/`_R[]`).
+  `scripts/elora-display-assets.py` checks it against the sketch for every first/last glyph pair
+  at every length, and `make check` draws the test pair `1.5.1` / `0.34.7` (the native
+  `skin-version.png`) and wider ones such as `10.12.13` / `0.34.10` pixel-exact.
+- The monospaced `.` reads slightly spaced out (`1 . 5 . 1`). That is the font's native look;
+  don't narrow it.
+- Both values are `VFD`, like the backlight readout: they are the answer on this screen.
+
+## 10. Don'ts
 
 - No scaled, pixel-doubled or synthetic-bold fonts or icons, no non-bold text and no italics.
 - No new font sizes. Don't emphasize anything (EXTRA included) by size.
@@ -294,22 +339,25 @@ Value rules:
   `graphics/`.
 - Don't move an element between states.
 
-## 10. Changing the skin
+## 11. Changing the skin
 
 The order is always **sketch → assets → layout → renderer → check**. The sketch
 (`scripts/elora_display_test/reference/sketch/skin.py`) is the design; the firmware follows it.
 
 1. **Design it in the sketch.** Change `skin.py`: the colors, `ghost()` factors, icons or the
    `draw()` coordinates. Keep to the rules above: a class A or B font, lamp-rule colors, the grid
-   and the gaps. If the five test states (`STATES` in `sketchlib.py`) can't show the change, make
-   sure the extended matrix in `compare.py` covers it.
+   and the gaps. If the six test states (`STATES`: five in `sketchlib.py`, `version` in
+   `skin.py`) can't show the change, make sure the extended matrix in `compare.py` covers it.
 2. **Re-render the reference images** (from the repo root):
 
    ```sh
    scripts/qmk --exec python3 -I -B -c "import sys; sys.path.insert(0, 'scripts/elora_display_test/reference/sketch'); import skin as S; [S.draw(S.STATES[k]).save(f'scripts/elora_display_test/reference/natives/skin-{k}.png') for k in S.STATE_ORDER]"
    ```
 
-   Look at all five PNGs at 1:1 and enlarged before you go on. Ideally, check them on the panel.
+   Look at all six PNGs at 1:1 and enlarged before you go on. Ideally, check them on the panel.
+   This re-encodes every PNG: keep the ones whose pixels didn't change byte-identical
+   (`git checkout` them). The README image `display_skin.png` shows the original five states only;
+   nothing regenerates it.
 3. **Regenerate the assets:** `scripts/elora-display-assets.sh`. It rewrites the font strips,
    icons, `display_palette.h` and `display_skin_metrics.h`, and converts them to `.qff`/`.qgf`.
    It asserts that the crop rows, the allowed glyphs per font, the icon bounds and the HSV → RGB565
@@ -335,9 +383,9 @@ The order is always **sketch → assets → layout → renderer → check**. The
    runs `scripts/elora_display_test/compare.py`, which checks:
    - the sketch re-renders the natives byte-identically;
    - `skin_hsv[]` gives exactly `skin_565[]`;
-   - the five test states are pixel-exact (RGB565) with the natives;
-   - an extended matrix (every layer, OS, language, layout, AUTO, mod and lock, and the popup at
-     every level) matches the sketch;
+   - the six test states are pixel-exact (RGB565) with the natives;
+   - an extended matrix (every layer, OS, language, layout, AUTO, mod and lock, the backlight
+     popup at every level, and the version popup with several version pairs) matches the sketch;
    - incremental redraws equal full redraws;
    - the `ds_resolve()` cases pass.
 

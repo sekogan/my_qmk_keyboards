@@ -8,11 +8,12 @@ of display_skin_layout.h:
   graphics/font_{val28,l24,l18}_caps.png   QFF font images for `qmk painter-convert-font-image`
   graphics/icon_<name>.png                 20x20 1-bit mod icons for `qmk painter-convert-graphics`
   display_palette.h                        the color table: HSV888 for QP, RGB565 for the host check
-  display_skin_metrics.h                   the measured text-cell x tables (centered on ink)
+  display_skin_metrics.h                   the measured text-cell x tables (centered on ink) and the
+                                           VAL28 ink columns of the version glyphs
 
 The font images are 1 bpp, cell = BDF DWIDTH, cropped to the rows the drawn glyphs ink (A-Z, 0-9
-and '/'). Nothing is scaled. Every output is checked here (see the asserts) and is byte-identical
-between runs.
+and '/'; '.' in VAL28 for the versions). Nothing is scaled. Every output is checked here (see the
+asserts) and is byte-identical between runs.
 """
 import os
 import re
@@ -26,7 +27,7 @@ sys.path.insert(0, os.path.join(ROOT, "scripts/elora_display_test"))
 
 import skin as S  # noqa: E402
 from PIL import Image, ImageDraw  # noqa: E402
-from skin_names import ICONS, LAYERS  # noqa: E402
+from skin_names import ICONS, LAYERS, VERSION_GLYPHS, VERSION_LABELS, WIDE_VERSIONS  # noqa: E402
 
 
 def layout_defines():
@@ -41,15 +42,19 @@ L = layout_defines()
 LOCKS = [("CAPS", L["SKIN_LOCK_X1"]), ("WORD", L["SKIN_LOCK_X2"]),   # label, bar x
          ("NUM", L["SKIN_LOCK_X1"]), ("SCRL", L["SKIN_LOCK_X2"])]
 READOUTS = [f"{n}/10" for n in range(11)]
+# The versions are build-time strings (KM/rules.mk): these stand for them, with every glyph a
+# version may use. The firmware centers them at run time from SKIN_VERSION_INK_* (below).
+VERSIONS = list(S.TEST_VERSIONS) + list(WIDE_VERSIONS) + [VERSION_GLYPHS]
 STRINGS = {
     "val28": ["LINUX", "WINDOWS", "MACOS", "UNKNOWN", "COLEMAK", "QWERTY", "PRIMARY", "SECONDARY"]
-    + READOUTS,
-    "l24": LAYERS + [label for label, _ in LOCKS] + ["DISPLAY", "BACKLIGHT"],
+    + READOUTS + VERSIONS,
+    "l24": LAYERS + [label for label, _ in LOCKS] + ["DISPLAY", "BACKLIGHT"] + VERSION_LABELS,
     "l18": ["OS", "AUTO", "LAYOUT", "LANGUAGE", "0", "5", "10"],
 }
 # The glyphs each font may draw. L18 never draws '/' (its '/' inks rows 3..16, outside the crop).
 CAPS_DIGITS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-ALLOWED = {"val28": CAPS_DIGITS + "/", "l24": CAPS_DIGITS + "/", "l18": CAPS_DIGITS}
+# VAL28 '.' (the versions) inks cell rows 18..21, inside the crop.
+ALLOWED = {"val28": CAPS_DIGITS + "/.", "l24": CAPS_DIGITS + "/", "l18": CAPS_DIGITS}
 for name, strings in STRINGS.items():
     for s in strings:
         assert set(s) <= set(ALLOWED[name]), f"{name} string {s!r} has a glyph outside {ALLOWED[name]}"
@@ -245,6 +250,8 @@ def metrics_header():
     tally = [S.centered_cell_x(layer, A, x0, cw) for layer in LAYERS]
     locks = [S.centered_cell_x(label, A, bx, lock_w) for label, bx in LOCKS]
     readout = [S.centered_cell_x(rd, T28, x0, cw) for rd in READOUTS]
+    ver_labels = [S.centered_cell_x(label, A, x0, cw) for label in VERSION_LABELS]
+    ink_l, ink_r = version_ink()
 
     def table(comment, prefix, names, values):
         out = ["", comment]
@@ -262,7 +269,26 @@ def metrics_header():
     out.append("")
     out.append(f"// The popup readout \"{{n}}/10\" (centered in {x0}..{x0 + cw - 1}), by n = 0..10.")
     out.append(f"__attribute__((unused)) static const uint8_t SKIN_READOUT_X[{len(readout)}] = {{" + ", ".join(map(str, readout)) + "};")
+    out += ["", f"// The version popup labels (centered in {x0}..{x0 + cw - 1})."]
+    out += [f"#define SKIN_VER_X_{n} {v}" for n, v in zip(VERSION_LABELS, ver_labels)]
+    out.append("")
+    out.append("// The version strings are build-time (rules.mk), so display_skin.c centers them at run time")
+    out.append("// with the same rule, from the first and last inked column of each VAL28 glyph cell.")
+    out.append(f"// Index: the digit, then '.' ({VERSION_GLYPHS!r}).")
+    for name, vals in (("SKIN_VERSION_INK_L", ink_l), ("SKIN_VERSION_INK_R", ink_r)):
+        out.append(f"__attribute__((unused)) static const uint8_t {name}[{len(vals)}] = {{" + ", ".join(map(str, vals)) + "};")
     return "\n".join(out) + "\n"
+
+
+def version_ink():
+    """First and last inked column of each VERSION_GLYPHS cell in VAL28."""
+    ink_l, ink_r = [], []
+    for c in VERSION_GLYPHS:
+        assert S.T28.mask(c).width == S.T28.width(c), f"VAL28 {c!r}: ink wider than its cell"
+        off, w = S.ink_bounds(c, S.T28)
+        ink_l.append(off)
+        ink_r.append(off + w - 1)
+    return ink_l, ink_r
 
 
 def write(path, data):

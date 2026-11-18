@@ -27,8 +27,11 @@ elora_only = {
     NUMPAD:  {51: "KC_NO", 52: "KC_TRNS", 61: "KC_TRNS"},
     LOWER:   {52: "KC_TRNS", 61: "KC_TRNS"},
     RAISE:   {51: "KC_TRNS", 52: "KC_TRNS", 61: "KC_TRNS"},
+    # SEK_VER (the version popup) at 40 and 41: V on QWERTY and on Colemak (bottom row, left half,
+    # columns 4 and 5; the same index on both boards, as they come before the inner keys).
     EXTRA:   {14: "BL_UP", 18: "KC_NO", 20: "KC_VOLU", 26: "BL_DOWN", 29: "SEK_OS",
-              31: "KC_MPRV", 32: "KC_VOLD", 33: "KC_MNXT", 48: "KC_MUTE", 49: "KC_MPLY"},
+              31: "KC_MPRV", 32: "KC_VOLD", 33: "KC_MNXT", 40: "SEK_VER", 41: "SEK_VER",
+              48: "KC_MUTE", 49: "KC_MPLY"},
 }
 ok = len(sofle) == len(elora)
 for i, (s, e) in enumerate(zip(sofle, elora)):

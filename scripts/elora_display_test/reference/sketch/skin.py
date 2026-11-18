@@ -5,6 +5,7 @@ reproduces pixel for pixel. It is the oracle of scripts/check-elora-display.sh a
 the colors, icons and centering used by scripts/elora-display-assets.py. Changes from the
 original, nothing else: this docstring, the sketchlib import (the trimmed copy next to this
 file), the T28 font path (the copy in the keymap's graphics/) and no run() at the end.
+Added after the copy: the version popup (version_popup(), the sixth test state "version").
 """
 import math
 import os
@@ -175,7 +176,30 @@ def meter(img, d, n, seg_y, scale_y):
     text(img, 113, scale_y, "10", B, PANEL)
 
 
+# ---------------------------------------------------------------- version popup
+# Two label/value pairs, centered vertically as one 92-row group (74 / 92 / 74): label caps,
+# 6 rows, value caps, 16 rows, label caps, 6 rows, value caps. Every line centered on its ink.
+# Ink rows: KEYMAP 74-87 (L24 caps are cell rows 6..19), value 94-111 (VAL28 caps are cell rows
+# 4..21), QMK 128-141, value 148-165.
+TEST_VERSIONS = ("1.5.1", "0.34.7")  # the keymap and QMK versions of the "version" test state
+
+
+def version_popup(keymap_version, qmk_version):
+    img, d = canvas()
+    for s, font, col, y in (("KEYMAP", A, PANEL, 68), (keymap_version, T28, VFD, 90),
+                            ("QMK", A, PANEL, 122), (qmk_version, T28, VFD, 144)):
+        text(img, centered_cell_x(s, font), y, s, font, col)
+    return img
+
+
+STATE_ORDER = STATE_ORDER + ["version"]
+STATES = dict(STATES, version=dict(STATES["idle"], layer="EXTRA", version_overlay=True,
+                                   keymap_version=TEST_VERSIONS[0], qmk_version=TEST_VERSIONS[1]))
+
+
 def draw(st):
+    if st.get("version_overlay"):
+        return version_popup(st["keymap_version"], st["qmk_version"])
     img, d = canvas()
     if st["backlight_overlay"]:
         # popup (68 / 104 / 68), every line centered on its measured ink

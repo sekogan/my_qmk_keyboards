@@ -3,17 +3,19 @@
 
     compare.py <render_states binary> <diff output dir>
 
-1. The tracked sketch copy re-renders the five natives byte-identically (it is the oracle).
+1. The tracked sketch copy re-renders the six natives byte-identically (it is the oracle).
 2. The firmware palette: hsv_to_rgb_nocie(skin_hsv[]) truncates to skin_565[] (render_states).
-3. The five design test states (render_states list), drawn by the firmware renderer and
+3. The six design test states (render_states list), drawn by the firmware renderer and
    rasterized here from the committed font images and icon PNGs (the exact QFF/QGF inputs) and
    skin_565[], equal the natives truncated to RGB565 (r>>3, g>>2, b>>3).
    Diffs: <diff dir>/display-diff-<state>.png.
 4. An extended matrix (every layer, OS, language, layout, instant QWERTY and OS AUTO, mods and
-   locks varied; the popup at every level) against the sketch script.
+   locks varied; the backlight popup at every level; the version popup with the test, a wide
+   and other versions, centered at run time by the firmware) against the sketch script.
 5. Incremental: skin_draw_changes(a, b) over the frame of a == the frame of b, for all
-   ordered pairs of the test states and a sample of the matrix. The frames of a and b are the
-   references steps 3 and 4 checked skin_draw_all() against (the natives, the sketch).
+   ordered pairs of the test states, a sample of the matrix, and each matrix version popup to and
+   from the main screen and the backlight popup. The frames of a and b are the references steps
+   3 and 4 checked skin_draw_all() against (the natives, the sketch).
 6. ds_resolve() cases (render_states model).
 """
 import os
@@ -30,11 +32,18 @@ sys.path.insert(0, HERE)
 
 import skin as S  # noqa: E402
 from PIL import Image  # noqa: E402
-from skin_names import ICONS, LAYERS  # noqa: E402
+from skin_names import ICONS, LAYERS, WIDE_VERSIONS  # noqa: E402
 
 W, H = 135, 240
 OSES = ["linux", "windows", "mac", "unknown"]                   # ds_os_t
+POPUP_NONE, POPUP_BACKLIGHT, POPUP_VERSION = range(3)           # ds_popup_t
 FONTS = ["font_val28_caps", "font_l24_caps", "font_l18_caps"]   # enum gfx_font
+# (keymap, QMK) versions of the version popup in the matrix: the test pair, the wide pair and the
+# widest (9 glyphs), each also in the incremental redraws; then, for display_skin.c version_x()'s
+# run-time centering, every glyph alone and every first/last glyph pair.
+VERSION_CASES = [S.TEST_VERSIONS, WIDE_VERSIONS, ("10.100.10", "0.0.0")]
+_CENTERING = [a + b for a in "0123456789." for b in ("", *(f"8{c}" for c in "0123456789."))]
+CENTERING_CASES = list(zip(_CENTERING[::2], _CENTERING[1::2]))
 
 # Frames are RGB565 kept as RGB bytes with the dropped low bits cleared (r & 0xF8, g & 0xFC,
 # b & 0xF8): equal bytes <=> equal RGB565.
@@ -163,14 +172,21 @@ def run(binary, mode, stdin=None):
 
 
 # ---------------------------------------------------------------- states
+def versions(st):
+    """The (keymap, QMK) versions a state's version popup draws."""
+    return st.get("versions", S.TEST_VERSIONS)
+
+
 def sketch_state(st):
-    """display_state_t fields -> a sketchlib state dict."""
+    """display_state_t fields (+ "versions") -> a sketch state dict."""
     mods = {m: {"held": bool(st[m]), "oneshot": False} for m in ("shift", "ctrl", "alt", "gui")}
     return dict(layer=LAYERS[st["layer"]], os=OSES[st["os"]], os_detected=bool(st["os_auto"]),
                 layout="qwerty" if st["qwerty"] else "colemak", instant=bool(st["layout_auto"]),
                 lang="secondary" if st["secondary"] else "primary", mods=mods, num=bool(st["num"]),
                 caps=bool(st["caps"]), scroll=bool(st["scrl"]), caps_word=bool(st["word"]),
-                backlight=st["backlight"], backlight_overlay=bool(st["overlay"]))
+                backlight=st["backlight"], backlight_overlay=st["popup"] == POPUP_BACKLIGHT,
+                version_overlay=st["popup"] == POPUP_VERSION, keymap_version=versions(st)[0],
+                qmk_version=versions(st)[1])
 
 
 def lang_muted(layer, os_):
@@ -191,14 +207,20 @@ def matrix(names):
                                 continue  # ds_resolve never gives AUTO with an unknown OS
                             st = dict(layer=layer, os=os_, backlight=rnd.randrange(11), os_auto=os_auto,
                                       qwerty=qwerty, layout_auto=layout_auto, secondary=secondary,
-                                      overlay=0)
+                                      popup=POPUP_NONE)
                             for f in ("shift", "ctrl", "alt", "gui", "caps", "word", "num", "scrl"):
                                 st[f] = rnd.randrange(2)
                             st["lang_muted"] = lang_muted(layer, os_)
                             states.append(st)
     for n in range(11):  # the popup at every level; main-screen fields random (not drawn)
         st = {f: rnd.randrange(2) for f in names if f != "lang_muted"}
-        st.update(layer=rnd.randrange(5), os=rnd.randrange(4), backlight=n, overlay=1)
+        st.update(layer=rnd.randrange(5), os=rnd.randrange(4), backlight=n, popup=POPUP_BACKLIGHT)
+        st["lang_muted"] = lang_muted(st["layer"], st["os"])
+        states.append(st)
+    for vers in VERSION_CASES + CENTERING_CASES:  # the version popup; main-screen fields random (not drawn)
+        st = {f: rnd.randrange(2) for f in names if f != "lang_muted"}
+        st.update(layer=rnd.randrange(5), os=rnd.randrange(4), backlight=rnd.randrange(11),
+                  popup=POPUP_VERSION, versions=vers)
         st["lang_muted"] = lang_muted(st["layer"], st["os"])
         states.append(st)
     return states
@@ -250,6 +272,14 @@ def main():
     def fields(st):
         return " ".join(str(int(st[f])) for f in names)
 
+    def key(st):
+        """The reference frame key: the fields, and the versions of a version popup."""
+        return fields(st) + (" V " + " ".join(versions(st)) if st["popup"] == POPUP_VERSION else "")
+
+    def with_versions(st, line):
+        """line, after a V line with the versions if st is a version popup."""
+        return f"V {' '.join(versions(st))}\n{line}" if st["popup"] == POPUP_VERSION else line
+
     def render(lines):
         return frames(run(binary, "render", "".join(line + "\n" for line in lines)))
 
@@ -259,10 +289,10 @@ def main():
     # 3. the design test states against the natives
     test_states = [dict(zip(names, map(int, line.split()))) for line in run(binary, "list").splitlines()]
     assert len(test_states) == len(S.STATE_ORDER)
-    out = render(f"A {fields(st)}" for st in test_states)
+    out = render(with_versions(st, f"A {fields(st)}") for st in test_states)
     assert len(out) == len(test_states)
     for name, st, (_, ops) in zip(S.STATE_ORDER, test_states, out):
-        ref[fields(st)] = natives[name]
+        ref[key(st)] = natives[name]
         got = rasterize(ops, pal)
         if got != natives[name]:
             path = os.path.join(diff_dir, f"display-diff-{name}.png")
@@ -275,11 +305,11 @@ def main():
 
     # 4. the extended matrix against the sketch
     states = matrix(names)
-    out = render(f"A {fields(st)}" for st in states)
+    out = render(with_versions(st, f"A {fields(st)}") for st in states)
     assert len(out) == len(states)
     bad_frames = 0
     for st, (_, ops) in zip(states, out):
-        want = ref.setdefault(fields(st), image565(S.draw(sketch_state(st))))
+        want = ref.setdefault(key(st), image565(S.draw(sketch_state(st))))
         got = rasterize(ops, pal)
         if got != want:
             if not bad_frames:
@@ -298,11 +328,16 @@ def main():
     pairs += list(zip(states, states[1:]))  # neighbors: one or two fields change at a time
     rnd = random.Random(1414)
     pairs += [(rnd.choice(states), rnd.choice(states)) for _ in range(60)]
-    out = render(f"C {fields(a)} {fields(b)}" for a, b in pairs)
+    main, backlight = states[0], next(st for st in states if st["popup"] == POPUP_BACKLIGHT)
+    for v in (st for st in states if st["popup"] == POPUP_VERSION and versions(st) in VERSION_CASES):  # the version popup <-> main screen, backlight popup
+        pairs += [(v, main), (main, v), (v, backlight), (backlight, v)]
+    # The versions are fixed in a build: never two version popups with different versions.
+    pairs = [(a, b) for a, b in pairs if not (a["popup"] == b["popup"] == POPUP_VERSION and versions(a) != versions(b))]
+    out = render(with_versions(b if b["popup"] == POPUP_VERSION else a, f"C {fields(a)} {fields(b)}") for a, b in pairs)
     assert len(out) == len(pairs)
     bad_pairs = 0
     for (a, b), (_, ops) in zip(pairs, out):
-        if rasterize(ops, pal, ref[fields(a)]) != ref[fields(b)]:
+        if rasterize(ops, pal, ref[key(a)]) != ref[key(b)]:
             if not bad_pairs:
                 print(f"FAIL: incremental {a} -> {b} differs from a full redraw")
             bad_pairs += 1

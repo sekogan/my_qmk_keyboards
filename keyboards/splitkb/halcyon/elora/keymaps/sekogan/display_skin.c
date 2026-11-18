@@ -9,9 +9,11 @@
 // background), so a group can be redrawn on its own over whatever was there.
 
 #include <stdbool.h>
+#include <string.h>
 #include "display_skin.h"
 #include "display_gfx.h"
 #include "display_skin_layout.h"
+#include "util.h" // STR()
 
 // A lamp: lit = full fill + BLACK content; off = fill x0.22 + content x0.45.
 typedef struct {
@@ -223,11 +225,58 @@ static void draw_popup(const display_state_t *s) {
     gfx_text(SKIN_SCALE_X10, SKIN_SCALE_Y, GFX_L18, "10", SKIN_PANEL, SKIN_BLACK);
 }
 
+// ---------------------------------------------------------------- version popup
+// The versions are build-time defines (rules.mk: VERSION and the qmk_firmware release tag), passed
+// bare (-DSEK_KEYMAP_VERSION=1.5.1: a preprocessing number) and stringified here. rules.mk lets only
+// MAJOR.MINOR.PATCH through; the width is asserted here.
+
+#if !defined(SEK_KEYMAP_VERSION) || !defined(SEK_QMK_VERSION)
+#    error "SEK_KEYMAP_VERSION and SEK_QMK_VERSION (rules.mk) are not defined"
+#endif
+#define KEYMAP_VERSION STR(SEK_KEYMAP_VERSION)
+#define QMK_VERSION STR(SEK_QMK_VERSION)
+_Static_assert(sizeof KEYMAP_VERSION - 1 <= SKIN_VER_MAX_GLYPHS, "SEK_KEYMAP_VERSION is wider than the screen");
+_Static_assert(sizeof QMK_VERSION - 1 <= SKIN_VER_MAX_GLYPHS, "SEK_QMK_VERSION is wider than the screen");
+
+static const char *keymap_version = KEYMAP_VERSION;
+static const char *qmk_version    = QMK_VERSION;
+
+#ifdef SEK_DISPLAY_HOST
+void skin_set_versions(const char *keymap, const char *qmk) {
+    keymap_version = keymap;
+    qmk_version    = qmk;
+}
+#endif
+
+// The SKIN_VERSION_INK_* index of a version glyph: the digit, or 10 for '.'.
+static uint8_t version_glyph(char c) {
+    return c == '.' ? 10 : (uint8_t)(c - '0');
+}
+
+// The cell x that centers the ink of version string s in the content block: the sketch's
+// centered_cell_x(), with the ink spanning from the first cell's first inked column to the last
+// cell's last one (make check compares it with the sketch for every first/last glyph pair).
+static uint8_t version_x(const char *s) {
+    const uint8_t n = (uint8_t)strlen(s);
+    const uint8_t left = SKIN_VERSION_INK_L[version_glyph(s[0])];
+    const uint8_t ink  = (uint8_t)((n - 1) * SKIN_VAL28_ADV + SKIN_VERSION_INK_R[version_glyph(s[n - 1])] + 1 - left);
+    return (uint8_t)(SKIN_X0 + (SKIN_CW - ink) / 2 - left);
+}
+
+static void draw_version_popup(void) {
+    gfx_text(SKIN_VER_X_KEYMAP, SKIN_VER_KEYMAP_Y, GFX_L24, "KEYMAP", SKIN_PANEL, SKIN_BLACK);
+    gfx_text(version_x(keymap_version), SKIN_VER_KEYMAP_V_Y, GFX_VAL28, keymap_version, SKIN_VFD, SKIN_BLACK);
+    gfx_text(SKIN_VER_X_QMK, SKIN_VER_QMK_Y, GFX_L24, "QMK", SKIN_PANEL, SKIN_BLACK);
+    gfx_text(version_x(qmk_version), SKIN_VER_QMK_V_Y, GFX_VAL28, qmk_version, SKIN_VFD, SKIN_BLACK);
+}
+
 // ---------------------------------------------------------------- entry points
 
 void skin_draw_all(const display_state_t *s) {
     gfx_fill(0, 0, SKIN_W, SKIN_H, SKIN_BLACK);
-    if (s->overlay) {
+    if (s->popup == DS_POPUP_VERSION) {
+        draw_version_popup();
+    } else if (s->popup == DS_POPUP_BACKLIGHT) {
         draw_popup(s);
     } else {
         for (uint8_t g = 0; g < sizeof GROUPS / sizeof GROUPS[0]; ++g) GROUPS[g].draw(s, GROUPS[g].k);
@@ -235,15 +284,15 @@ void skin_draw_all(const display_state_t *s) {
 }
 
 void skin_draw_changes(const display_state_t *old, const display_state_t *s) {
-    if (old->overlay != s->overlay) { // popup <-> main: the screens share nothing
+    if (old->popup != s->popup) { // main <-> popups: the screens share nothing
         skin_draw_all(s);
         gfx_flush();
-    } else if (s->overlay) { // only the level can change in the popup
+    } else if (s->popup == DS_POPUP_BACKLIGHT) { // only the level can change in the backlight popup
         if (old->backlight != s->backlight) {
             draw_level(s->backlight);
             gfx_flush();
         }
-    } else {
+    } else if (s->popup == DS_POPUP_NONE) { // the main screen (the version popup never changes)
         for (uint8_t g = 0; g < sizeof GROUPS / sizeof GROUPS[0]; ++g) {
             const group_t *grp = &GROUPS[g];
             if (grp->key(old, grp->k) != grp->key(s, grp->k)) {

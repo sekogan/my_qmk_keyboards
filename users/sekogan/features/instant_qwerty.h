@@ -22,3 +22,6 @@ void unmask_instant_qwerty_activation_reasons(uint8_t reasons);
 
 // Returns true if the Qwerty layout is activated.
 bool is_instant_qwerty_activated(void);
+
+// Returns the default layer the user selected: the stashed one while the Qwerty layout is activated.
+uint8_t get_selected_default_layer(void);

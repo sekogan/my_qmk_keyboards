@@ -31,7 +31,7 @@
 #define ST7789_NO_AUTOMATIC_VIEWPORT_OFFSETS
 #define QUANTUM_PAINTER_DISPLAY_TIMEOUT 0 // the panel timeout is in display.c, together with the backlight
 #define SEK_DISPLAY_TIMEOUT 120000 // ms without key activity before the panel and backlight go off
-#define SEK_DISPLAY_BL_OVERLAY_MS 2500 // the backlight popup stays this long after the last BL+/BL-; hidden earlier when EXTRA is left
+#define SEK_DISPLAY_POPUP_MS 2500 // a popup stays this long after the press that showed it; hidden earlier when EXTRA is left
 
 // Backlight: GP27 = PWM slice 5, channel B.
 #define BACKLIGHT_PIN GP27

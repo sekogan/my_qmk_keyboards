@@ -5,13 +5,15 @@
 //   render_states palette   P <index> <rgb565> per color; fails unless QMK's hsv_to_rgb_nocie()
 //                           (qmk_firmware/quantum/color.c) of skin_hsv[] truncates to skin_565[]
 //   render_states fields    the <state> field names (DS_FIELDS), one line
-//   render_states list      the five design test states (display_test_states.c) as <state> lines
+//   render_states list      the six design test states (display_test_states.c) as <state> lines
 //   render_states render    reads states from stdin, one per line:
 //                             A <state>            skin_draw_all(state)
 //                             C <state> <state>    skin_draw_changes(a, b) only (no skin_draw_all(a))
+//                             V <keymap> <qmk>     the versions the version popup draws from now on
+//                                                  (no frame; until then, the placeholder -D versions)
 //                           <state> = the DS_FIELDS values in order, as integers
-//   render_states model     ds_resolve() cases (popup timer and EXTRA rule, Caps Word Shift,
-//                           pre-LOWER snapshot, language muting)
+//   render_states model     ds_resolve() cases (popup timers and EXTRA rule, one popup at a time,
+//                           Caps Word Shift, pre-LOWER snapshot, language muting)
 // Frames are "BEGIN <n>" ... primitives (host_gfx.c) ... "END".
 
 #include <stdio.h>
@@ -23,10 +25,11 @@
 #include "display_state.h"
 
 // display_test_states.c (host only)
-extern const display_state_t display_test_states[5];
+#define NUM_TEST_STATES 6
+extern const display_state_t display_test_states[NUM_TEST_STATES];
 
 // Every display_state_t field, in the <state> order.
-#define DS_FIELDS(X) X(layer) X(os) X(backlight) X(os_auto) X(qwerty) X(layout_auto) X(secondary) X(lang_muted) X(shift) X(ctrl) X(alt) X(gui) X(caps) X(word) X(num) X(scrl) X(overlay)
+#define DS_FIELDS(X) X(layer) X(os) X(backlight) X(os_auto) X(qwerty) X(layout_auto) X(secondary) X(lang_muted) X(shift) X(ctrl) X(alt) X(gui) X(caps) X(word) X(num) X(scrl) X(popup)
 
 #define DS_FIELD_SIZE(f) +sizeof(((display_state_t *)0)->f)
 _Static_assert(0 DS_FIELDS(DS_FIELD_SIZE) == sizeof(display_state_t), "DS_FIELDS lists every display_state_t field");
@@ -68,12 +71,15 @@ static int fields(void) {
 }
 
 static int render(void) {
-    char line[512];
-    int  n = 0;
+    static char keymap[16], qmk[16]; // the V versions (skin_set_versions() keeps the pointers)
+    char        line[512];
+    int         n = 0;
     while (fgets(line, sizeof line, stdin)) {
         char           *cur = line + 1;
         display_state_t a, b;
-        if (line[0] == 'A' && parse_state(&cur, &a)) {
+        if (line[0] == 'V' && sscanf(cur, "%15s %15s", keymap, qmk) == 2) {
+            skin_set_versions(keymap, qmk);
+        } else if (line[0] == 'A' && parse_state(&cur, &a)) {
             printf("BEGIN %d\n", n++);
             skin_draw_all(&a);
             printf("END\n");
@@ -90,7 +96,7 @@ static int render(void) {
 }
 
 static int list(void) {
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < NUM_TEST_STATES; ++i) {
         const display_state_t *s   = &display_test_states[i];
         const char            *sep = "";
 #define DS_PRINT(f) printf("%s%d", sep, (int)s->f), sep = " ";
@@ -122,41 +128,54 @@ static display_state_t at(ds_ctx_t *ctx, uint8_t layer, uint32_t now) {
 }
 
 static int model(void) {
-    { // popup: SEK_DISPLAY_BL_OVERLAY_MS after the last press, on EXTRA
-        ds_ctx_t ctx = {0};
-        EXPECT(!at(&ctx, DS_LAYER_EXTRA, 1000).overlay);
-        ds_backlight_pressed(&ctx, 1000);
-        EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000).overlay);
-        EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000 + SEK_DISPLAY_BL_OVERLAY_MS - 1).overlay);
-        EXPECT(!at(&ctx, DS_LAYER_EXTRA, 1000 + SEK_DISPLAY_BL_OVERLAY_MS).overlay);
-        EXPECT(!at(&ctx, DS_LAYER_EXTRA, 1000 + SEK_DISPLAY_BL_OVERLAY_MS - 1).overlay); // disarmed for good
-    }
-    { // hidden at once when EXTRA is left; re-entering EXTRA does not bring it back
-        ds_ctx_t ctx = {0};
-        ds_backlight_pressed(&ctx, 5000);
-        EXPECT(at(&ctx, DS_LAYER_EXTRA, 5001).overlay);
-        EXPECT(!at(&ctx, DS_LAYER_LOWER, 5002).overlay);
-        EXPECT(!at(&ctx, DS_LAYER_EXTRA, 5003).overlay);
-        ds_backlight_pressed(&ctx, 5004); // a new press does
-        EXPECT(at(&ctx, DS_LAYER_EXTRA, 5004).overlay);
-        EXPECT(!at(&ctx, DS_LAYER_BASE, 5005).overlay);
-    }
-    { // a new press restarts the time
-        ds_ctx_t       ctx    = {0};
-        const uint32_t second = 1000 + SEK_DISPLAY_BL_OVERLAY_MS - 1;
-        ds_backlight_pressed(&ctx, 1000);
-        EXPECT(at(&ctx, DS_LAYER_EXTRA, second).overlay);
-        ds_backlight_pressed(&ctx, second);
-        EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000 + SEK_DISPLAY_BL_OVERLAY_MS).overlay);
-        EXPECT(at(&ctx, DS_LAYER_EXTRA, second + SEK_DISPLAY_BL_OVERLAY_MS - 1).overlay);
-        EXPECT(!at(&ctx, DS_LAYER_EXTRA, second + SEK_DISPLAY_BL_OVERLAY_MS).overlay);
-    }
-    { // across the 32-bit timer wrap
-        ds_ctx_t       ctx   = {0};
-        const uint32_t press = 0xFFFFFFFFu - SEK_DISPLAY_BL_OVERLAY_MS / 2;
-        ds_backlight_pressed(&ctx, press);
-        EXPECT(at(&ctx, DS_LAYER_EXTRA, press + SEK_DISPLAY_BL_OVERLAY_MS - 1).overlay); // wrapped
-        EXPECT(!at(&ctx, DS_LAYER_EXTRA, press + SEK_DISPLAY_BL_OVERLAY_MS).overlay);
+    // The lifecycle, the same for every popup.
+    for (uint8_t p = DS_POPUP_BACKLIGHT; p <= DS_POPUP_VERSION; ++p) {
+        { // SEK_DISPLAY_POPUP_MS after the last press, on EXTRA
+            ds_ctx_t ctx = {0};
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000).popup == DS_POPUP_NONE);
+            ds_popup_pressed(&ctx, p, 1000);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000).popup == p);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000 + SEK_DISPLAY_POPUP_MS - 1).popup == p);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000 + SEK_DISPLAY_POPUP_MS).popup == DS_POPUP_NONE);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000 + SEK_DISPLAY_POPUP_MS - 1).popup == DS_POPUP_NONE); // disarmed for good
+        }
+        { // hidden at once when EXTRA is left; re-entering EXTRA does not bring it back
+            ds_ctx_t ctx = {0};
+            ds_popup_pressed(&ctx, p, 5000);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 5001).popup == p);
+            EXPECT(at(&ctx, DS_LAYER_LOWER, 5002).popup == DS_POPUP_NONE);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 5003).popup == DS_POPUP_NONE);
+            ds_popup_pressed(&ctx, p, 5004); // a new press does
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 5004).popup == p);
+            EXPECT(at(&ctx, DS_LAYER_BASE, 5005).popup == DS_POPUP_NONE);
+        }
+        { // a new press restarts the time
+            ds_ctx_t       ctx    = {0};
+            const uint32_t second = 1000 + SEK_DISPLAY_POPUP_MS - 1;
+            ds_popup_pressed(&ctx, p, 1000);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, second).popup == p);
+            ds_popup_pressed(&ctx, p, second);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1000 + SEK_DISPLAY_POPUP_MS).popup == p);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, second + SEK_DISPLAY_POPUP_MS - 1).popup == p);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, second + SEK_DISPLAY_POPUP_MS).popup == DS_POPUP_NONE);
+        }
+        { // across the 32-bit timer wrap
+            ds_ctx_t       ctx   = {0};
+            const uint32_t press = 0xFFFFFFFFu - SEK_DISPLAY_POPUP_MS / 2;
+            ds_popup_pressed(&ctx, p, press);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, press + SEK_DISPLAY_POPUP_MS - 1).popup == p); // wrapped
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, press + SEK_DISPLAY_POPUP_MS).popup == DS_POPUP_NONE);
+        }
+        { // the other popup's press replaces it, with its own time; it does not come back
+            const uint8_t other = p == DS_POPUP_BACKLIGHT ? DS_POPUP_VERSION : DS_POPUP_BACKLIGHT;
+            ds_ctx_t      ctx   = {0};
+            ds_popup_pressed(&ctx, p, 1000);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1001).popup == p);
+            ds_popup_pressed(&ctx, other, 1002);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1002).popup == other);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1002 + SEK_DISPLAY_POPUP_MS - 1).popup == other);
+            EXPECT(at(&ctx, DS_LAYER_EXTRA, 1002 + SEK_DISPLAY_POPUP_MS).popup == DS_POPUP_NONE);
+        }
     }
     { // mods: Caps Word's own Left Shift is hidden, the user's Shift is not
         ds_ctx_t        ctx = {0};

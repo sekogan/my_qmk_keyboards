@@ -15,6 +15,7 @@
 #include "features/non_qwerty_shortcuts.h"
 #include "features/os.h"
 #include "features/select_word.h"
+#include "features/selected_layout.h"
 #include "features/text_editing.h"
 
 enum custom_keycodes {
@@ -34,6 +35,8 @@ enum custom_keycodes {
     SEK_FUP,   // Fast up
     SEK_FDOWN, // Fast down
     SEK_FSPC,  // Fast space
+
+    SEK_VER, // Version popup (V on EXTRA)
 };
 
 _Static_assert(LOWER == TRI_LAYER_LOWER_LAYER && RAISE == TRI_LAYER_UPPER_LAYER && EXTRA == TRI_LAYER_ADJUST_LAYER, "config.h TRI_LAYER_* values must match enum layers");
@@ -156,7 +159,7 @@ _______,   KC_UNDO,   KC_CUT,    KC_COPY,   KC_PASTE,  KC_PASTE,  XXXXXXX,   XXX
  * |------+------+------+------+------+------|                                  |------+------+------+------+------+------|
  * |      |      | BL-  |      |      |  OS  |                                  |      | PREV | VOL- | NEXT |      |      |
  * |------+------+------+------+------+------+-------------.      ,-------------+------+------+------+------+------+------|
- * | ___  |      |      |      |      |      |      |      |      |      |      |      |      | MUTE | PLAY |      | ___  |
+ * | ___  |      |      |      | VER  | VER  |      |      |      |      |      |      |      | MUTE | PLAY |      | ___  |
  * `--------------------+------+------+------+------+------|      |------+------+------+------+------+--------------------'
  *                      | ___  | ___  | ___  | ___  | ___  |      | ___  | ___  | ___  | ___  | ___  |
  *                      `----------------------------------'      `----------------------------------'
@@ -165,12 +168,18 @@ _______,   KC_UNDO,   KC_CUT,    KC_COPY,   KC_PASTE,  KC_PASTE,  XXXXXXX,   XXX
 XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,                                               XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,
 XXXXXXX,   XXXXXXX,   BL_UP,     XXXXXXX,   XXXXXXX,   SEK_BASE,                                              XXXXXXX,   XXXXXXX,   KC_VOLU,   XXXXXXX,   XXXXXXX,   XXXXXXX,
 XXXXXXX,   XXXXXXX,   BL_DOWN,   XXXXXXX,   XXXXXXX,   SEK_OS,                                                XXXXXXX,   KC_MPRV,   KC_VOLD,   KC_MNXT,   XXXXXXX,   XXXXXXX,
-_______,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_MUTE,   KC_MPLY,   XXXXXXX,   _______,
+_______,   XXXXXXX,   XXXXXXX,   XXXXXXX,   SEK_VER,   SEK_VER,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_MUTE,   KC_MPLY,   XXXXXXX,   _______,
                                  _______,   _______,   _______,   _______,   _______,   _______,   _______,   _______,   _______,   _______
 )
 
 };
 // clang-format on
+
+// Under V of both QWERTY and Colemak: only the one under V of the selected layout works, the other
+// is ignored before anything else sees it.
+const struct selected_layout_key selected_layout_keys[] = {
+    {.keycode = SEK_VER, .letter = KC_V}, // EXTRA
+};
 
 const struct fast_keycode fast_keycodes[] = {
     {.fast_keycode = SEK_FSPC, .real_keycode = KC_SPC, .real_count = 3},
@@ -185,6 +194,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_selected_layout_keys(keycode, record, selected_layout_keys, selected_layout_keys + ARRAY_SIZE(selected_layout_keys))) return false;
     if (!process_text_navigation_shortcuts(keycode, record, SEK_WPREV, SEK_WNEXT, SEK_LSTRT, SEK_LEND)) return false;
     if (!process_fast_keycodes(keycode, record, fast_keycodes, fast_keycodes + ARRAY_SIZE(fast_keycodes))) return false;
     if (!process_clipboard_shortcuts(keycode, record)) return false;
@@ -201,9 +211,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case SEK_BASE:
             if (record->event.pressed) set_single_persistent_default_layer(IS_LAYER_ON_STATE(default_layer_state, QWERTY) ? COLEMAK : QWERTY);
             return false;
+        case SEK_VER:
+            if (record->event.pressed) display_popup_pressed(DS_POPUP_VERSION);
+            return false;
         case QK_BACKLIGHT_UP:
         case QK_BACKLIGHT_DOWN:
-            if (record->event.pressed) display_backlight_adjusted(); // the level changes later, in process_backlight()
+            if (record->event.pressed) display_popup_pressed(DS_POPUP_BACKLIGHT); // the level changes later, in process_backlight()
             return true;
     }
     return true;

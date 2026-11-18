@@ -15,6 +15,9 @@ typedef enum { DS_OS_LINUX, DS_OS_WINDOWS, DS_OS_MAC, DS_OS_UNKNOWN } ds_os_t;
 
 #define DS_BACKLIGHT_MAX 10 // the backlight level is 0..DS_BACKLIGHT_MAX (BACKLIGHT_LEVELS)
 
+// The full-screen popup: at most one at a time, the last one pressed.
+typedef enum { DS_POPUP_NONE, DS_POPUP_BACKLIGHT, DS_POPUP_VERSION } ds_popup_t;
+
 typedef struct {
     uint8_t layer, os, backlight; // ds_layer_t, ds_os_t, backlight 0..DS_BACKLIGHT_MAX
     bool    os_auto;              // autodetection on AND os != unknown
@@ -23,7 +26,7 @@ typedef struct {
     bool    lang_muted;           // the language does not apply: not BASE, or macOS / unknown OS
     bool    shift, ctrl, alt, gui; // held or one-shot, minus Caps Word's synthetic LSFT
     bool    caps, word, num, scrl;
-    bool    overlay; // full-screen backlight popup visible
+    uint8_t popup; // ds_popup_t shown in place of the main screen
 } display_state_t;
 
 // 8-bit mod bits as in QMK (MOD_BIT(KC_LCTL) ...); display_state.c checks them against QMK.
@@ -51,21 +54,21 @@ typedef struct {
     bool     caps_word;
     bool     caps_lock, num_lock, scroll_lock;
     uint8_t  backlight; // get_backlight_level()
-    uint32_t now;       // timer_read32(), read only while the popup is armed (0 otherwise)
+    uint32_t now;       // timer_read32(), read only while a popup is armed (0 otherwise)
 } ds_raw_t;
 
 // What the view model remembers between reads.
 typedef struct {
-    bool     overlay_armed;
-    uint32_t bl_pressed_at;
+    uint8_t  popup;    // ds_popup_t
+    uint32_t popup_at; // the press that armed it
     bool     pre_lower_secondary, pre_lower_qwerty, pre_lower_layout_auto;
 } ds_ctx_t;
 
 // Pure: the view model of raw. Disarms an armed popup when the highest layer is not EXTRA or
-// SEK_DISPLAY_BL_OVERLAY_MS have passed since the last BL+/BL- press (raw->now).
+// SEK_DISPLAY_POPUP_MS has passed since the press that armed it (raw->now).
 void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out);
-// Pure: a BL+/BL- press at time now.
-void ds_backlight_pressed(ds_ctx_t *ctx, uint32_t now);
+// Pure: the press that shows popup (ds_popup_t) at time now, replacing any other popup.
+void ds_popup_pressed(ds_ctx_t *ctx, uint8_t popup, uint32_t now);
 // Pure: remember language and layout before LOWER stashes the language.
 void ds_snapshot_before_lower(ds_ctx_t *ctx, const ds_raw_t *raw);
 

@@ -6,13 +6,13 @@
 
 #include "display_state.h"
 
-#ifndef SEK_DISPLAY_BL_OVERLAY_MS
-#    error "SEK_DISPLAY_BL_OVERLAY_MS (config.h) is not defined"
+#ifndef SEK_DISPLAY_POPUP_MS
+#    error "SEK_DISPLAY_POPUP_MS (config.h) is not defined"
 #endif
 
-void ds_backlight_pressed(ds_ctx_t *ctx, uint32_t now) {
-    ctx->bl_pressed_at = now;
-    ctx->overlay_armed = true;
+void ds_popup_pressed(ds_ctx_t *ctx, uint8_t popup, uint32_t now) {
+    ctx->popup    = popup;
+    ctx->popup_at = now;
 }
 
 void ds_snapshot_before_lower(ds_ctx_t *ctx, const ds_raw_t *raw) {
@@ -22,9 +22,9 @@ void ds_snapshot_before_lower(ds_ctx_t *ctx, const ds_raw_t *raw) {
 }
 
 void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out) {
-    // The popup hides SEK_DISPLAY_BL_OVERLAY_MS after the last BL+/BL- press, or at once when
-    // EXTRA is left. Disarmed, not masked: re-entering EXTRA does not bring it back.
-    if (ctx->overlay_armed && (raw->layer != DS_LAYER_EXTRA || (uint32_t)(raw->now - ctx->bl_pressed_at) >= SEK_DISPLAY_BL_OVERLAY_MS)) ctx->overlay_armed = false;
+    // A popup hides SEK_DISPLAY_POPUP_MS after the press that armed it, or at once when EXTRA is left.
+    // Disarmed, not masked: re-entering EXTRA does not bring it back.
+    if (ctx->popup != DS_POPUP_NONE && (raw->layer != DS_LAYER_EXTRA || (uint32_t)(raw->now - ctx->popup_at) >= SEK_DISPLAY_POPUP_MS)) ctx->popup = DS_POPUP_NONE;
 
     // Caps Word's own Left Shift is not the user's; a one-shot Shift still is.
     uint8_t mods = raw->mods;
@@ -53,7 +53,7 @@ void ds_resolve(const ds_raw_t *raw, ds_ctx_t *ctx, display_state_t *out) {
         .word        = raw->caps_word,
         .num         = raw->num_lock,
         .scrl        = raw->scroll_lock,
-        .overlay     = ctx->overlay_armed,
+        .popup       = ctx->popup,
     };
 }
 
@@ -126,12 +126,12 @@ static void read_raw(ds_raw_t *raw) {
 void display_state_read(display_state_t *out) {
     ds_raw_t raw;
     read_raw(&raw);
-    if (ctx.overlay_armed) raw.now = timer_read32(); // only the popup expiry needs the time
+    if (ctx.popup != DS_POPUP_NONE) raw.now = timer_read32(); // only the popup expiry needs the time
     ds_resolve(&raw, &ctx, out);
 }
 
-void display_backlight_adjusted(void) {
-    ds_backlight_pressed(&ctx, timer_read32());
+void display_popup_pressed(uint8_t popup) {
+    ds_popup_pressed(&ctx, popup, timer_read32());
 }
 
 void display_snapshot_before_lower(void) {

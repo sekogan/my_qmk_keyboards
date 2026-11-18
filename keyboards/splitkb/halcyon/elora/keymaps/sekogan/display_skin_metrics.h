@@ -28,3 +28,13 @@ __attribute__((unused)) static const uint8_t SKIN_LOCK_X[4] = {SKIN_LOCK_X_CAPS,
 
 // The popup readout "{n}/10" (centered in 4..130), by n = 0..10.
 __attribute__((unused)) static const uint8_t SKIN_READOUT_X[11] = {40, 39, 40, 40, 40, 40, 40, 40, 40, 40, 32};
+
+// The version popup labels (centered in 4..130).
+#define SKIN_VER_X_KEYMAP 31
+#define SKIN_VER_X_QMK 49
+
+// The version strings are build-time (rules.mk), so display_skin.c centers them at run time
+// with the same rule, from the first and last inked column of each VAL28 glyph cell.
+// Index: the digit, then '.' ('0123456789.').
+__attribute__((unused)) static const uint8_t SKIN_VERSION_INK_L[11] = {1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 6};
+__attribute__((unused)) static const uint8_t SKIN_VERSION_INK_R[11] = {11, 10, 11, 11, 11, 11, 11, 11, 11, 11, 7};
