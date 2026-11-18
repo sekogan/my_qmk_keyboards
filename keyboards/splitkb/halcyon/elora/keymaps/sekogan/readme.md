@@ -27,8 +27,8 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features a
 - **Caps Word**: press both Shifts to type one word in capitals; it turns off by itself, or
   when you tap a Shift.
 - **Editing on RAISE**: arrows and page keys, previous/next word, line start/end, select
-  word, delete word forward/backward, delete line, undo/cut/copy/paste, and "fast" up, down
-  and space keys that repeat several times per press.
+  word, delete word forward/backward, delete line, undo/cut/copy/paste (paste is on V of your
+  chosen layout), and "fast" up, down and space keys that repeat several times per press.
 - **Num Lock** is kept on.
 - **Media and display controls on EXTRA**: volume, previous/next track, mute, play/pause,
   and display brightness (BL+/BL-). V on EXTRA (wherever V is in your chosen layout) shows

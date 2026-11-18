@@ -16,6 +16,7 @@
 #include "features/non_qwerty_shortcuts.h"
 #include "features/os.h"
 #include "features/select_word.h"
+#include "features/selected_layout.h"
 #include "features/text_editing.h"
 
 enum custom_keycodes {
@@ -195,6 +196,12 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 #endif // ENCODER_MAP_ENABLE
 // clang-format on
 
+// Under V of both QWERTY and Colemak: only the one under V of the selected layout works, the other
+// is ignored before anything else sees it.
+const struct selected_layout_key selected_layout_keys[] = {
+    {.keycode = KC_PASTE, .letter = KC_V}, // RAISE
+};
+
 const struct fast_keycode fast_keycodes[] = {
     {.fast_keycode = SEK_FSPC, .real_keycode = KC_SPC, .real_count = 3},
     {.fast_keycode = SEK_FUP, .real_keycode = KC_UP, .real_count = 5},
@@ -208,6 +215,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_selected_layout_keys(keycode, record, selected_layout_keys, selected_layout_keys + ARRAY_SIZE(selected_layout_keys))) return false;
     if (!process_encoder_keycodes(keycode, record, SEK_ENC_L_CCW, SEK_ENC_L_CW, SEK_ENC_R_CCW, SEK_ENC_R_CW)) return false;
     if (!process_text_navigation_shortcuts(keycode, record, SEK_WPREV, SEK_WNEXT, SEK_LSTRT, SEK_LEND)) return false;
     if (!process_fast_keycodes(keycode, record, fast_keycodes, fast_keycodes + ARRAY_SIZE(fast_keycodes))) return false;

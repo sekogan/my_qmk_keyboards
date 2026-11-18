@@ -178,7 +178,8 @@ _______,   XXXXXXX,   XXXXXXX,   XXXXXXX,   SEK_VER,   SEK_VER,   XXXXXXX,   XXX
 // Under V of both QWERTY and Colemak: only the one under V of the selected layout works, the other
 // is ignored before anything else sees it.
 const struct selected_layout_key selected_layout_keys[] = {
-    {.keycode = SEK_VER, .letter = KC_V}, // EXTRA
+    {.keycode = KC_PASTE, .letter = KC_V}, // RAISE
+    {.keycode = SEK_VER, .letter = KC_V},  // EXTRA
 };
 
 const struct fast_keycode fast_keycodes[] = {
