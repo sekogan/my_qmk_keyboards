@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-// Colours of the skin design. The panel shows (R>>3, G>>2, B>>3) of the sketch hex:
+// Colors of the skin design. The panel shows (R>>3, G>>2, B>>3) of the sketch hex:
 // QP converts skin_hsv[] with hsv_to_rgb_nocie() and truncates, which gives exactly skin_565[].
 enum skin_color {
     SKIN_BLACK,

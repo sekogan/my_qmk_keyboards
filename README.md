@@ -1,6 +1,6 @@
 # Firmware for my QMK-based keyboards
 
-Custom [QMK](https://qmk.fm) keymaps, organised as a QMK
+Custom [QMK](https://qmk.fm) keymaps, organized as a QMK
 [External Userspace](https://docs.qmk.fm/newbs_external_userspace):
 
 | Keyboard | QMK target | Keymap |
@@ -57,8 +57,8 @@ give byte-identical builds.
 | Part | Bump when |
 |---|---|
 | MAJOR | you have to relearn something: a key, layer or shortcut moved, was removed or changed |
-| MINOR | something was added without changing existing behaviour |
-| PATCH | no intended behaviour change: refactor, QMK bump, toolchain change, bug fix |
+| MINOR | something was added without changing existing behavior |
+| PATCH | no intended behavior change: refactor, QMK bump, toolchain change, bug fix |
 
 A commit that produces firmware to keep bumps `VERSION` and adds a [CHANGELOG.md](CHANGELOG.md)
 entry in the same commit; a commit whose firmware is byte-identical keeps the version.
@@ -163,7 +163,7 @@ flash commands for what they just built.
   ```
   The script prints the file's sha256 and origin, refuses a file whose hash does not match its
   `SHA256SUMS`, then waits for you to double-tap the reset button of the half. The bootloader
-  appears as a USB drive labelled `RPI-RP2`; the script copies the file there and the half
+  appears as a USB drive labeled `RPI-RP2`; the script copies the file there and the half
   reboots by itself. If the drive is not mounted automatically, double-tap reset and copy by
   hand: `cp build/firmware/qmk-<QMK version>-<VERSION>/elora.uf2 /run/media/$USER/RPI-RP2/ && sync`.
 - **KBD75** (atmel-dfu): put the board into the bootloader (Caps Lock + Esc + F12),

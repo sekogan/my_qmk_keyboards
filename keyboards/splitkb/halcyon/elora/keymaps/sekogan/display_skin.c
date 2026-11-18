@@ -18,7 +18,7 @@ typedef struct {
     uint8_t on, off_fill, off_txt;
 } lamp_colors_t;
 
-// A meter segment: lit = full colour, off = colour x0.22.
+// A meter segment: lit = full color, off = color x0.22.
 typedef struct {
     uint8_t on, off;
 } seg_colors_t;

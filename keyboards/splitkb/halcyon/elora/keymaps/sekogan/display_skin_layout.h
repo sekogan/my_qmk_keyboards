@@ -6,7 +6,7 @@
 // skin layout, measured from the sketch (scripts/elora_display_test/reference/sketch/skin.py)
 // and its natives. Boxes are x, y, w, h (last pixel x + w - 1). Text origins are firmware
 // origins: the sketch's text() cell with y + 4, because the fonts are cropped to cell rows 4..
-// (VAL28 20 rows, L24 18, L18 11; advances 14, 12, 9). The centred x tables are generated:
+// (VAL28 20 rows, L24 18, L18 11; advances 14, 12, 9). The centered x tables are generated:
 // display_skin_metrics.h.
 
 #include "display_skin_metrics.h"
@@ -85,7 +85,7 @@ _Static_assert(4 * SKIN_MOD_SIZE + 3 * (SKIN_MOD_PITCH - SKIN_MOD_SIZE) == SKIN_
 _Static_assert(SKIN_LOCK_W + (SKIN_LOCK_X2 - SKIN_LOCK_X1 - SKIN_LOCK_W) + SKIN_LOCK_W == SKIN_CW, "lock bars span the content width");
 _Static_assert(10 * SKIN_SEG_W + 9 * (SKIN_SEG_PITCH - SKIN_SEG_W) == SKIN_CW, "segments span the content width");
 _Static_assert(SKIN_X0 + SKIN_CW + SKIN_X0 == SKIN_W, "even side margins");
-_Static_assert(2 * SKIN_ICON_INSET + SKIN_ICON_SIZE == SKIN_MOD_SIZE, "icons centred in their tiles");
+_Static_assert(2 * SKIN_ICON_INSET + SKIN_ICON_SIZE == SKIN_MOD_SIZE, "icons centered in their tiles");
 
 // Every cropped text cell lies inside its fill, or on black with nothing else on its pixels.
 #define SKIN_INSIDE(cx, cy, cw, ch, bx, by, bw, bh) ((cx) >= (bx) && (cy) >= (by) && (cx) + (cw) <= (bx) + (bw) && (cy) + (ch) <= (by) + (bh))

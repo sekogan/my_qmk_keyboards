@@ -1,9 +1,9 @@
 // Copyright 2026 Sergei Kogan
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-// display_gfx.h with Quantum Painter on the rgb565 surface. Colours go in as the HSV888 of
+// display_gfx.h with Quantum Painter on the rgb565 surface. Colors go in as the HSV888 of
 // display_palette.h; the surface turns them into the sketch's RGB565 exactly
-// (hsv_to_rgb_nocie + truncation). The 1 bpp fonts and icons are recoloured with 2 steps, so
+// (hsv_to_rgb_nocie + truncation). The 1 bpp fonts and icons are recolored with 2 steps, so
 // ink is exactly fg and the rest of the cell exactly bg.
 
 #include QMK_KEYBOARD_H

@@ -55,7 +55,7 @@ echo "uf2:    $uf2"
 echo "sha256: $want (matches SHA256SUMS)"
 if [ -f "$dir/README" ]; then grep -v 'cflags' "$dir/README" | sed 's/^/        /'; else echo "        (no README)"; fi
 
-# The RP2040 bootloader mounts as a USB drive labelled RPI-RP2.
+# The RP2040 bootloader mounts as a USB drive labeled RPI-RP2.
 find_mount() {
   local m
   for m in "/run/media/$USER/RPI-RP2" "/media/$USER/RPI-RP2"; do

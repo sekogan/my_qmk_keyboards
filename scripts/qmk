@@ -45,7 +45,7 @@ fi
 # Mounts: only the repo root, as /qmk_userspace. `--security-opt label=disable` instead of
 # :Z: with :Z every `--rm` container gets a new private SELinux label, so Podman relabels
 # the whole repo (qmk_firmware ~30k files, build/qmk, build/venv, the 0.9 GB archive in
-# build/toolchain) on every run. With label separation disabled nothing is relabelled;
+# build/toolchain) on every run. With label separation disabled nothing is relabeled;
 # the container is still rootless and user-namespaced, runs the pinned official image,
 # and sees only the repo.
 # QMK's build directory is build/qmk: BUILD_DIR (env) for the qmk CLI and, via

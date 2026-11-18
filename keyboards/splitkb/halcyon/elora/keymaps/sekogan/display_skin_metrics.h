@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-// Text-cell x of the centred labels, measured on the ink with the sketch's centred_cell_x():
+// Text-cell x of the centered labels, measured on the ink with the sketch's centered_cell_x():
 // cell x = x0 + (w - ink width) / 2 - ink left offset.
 
 // The tally (box 4,4,127,20), by ds_layer_t.
@@ -26,5 +26,5 @@ __attribute__((unused)) static const uint8_t SKIN_TALLY_X[5] = {SKIN_TALLY_X_BAS
 #define SKIN_LOCK_X_SCRL 76
 __attribute__((unused)) static const uint8_t SKIN_LOCK_X[4] = {SKIN_LOCK_X_CAPS, SKIN_LOCK_X_WORD, SKIN_LOCK_X_NUM, SKIN_LOCK_X_SCRL};
 
-// The popup readout "{n}/10" (centred in 4..130), by n = 0..10.
+// The popup readout "{n}/10" (centered in 4..130), by n = 0..10.
 __attribute__((unused)) static const uint8_t SKIN_READOUT_X[11] = {40, 39, 40, 40, 40, 40, 40, 40, 40, 40, 32};

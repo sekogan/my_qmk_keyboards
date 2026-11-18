@@ -6,7 +6,7 @@
 1. The tracked sketch copy re-renders the five natives byte-identically (it is the oracle).
 2. The firmware palette: hsv_to_rgb_nocie(skin_hsv[]) truncates to skin_565[] (render_states).
 3. The five design test states (render_states list), drawn by the firmware renderer and
-   rasterised here from the committed font images and icon PNGs (the exact QFF/QGF inputs) and
+   rasterized here from the committed font images and icon PNGs (the exact QFF/QGF inputs) and
    skin_565[], equal the natives truncated to RGB565 (r>>3, g>>2, b>>3).
    Diffs: <diff dir>/display-diff-<state>.png.
 4. An extended matrix (every layer, OS, language, layout, instant QWERTY and OS AUTO, mods and
@@ -40,7 +40,7 @@ FONTS = ["font_val28_caps", "font_l24_caps", "font_l18_caps"]   # enum gfx_font
 # b & 0xF8): equal bytes <=> equal RGB565.
 MASK5 = [v & 0xF8 for v in range(256)]
 MASK6 = [v & 0xFC for v in range(256)]
-UNPAINTED = b"\x01\x01\x01"  # never a masked colour
+UNPAINTED = b"\x01\x01\x01"  # never a masked color
 
 
 def rgb565_bytes(c):
@@ -52,7 +52,7 @@ def image565(img):
     return img.convert("RGB").point(MASK5 + MASK6 + MASK5).tobytes()
 
 
-# ---------------------------------------------------------------- rasteriser
+# ---------------------------------------------------------------- rasterizer
 class Font:
     def __init__(self, path):
         img = Image.open(path).convert("RGB")
@@ -104,7 +104,7 @@ def icon_rows(i, fg, bg):
     return _cached(("i", i, fg, bg), lambda: [b"".join(fg if ink else bg for ink in row) for row in ICON_DATA[i].ink])
 
 
-def rasterise(ops, pal, base=None):
+def rasterize(ops, pal, base=None):
     """ops: primitive lines of one frame, drawn over base (a frame) or nothing -> frame bytes."""
     canvas = bytearray(base) if base is not None else bytearray(UNPAINTED * (W * H))
 
@@ -205,7 +205,7 @@ def matrix(names):
 
 
 def diff_image(want, got, path, s=4):
-    """expected | actual | differing pixels in red, nearest-neighbour 4x for viewing."""
+    """expected | actual | differing pixels in red, nearest-neighbor 4x for viewing."""
     widen5 = [v | v >> 5 for v in range(256)]
     widen6 = [v | v >> 6 for v in range(256)]
     img = Image.new("RGB", (W * 3 + 8, H), (48, 48, 52))
@@ -243,7 +243,7 @@ def main():
     for line in run(binary, "palette").splitlines():
         _, i, c = line.split()
         pal[int(i)] = rgb565_bytes(int(c))
-    print(f"palette: {len(pal)} colours, hsv_to_rgb_nocie(skin_hsv) == skin_565")
+    print(f"palette: {len(pal)} colors, hsv_to_rgb_nocie(skin_hsv) == skin_565")
 
     names = run(binary, "fields").split()
 
@@ -263,7 +263,7 @@ def main():
     assert len(out) == len(test_states)
     for name, st, (_, ops) in zip(S.STATE_ORDER, test_states, out):
         ref[fields(st)] = natives[name]
-        got = rasterise(ops, pal)
+        got = rasterize(ops, pal)
         if got != natives[name]:
             path = os.path.join(diff_dir, f"display-diff-{name}.png")
             diff_image(natives[name], got, path)
@@ -280,7 +280,7 @@ def main():
     bad_frames = 0
     for st, (_, ops) in zip(states, out):
         want = ref.setdefault(fields(st), image565(S.draw(sketch_state(st))))
-        got = rasterise(ops, pal)
+        got = rasterize(ops, pal)
         if got != want:
             if not bad_frames:
                 path = os.path.join(diff_dir, "display-diff-matrix.png")
@@ -295,14 +295,14 @@ def main():
 
     # 5. incremental redraws, over the reference frame of a
     pairs = [(a, b) for a in test_states for b in test_states if a is not b]
-    pairs += list(zip(states, states[1:]))  # neighbours: one or two fields change at a time
+    pairs += list(zip(states, states[1:]))  # neighbors: one or two fields change at a time
     rnd = random.Random(1414)
     pairs += [(rnd.choice(states), rnd.choice(states)) for _ in range(60)]
     out = render(f"C {fields(a)} {fields(b)}" for a, b in pairs)
     assert len(out) == len(pairs)
     bad_pairs = 0
     for (a, b), (_, ops) in zip(pairs, out):
-        if rasterise(ops, pal, ref[fields(a)]) != ref[fields(b)]:
+        if rasterize(ops, pal, ref[fields(a)]) != ref[fields(b)]:
             if not bad_pairs:
                 print(f"FAIL: incremental {a} -> {b} differs from a full redraw")
             bad_pairs += 1

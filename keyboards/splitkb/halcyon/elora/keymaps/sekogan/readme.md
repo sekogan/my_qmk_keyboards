@@ -3,7 +3,7 @@
 A keymap for the [splitkb Halcyon Elora](https://splitkb.com) rev2 split keyboard with a
 Halcyon TFT display module on one half. It uses the same layers as the
 [Sofle keymap](../../../../../sofle/keymaps/sekogan/readme.md), adapted to the Elora's
-extra keys, and adds a colour status display.
+extra keys, and adds a color status display.
 
 QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features are in
 [`users/sekogan/`](../../../../../../users/sekogan/).
@@ -39,7 +39,7 @@ QMK target `splitkb/halcyon/elora/rev2`, keymap `sekogan`. The shared features a
 
 The display shows, top to bottom:
 
-- the active layer, each in its own colour;
+- the active layer, each in its own color;
 - Shift, Ctrl, Alt and GUI tiles, lit while the modifier is held (the GUI icon
   follows the OS);
 - Caps Lock, Caps Word, Num Lock and Scroll Lock;

@@ -99,7 +99,7 @@ def text(img, x, y, s, font, col):
 
 
 def ghost(c, f=0.16):
-    """Unlit version of a colour: same hue, scaled towards black."""
+    """Unlit version of a color: same hue, scaled towards black."""
     return tuple(int(v * f) for v in c)
 
 

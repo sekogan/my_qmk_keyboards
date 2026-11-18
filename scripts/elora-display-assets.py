@@ -7,8 +7,8 @@ of display_skin_layout.h:
 
   graphics/font_{val28,l24,l18}_caps.png   QFF font images for `qmk painter-convert-font-image`
   graphics/icon_<name>.png                 20x20 1-bit mod icons for `qmk painter-convert-graphics`
-  display_palette.h                        the colour table: HSV888 for QP, RGB565 for the host check
-  display_skin_metrics.h                   the measured text-cell x tables (centred on ink)
+  display_palette.h                        the color table: HSV888 for QP, RGB565 for the host check
+  display_skin_metrics.h                   the measured text-cell x tables (centered on ink)
 
 The font images are 1 bpp, cell = BDF DWIDTH, cropped to the rows the drawn glyphs ink (A-Z, 0-9
 and '/'). Nothing is scaled. Every output is checked here (see the asserts) and is byte-identical
@@ -130,7 +130,7 @@ def icon_image(name):
     return out
 
 
-# ---------------------------------------------------------------- colours
+# ---------------------------------------------------------------- colors
 def hsv_to_rgb_nocie(h, s, v):
     """hsv_to_rgb_impl(hsv, false) from qmk_firmware/quantum/color.c."""
     if s == 0:
@@ -158,7 +158,7 @@ def rgb565(c):
 
 
 def find_hsv(target):
-    """Deterministic HSV888 whose truncated RGB565 equals the sketch colour's."""
+    """Deterministic HSV888 whose truncated RGB565 equals the sketch color's."""
     want = rgb565(target)
     r5, g6, b5 = want >> 11, (want >> 5) & 0x3F, want & 0x1F
     # v is one of the output channels, p (= v(255-s)>>8) the smallest one
@@ -217,7 +217,7 @@ HEADER = """// Copyright 2026 Sergei Kogan
 
 def palette_header(pal):
     out = [HEADER]
-    out.append("// Colours of the skin design. The panel shows (R>>3, G>>2, B>>3) of the sketch hex:")
+    out.append("// Colors of the skin design. The panel shows (R>>3, G>>2, B>>3) of the sketch hex:")
     out.append("// QP converts skin_hsv[] with hsv_to_rgb_nocie() and truncates, which gives exactly skin_565[].")
     out.append("enum skin_color {")
     for name, c, _ in pal:
@@ -242,9 +242,9 @@ def palette_header(pal):
 def metrics_header():
     A, T28 = S.A, S.T28
     x0, cw, lock_w = L["SKIN_X0"], L["SKIN_CW"], L["SKIN_LOCK_W"]
-    tally = [S.centred_cell_x(layer, A, x0, cw) for layer in LAYERS]
-    locks = [S.centred_cell_x(label, A, bx, lock_w) for label, bx in LOCKS]
-    readout = [S.centred_cell_x(rd, T28, x0, cw) for rd in READOUTS]
+    tally = [S.centered_cell_x(layer, A, x0, cw) for layer in LAYERS]
+    locks = [S.centered_cell_x(label, A, bx, lock_w) for label, bx in LOCKS]
+    readout = [S.centered_cell_x(rd, T28, x0, cw) for rd in READOUTS]
 
     def table(comment, prefix, names, values):
         out = ["", comment]
@@ -254,13 +254,13 @@ def metrics_header():
         return out
 
     out = [HEADER]
-    out.append("// Text-cell x of the centred labels, measured on the ink with the sketch's centred_cell_x():")
+    out.append("// Text-cell x of the centered labels, measured on the ink with the sketch's centered_cell_x():")
     out.append("// cell x = x0 + (w - ink width) / 2 - ink left offset.")
     out += table(f"// The tally (box {x0},{L['SKIN_TALLY_Y']},{cw},{L['SKIN_TALLY_H']}), by ds_layer_t.",
                  "SKIN_TALLY_X", LAYERS, tally)
     out += table(f"// The lock labels ({lock_w}-wide bars).", "SKIN_LOCK_X", [label for label, _ in LOCKS], locks)
     out.append("")
-    out.append(f"// The popup readout \"{{n}}/10\" (centred in {x0}..{x0 + cw - 1}), by n = 0..10.")
+    out.append(f"// The popup readout \"{{n}}/10\" (centered in {x0}..{x0 + cw - 1}), by n = 0..10.")
     out.append(f"__attribute__((unused)) static const uint8_t SKIN_READOUT_X[{len(readout)}] = {{" + ", ".join(map(str, readout)) + "};")
     return "\n".join(out) + "\n"
 

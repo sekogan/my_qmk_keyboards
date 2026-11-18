@@ -6,7 +6,7 @@
 // The four drawing primitives the renderer (display_skin.c) uses. The firmware implements them
 // with Quantum Painter on the rgb565 surface (display_gfx_qp.c); the host check
 // (scripts/elora_display_test/host_gfx.c) records them. Coordinates are pixels on the 135x240
-// panel; colours are enum skin_color (display_palette.h).
+// panel; colors are enum skin_color (display_palette.h).
 
 #include <stdint.h>
 #include "display_palette.h"

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 // Host driver for the Elora display check (scripts/check-elora-display.sh).
-//   render_states palette   P <index> <rgb565> per colour; fails unless QMK's hsv_to_rgb_nocie()
+//   render_states palette   P <index> <rgb565> per color; fails unless QMK's hsv_to_rgb_nocie()
 //                           (qmk_firmware/quantum/color.c) of skin_hsv[] truncates to skin_565[]
 //   render_states fields    the <state> field names (DS_FIELDS), one line
 //   render_states list      the five design test states (display_test_states.c) as <state> lines

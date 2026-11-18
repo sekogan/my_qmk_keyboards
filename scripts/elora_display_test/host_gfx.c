@@ -1,7 +1,7 @@
 // Copyright 2026 Sergei Kogan
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-// display_gfx.h on the host: one line per primitive on stdout, rasterised by compare.py.
+// display_gfx.h on the host: one line per primitive on stdout, rasterized by compare.py.
 //   F x y w h color
 //   T x y font fg bg text
 //   I x y icon fg bg

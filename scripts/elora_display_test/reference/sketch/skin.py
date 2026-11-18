@@ -1,8 +1,8 @@
-"""The skin: i12.2 top, i13c2 sections, L24 lock labels, centred popup.
+"""The skin: i12.2 top, i13c2 sections, L24 lock labels, centered popup.
 
 Tracked copy of the sketch script of the design the Elora display firmware
 reproduces pixel for pixel. It is the oracle of scripts/check-elora-display.sh and the source of
-the colours, icons and centring used by scripts/elora-display-assets.py. Changes from the
+the colors, icons and centering used by scripts/elora-display-assets.py. Changes from the
 original, nothing else: this docstring, the sketchlib import (the trimmed copy next to this
 file), the T28 font path (the copy in the keymap's graphics/) and no run() at the end.
 """
@@ -104,8 +104,8 @@ def lamp(img, d, bx, by, bw, bh, tx, ty, label, col, lit, font=B):
     text(img, tx, ty, label, font, BLACK if lit else ghost(col, OFF_TXT))
 
 
-def centred_cell_x(s, font, x0=4, w=127):
-    """Cell x that centres the measured ink of s in x0..x0+w-1."""
+def centered_cell_x(s, font, x0=4, w=127):
+    """Cell x that centers the measured ink of s in x0..x0+w-1."""
     off, ink = ink_bounds(s, font)
     return x0 + (w - ink) // 2 - off
 
@@ -136,12 +136,12 @@ def panel(img, d, st, ty, my, ly1, ly2):
         box(d, x, my, 28, 28, c if lit else ghost(c, OFF_FILL))
         icon(d, x + 4, my + 4, gui_icon if m == "gui" else m,
              BLACK if lit else ghost(c, OFF_TXT))
-    # 61x20 bars, L24 labels centred on ink, cell y = bar y - 3
+    # 61x20 bars, L24 labels centered on ink, cell y = bar y - 3
     for bx, by, label, col, on in ((4, ly1, "CAPS", LAMP_G, st["caps"]),
                                    (70, ly1, "WORD", AMBER, st["caps_word"]),
                                    (4, ly2, "NUM", LAMP_G, st["num"]),
                                    (70, ly2, "SCRL", LAMP_G, st["scroll"])):
-        lamp(img, d, bx, by, 61, 20, centred_cell_x(label, A, bx, 61), by - 3,
+        lamp(img, d, bx, by, 61, 20, centered_cell_x(label, A, bx, 61), by - 3,
              label, col, on, A)
 
 
@@ -178,11 +178,11 @@ def meter(img, d, n, seg_y, scale_y):
 def draw(st):
     img, d = canvas()
     if st["backlight_overlay"]:
-        # popup (68 / 104 / 68), every line centred on its measured ink
+        # popup (68 / 104 / 68), every line centered on its measured ink
         rd = f"{st['backlight']}/10"
-        text(img, centred_cell_x("DISPLAY", A), 62, "DISPLAY", A, PANEL)
-        text(img, centred_cell_x("BACKLIGHT", A), 81, "BACKLIGHT", A, PANEL)
-        text(img, centred_cell_x(rd, T28), 107, rd, T28, VFD)
+        text(img, centered_cell_x("DISPLAY", A), 62, "DISPLAY", A, PANEL)
+        text(img, centered_cell_x("BACKLIGHT", A), 81, "BACKLIGHT", A, PANEL)
+        text(img, centered_cell_x(rd, T28), 107, rd, T28, VFD)
         meter(img, d, st["backlight"], 139, 157)
         return img
     tally(img, d, st["layer"], A, 20, 1)
