@@ -94,9 +94,9 @@ KC_LSFT,   KC_Z,      KC_X,      KC_C,      KC_D,      KC_V,      KC_LSFT,   KC_
  * |------+------+------+------+------+------|                                  |------+------+------+------+------+------|
  * |      |      |      |      |      |      |                                  |  0   |  1   |  2   |  3   |      | BSPC |
  * |------+------+------+------+------+------|                                  |------+------+------+------+------+------|
- * |      | LSFT | LALT | LCTL |      |      |                                  |  .   |  4   |  5   |  6   |  -   |  +   |
+ * |      | LSFT | LALT | LCTL |      |      |                                  |  .   |  4   |  5   |  6   |      |      |
  * |------+------+------+------+------+------+-------------.      ,-------------+------+------+------+------+------+------|
- * |      |      |      |      |      |      |      |      |      |      | ___  |      |  7   |  8   |  9   |  /   |  *   |
+ * |      |      |      |      |      |      |      |      |      |      | ___  |      |  7   |  8   |  9   |      |      |
  * `--------------------+------+------+------+------+------|      |------+------+------+------+------+--------------------'
  *                      | ___  | ___  | ___  | ___  | ___  |      | ___  | ___  | ___  | ___  | ___  |
  *                      `----------------------------------'      `----------------------------------'
@@ -104,8 +104,8 @@ KC_LSFT,   KC_Z,      KC_X,      KC_C,      KC_D,      KC_V,      KC_LSFT,   KC_
 [NUMPAD] = LAYOUT_split_4x6_5(
 XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,                                               KC_NUM,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,
 XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,                                               KC_0,      KC_1,      KC_2,      KC_3,      XXXXXXX,   KC_BSPC,
-XXXXXXX,   KC_LSFT,   KC_LALT,   KC_LCTL,   XXXXXXX,   XXXXXXX,                                               KC_PDOT,   KC_4,      KC_5,      KC_6,      KC_PMNS,   KC_PPLS,
-XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   _______,   XXXXXXX,   KC_7,      KC_8,      KC_9,      KC_PSLS,   KC_PAST,
+XXXXXXX,   KC_LSFT,   KC_LALT,   KC_LCTL,   XXXXXXX,   XXXXXXX,                                               KC_PDOT,   KC_4,      KC_5,      KC_6,      XXXXXXX,   XXXXXXX,
+XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   _______,   XXXXXXX,   KC_7,      KC_8,      KC_9,      XXXXXXX,   XXXXXXX,
                                  _______,   _______,   _______,   _______,   _______,   _______,   _______,   _______,   _______,   _______
 ),
 

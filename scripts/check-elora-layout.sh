@@ -23,9 +23,8 @@ blank = ["KC_NO"] * 4
 elora_only = {
     QWERTY:  {52: "KC_LGUI", 57: "KC_ENT", 61: "KC_RGUI"},
     COLEMAK: {52: "KC_LGUI", 57: "KC_ENT", 61: "KC_RGUI"},
-    # NUMPAD's right half: '-' and '+' on the home row, '/' and '*' below '-' and '+', no PENT.
-    NUMPAD:  {10: "KC_NO", 22: "KC_NO", 34: "KC_PMNS", 35: "KC_PPLS",
-              50: "KC_PSLS", 51: "KC_PAST", 52: "KC_TRNS", 61: "KC_TRNS"},
+    # NUMPAD: no PENT (the right thumb Enter is transparent).
+    NUMPAD:  {51: "KC_NO", 52: "KC_TRNS", 61: "KC_TRNS"},
     LOWER:   {52: "KC_TRNS", 61: "KC_TRNS"},
     RAISE:   {51: "KC_TRNS", 52: "KC_TRNS", 61: "KC_TRNS"},
     EXTRA:   {14: "BL_UP", 18: "KC_NO", 20: "KC_VOLU", 26: "BL_DOWN", 29: "SEK_OS",
